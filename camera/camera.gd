@@ -9,6 +9,7 @@ export var distance_to_target := 5.0
 export var height_modifier := 0.33
 export var target_height_modifier := 1.5
 export var side_offset := 0.0
+export var ignore_collision = false
 export(NodePath) var initial_target = NodePath()
 # When turned on, the camera will automatically search inside the target for the actual
 # anchor to follow, which must have a CameraHints child node
@@ -79,11 +80,13 @@ func set_target(target: Spatial):
 		height_modifier = hints.height_modifier
 		target_height_modifier = hints.target_height_modifier
 		side_offset = hints.side_offset
+		ignore_collision = hints.ignore_collision
 	else:
 		distance_to_target = _default_distance_to_target
 		height_modifier = _default_height_modifier
 		target_height_modifier = _default_target_height_modifier
 		side_offset = _default_side_offset
+		ignore_collision = false
 	
 	var tt = _get_target_transform()
 	_prev_target_pos = tt.origin
@@ -123,12 +126,13 @@ func _physics_process(delta: float):
 	var trans := ideal_trans
 	
 	# Collision avoidance
-	var dss := get_world().direct_space_state
-	var ignored := [_target_rigidbody] if _target_rigidbody != null else []
-	var hit := dss.intersect_ray(tt.origin, ideal_trans.origin, ignored)
-	if not hit.empty():
-		#var hit_normal = hit.normal
-		trans.origin = hit.position + 0.3 * hit.normal
+	if !ignore_collision:
+		var dss := get_world().direct_space_state
+		var ignored := [_target_rigidbody] if _target_rigidbody != null else []
+		var hit := dss.intersect_ray(tt.origin, ideal_trans.origin, ignored)
+		if not hit.empty():
+			#var hit_normal = hit.normal
+			trans.origin = hit.position + 0.3 * hit.normal
 	
 	# Add latency (using interpolation)
 #	var q1 = Quat(prev_trans.basis)

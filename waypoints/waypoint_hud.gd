@@ -3,6 +3,8 @@ extends Control
 const SolarSystem = preload("res://solar_system/solar_system.gd")
 const WaypointTexture = preload("res://gui/waypoint.png")
 
+onready var info_label = get_node("waypoint_info")
+
 var _solar_system : SolarSystem
 
 var _labels = []
@@ -23,6 +25,7 @@ func _draw():
 
 	var body = _solar_system.get_reference_stellar_body()
 	var font = get_font("font")
+	var mouse_pos = get_viewport().get_mouse_position()
 
 	for waypoint in body.waypoints:
 		var pos : Vector3 = waypoint.transform.origin
@@ -39,3 +42,17 @@ func _draw():
 		var pos_2d = center_2d - Vector2(radius, radius) * 0.5
 		draw_texture_rect(
 			WaypointTexture, Rect2(pos_2d, Vector2(radius, radius)), false, Color(0.3, 1.0, 0.3))
+
+		if waypoint.has_meta("mine"):
+			var dist = mouse_pos.distance_to(pos_2d + Vector2(radius, radius))
+			if dist <= radius:
+				var mine = waypoint.get_meta("mine")
+				info_label.show()
+				info_label.set_text("Mine Pos :" + str(mine.pos)+"\nAmount: "+str(mine.amount))
+				info_label.rect_position = mouse_pos
+			else:
+				info_label.hide()
+		else:
+			info_label.hide()
+			
+			

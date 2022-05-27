@@ -5,6 +5,7 @@ const VolumetricAtmosphereScene = preload("res://addons/zylann.atmosphere/planet
 const BigRock1Scene = preload("../props/big_rocks/big_rock1.tscn")
 const Rock1Scene = preload("../props/rocks/rock1.tscn")
 const GrassScene = preload("res://props/grass/grass.tscn")
+const CameraHints = preload("res://camera/camera_hints.gd")
 
 const SunMaterial = preload("./materials/sun_yellow.tres")
 const PlanetRockyMaterial = preload("./materials/planet_material_rocky.tres")
@@ -215,7 +216,7 @@ static func _setup_rocky_planet(body: StellarBody, root: Spatial):
 	var volume := VoxelLodTerrain.new()
 	volume.lod_count = 7
 	volume.lod_distance = 60.0
-	volume.collision_lod_count = 2
+	volume.collision_lod_count = 6
 	volume.generator = generator
 	volume.stream = stream
 	volume.view_distance = 100000
@@ -229,9 +230,20 @@ static func _setup_rocky_planet(body: StellarBody, root: Spatial):
 	#volume.set_process_mode(VoxelLodTerrain.PROCESS_MODE_PHYSICS)
 	body.volume = volume
 	root.add_child(volume)
+	
+	var head = Spatial.new()
+	head.name = "head"
+	root.add_child(head)
+	var hints = Node.new()
+	hints.set_script(CameraHints)
+	hints.name = "CameraHints"
+	head.add_child(hints)
+	hints.distance_to_target = body.radius * 2
+	hints.height_modifier = 0
+	hints.target_height_modifier = 0
+	hints.ignore_collision = true
 
 	_configure_instancing_for_planet(body, volume)
-
 
 static func _configure_instancing_for_planet(body: StellarBody, volume: VoxelLodTerrain):
 	for mesh in [Pebble1Mesh, Rock1Mesh, BigRock1Mesh]:
@@ -349,6 +361,12 @@ static func _configure_instancing_for_planet(body: StellarBody, volume: VoxelLod
 	volume.add_child(instancer)
 	body.instancer = instancer
 
+static func _setup_mining(body, root):
+	
+	var world = root.get_world()
+	
+	pass
+
 
 static func setup_stellar_body(body: StellarBody, parent: Node) -> DirectionalLight:
 	var root := Spatial.new()
@@ -369,6 +387,9 @@ static func setup_stellar_body(body: StellarBody, parent: Node) -> DirectionalLi
 	
 	if body.type != StellarBody.TYPE_SUN:
 		_setup_atmosphere(body, root)
+	
+	if body.name == "Earth":
+		_setup_mining(body, root)
 	
 	return sun_light
 

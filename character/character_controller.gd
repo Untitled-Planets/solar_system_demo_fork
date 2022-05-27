@@ -189,7 +189,7 @@ func _interact():
 func _enter_ship(ship: Ship):
 	var camera = get_viewport().get_camera()
 	camera.set_target(ship)
-	ship.enable_controller()
+	ship.set_character(null)
 	_get_body().queue_free()
 
 

@@ -10,3 +10,7 @@ script = ExtResource( 1 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
+
+[node name="waypoint_info" type="Label" parent="."]
+margin_right = 40.0
+margin_bottom = 14.0

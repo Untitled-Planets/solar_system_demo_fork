@@ -49,8 +49,12 @@ var _ref_change_info = null
 var _was_superspeed := false
 var _last_contacts_count := 0
 
+var current_character
 
 func _ready():
+	
+	add_to_group("planet_mode")
+	
 	for n in _landed_nodes:
 		_landed_node_parents.append(n.get_parent())
 	
@@ -60,6 +64,28 @@ func _ready():
 	get_solar_system().connect(
 		"reference_body_changed", self, "_on_solar_system_reference_body_changed")
 
+func pm_enabled(p_enabled):
+
+	if current_character:
+		return
+
+	_controller.set_enabled(!p_enabled)
+
+	if p_enabled:
+		disable_controller()
+	else:
+		var camera = get_viewport().get_camera()
+		camera.set_target(self)
+		enable_controller()
+
+
+func set_character(p_char):
+	
+	current_character = p_char
+	if current_character:
+		disable_controller()
+	else:
+		enable_controller()
 
 func enable_controller():
 	_controller.set_enabled(true)

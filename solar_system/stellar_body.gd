@@ -40,3 +40,12 @@ func _notification(what: int):
 			for sb in static_bodies:
 				sb.free()
 
+
+func get_surface_transform(pos):
+	
+	var t = Transform().rotated(Vector3(0, 1, 0), deg2rad(pos.y))
+	t = t.rotated(Vector3(1, 0, 0), deg2rad(pos.x))
+	t = t.translated(Vector3(0, 0, radius))
+	
+	return t
+	

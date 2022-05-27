@@ -108,7 +108,8 @@ func _try_exit_ship():
 	ship.get_parent().add_child(character)
 	var camera = get_viewport().get_camera()
 	camera.set_target(character)
-	ship.disable_controller()
+	ship.set_character(character)
+	#ship.disable_controller()
 
 
 # TODO I could not use `_unhandled_input`
@@ -127,6 +128,9 @@ func _input(event):
 	
 	elif event.is_action_pressed("interact") && !event.is_echo():
 		_exit_ship_cmd = true
+
+	if event.is_action_pressed("planet_mode_toggle"):
+		get_tree().call_group("planet_mode", "pm_try_enable")
 
 
 # TODO Temporary, need to replace this with a rocket launcher

@@ -4,13 +4,28 @@ export var capture_mouse_in_ready = true
 
 signal escaped
 
+var in_ui = false
 
 func _ready():
+	add_to_group("planet_mode")
 	if capture_mouse_in_ready:
 		Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 
+func pm_enabled(p_enabled):
+	in_ui = p_enabled
+	if p_enabled:
+		escape()
+	else:
+		capture()
+
+func escape():
+	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
+	emit_signal("escaped")
+
 
 func capture():
+	if in_ui:
+		return
 	# Remove focus from the HUD
 	var focus_owner = get_focus_owner()
 	if focus_owner != null:
@@ -26,9 +41,7 @@ func _unhandled_input(event):
 			capture()
 	
 	elif event is InputEventKey:
-		if event.pressed and event.scancode == KEY_ESCAPE:
+		if event.is_action_pressed("capture_escape"):
 			if Input.get_mouse_mode() != Input.MOUSE_MODE_VISIBLE:
-				# Get the mouse back
-				Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
-				emit_signal("escaped")
+				escape()
 

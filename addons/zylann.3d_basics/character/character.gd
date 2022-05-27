@@ -127,3 +127,10 @@ func _physics_process(delta : float):
 
 func is_landed() -> bool:
 	return _landed
+
+func pm_enabled(p_enabled):
+	pass
+	
+
+func _ready():
+	add_to_group("planet_mode")
