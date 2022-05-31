@@ -27,6 +27,7 @@ func _draw():
 	var font = get_font("font")
 	var mouse_pos = get_viewport().get_mouse_position()
 
+	var mouse_collide = false
 	for waypoint in body.waypoints:
 		var pos : Vector3 = waypoint.transform.origin
 		var center_2d := camera.unproject_position(pos)
@@ -44,15 +45,14 @@ func _draw():
 			WaypointTexture, Rect2(pos_2d, Vector2(radius, radius)), false, Color(0.3, 1.0, 0.3))
 
 		if waypoint.has_meta("mine"):
-			var dist = mouse_pos.distance_to(pos_2d + Vector2(radius, radius))
+			var dist = mouse_pos.distance_to(center_2d)
 			if dist <= radius:
 				var mine = waypoint.get_meta("mine")
 				info_label.show()
 				info_label.set_text("Mine Pos :" + str(mine.pos)+"\nAmount: "+str(mine.amount))
 				info_label.rect_position = mouse_pos
-			else:
-				info_label.hide()
-		else:
-			info_label.hide()
-			
+				mouse_collide = true
+
+	if !mouse_collide:
+		info_label.hide()			
 			
