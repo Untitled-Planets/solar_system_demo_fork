@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://models/portal/portal.tscn" type="PackedScene" id=1]
+
+[node name="portal" type="Spatial"]
+
+[node name="portal" parent="." instance=ExtResource( 1 )]
+transform = Transform( 8, 0, 0, 0, 8, 0, 0, 0, 8, 0, 0, 0 )
