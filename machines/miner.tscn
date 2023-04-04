@@ -1,0 +1,10 @@
+[gd_scene load_steps=3 format=3 uid="uid://3plw8drn1tul"]
+
+[ext_resource type="PackedScene" uid="uid://d20pdti6fffac" path="res://machines/Machine.tscn" id="1_7qetq"]
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_tibp5"]
+
+[node name="Miner" instance=ExtResource("1_7qetq")]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." index="1"]
+mesh = SubResource("CapsuleMesh_tibp5")

@@ -77,6 +77,8 @@ func _ready():
 	get_solar_system().reference_body_changed.connect(_on_solar_system_reference_body_changed)
 
 
+
+
 func apply_game_settings(s: Settings):
 	if s.world_scale_x10:
 		speed_cap_in_space *= SolarSystemSetup.LARGE_SCALE

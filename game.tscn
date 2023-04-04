@@ -1,4 +1,4 @@
-[gd_scene load_steps=19 format=3 uid="uid://dx0qy8pg0q72b"]
+[gd_scene load_steps=21 format=3 uid="uid://dx0qy8pg0q72b"]
 
 [ext_resource type="Script" path="res://solar_system/solar_system.gd" id="1_tcbv5"]
 [ext_resource type="Texture2D" uid="uid://b0s3fc7sjnlof" path="res://solar_system/space_background.png" id="2_06f30"]
@@ -6,15 +6,17 @@
 [ext_resource type="FontFile" path="res://gui/fonts/hack_regular_16_dynamic_font.tres" id="4_5b8os"]
 [ext_resource type="Texture2D" uid="uid://dnkytmccfss5m" path="res://gui/select_rect.png" id="5_hq7jk"]
 [ext_resource type="Texture2D" uid="uid://31ebse57lvhs" path="res://gui/crosshair.png" id="6_rc6j7"]
-[ext_resource type="PackedScene" path="res://waypoints/waypoint_hud.tscn" id="7_b4x6s"]
+[ext_resource type="PackedScene" uid="uid://b0omhqytjn0qj" path="res://waypoints/waypoint_hud.tscn" id="7_b4x6s"]
 [ext_resource type="AudioStream" uid="uid://bpacs3ufj22ps" path="res://sounds/ui_planet_hover.wav" id="8_tvaq7"]
 [ext_resource type="Script" path="res://addons/SIsilicon.vfx.lens flare/lens-flare.gd" id="9_w721i"]
-[ext_resource type="PackedScene" path="res://gui/mouse_capture.tscn" id="10_4n27f"]
+[ext_resource type="PackedScene" uid="uid://bu1ftqx735ygp" path="res://gui/mouse_capture.tscn" id="10_4n27f"]
 [ext_resource type="Script" path="res://gui/loading_screen.gd" id="11_vsdyb"]
 [ext_resource type="PackedScene" uid="uid://b1jp62h7crdt7" path="res://gui/pause_menu/pause_menu.tscn" id="12_cuwn3"]
 [ext_resource type="Script" path="res://voxel_debug_info.gd" id="12_ysp6t"]
 [ext_resource type="Script" path="res://sounds/ambient_sounds.gd" id="13_esoyx"]
 [ext_resource type="AudioStream" uid="uid://pdsd7xlt73p1" path="res://sounds/deep_space.ogg" id="14_krriv"]
+[ext_resource type="PackedScene" uid="uid://c0s0vh504ph30" path="res://planet_mode.tscn" id="16_fuknr"]
+[ext_resource type="PackedScene" uid="uid://co45bdw7qhu7i" path="res://waypoints/waypoint.tscn" id="17_mvuvu"]
 
 [sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_cmlyd"]
 panorama = ExtResource("2_06f30")
@@ -55,11 +57,13 @@ mouse_filter = 2
 script = ExtResource("3_rlxpp")
 
 [node name="TargetPlanetLabel" type="Label" parent="HUD"]
+layout_mode = 0
 theme_override_fonts/font = ExtResource("4_5b8os")
 text = "Hello world"
 
 [node name="TargetPlanetRect" type="NinePatchRect" parent="HUD"]
 modulate = Color(1, 1, 1, 0.784314)
+layout_mode = 0
 texture = ExtResource("5_hq7jk")
 patch_margin_left = 15
 patch_margin_top = 15
@@ -67,7 +71,7 @@ patch_margin_right = 16
 patch_margin_bottom = 16
 
 [node name="Crosshair" type="CenterContainer" parent="HUD"]
-anchors_preset = 15
+layout_mode = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
@@ -75,16 +79,13 @@ grow_vertical = 2
 mouse_filter = 2
 
 [node name="TextureRect" type="TextureRect" parent="HUD/Crosshair"]
-offset_left = 560.0
-offset_top = 308.0
-offset_right = 592.0
-offset_bottom = 340.0
+layout_mode = 2
 mouse_filter = 2
 texture = ExtResource("6_rc6j7")
 stretch_mode = 4
 
 [node name="WaypointHUD" parent="HUD" instance=ExtResource("7_b4x6s")]
-layout_mode = 3
+layout_mode = 1
 anchors_preset = 15
 grow_horizontal = 2
 grow_vertical = 2
@@ -101,8 +102,6 @@ distortion = 7.422
 haloWidth = 0.449
 
 [node name="MouseCapture" parent="." instance=ExtResource("10_4n27f")]
-layout_mode = 3
-anchors_preset = 0
 capture_mouse_in_ready = false
 
 [node name="LoadingScreen" type="ColorRect" parent="."]
@@ -115,7 +114,7 @@ color = Color(0, 0, 0, 0.65098)
 script = ExtResource("11_vsdyb")
 
 [node name="CC" type="CenterContainer" parent="LoadingScreen"]
-anchors_preset = 15
+layout_mode = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
@@ -123,25 +122,18 @@ grow_vertical = 2
 
 [node name="PC" type="PanelContainer" parent="LoadingScreen/CC"]
 custom_minimum_size = Vector2(200, 0)
-offset_left = 476.0
-offset_top = 295.0
-offset_right = 676.0
-offset_bottom = 352.0
+layout_mode = 2
 
 [node name="VB" type="VBoxContainer" parent="LoadingScreen/CC/PC"]
-offset_right = 200.0
-offset_bottom = 57.0
+layout_mode = 2
 
 [node name="Label" type="Label" parent="LoadingScreen/CC/PC/VB"]
-offset_right = 200.0
-offset_bottom = 26.0
+layout_mode = 2
 text = "Loading..."
 horizontal_alignment = 1
 
 [node name="ProgressBar" type="ProgressBar" parent="LoadingScreen/CC/PC/VB"]
-offset_top = 30.0
-offset_right = 200.0
-offset_bottom = 57.0
+layout_mode = 2
 max_value = 1.0
 
 [node name="PauseMenu" parent="." instance=ExtResource("12_cuwn3")]
@@ -161,6 +153,9 @@ bus = &"SFX"
 [node name="PlanetDay" type="AudioStreamPlayer" parent="AmbientSounds"]
 
 [node name="PlanetNight" type="AudioStreamPlayer" parent="AmbientSounds"]
+
+[node name="planet_mode" parent="." instance=ExtResource("16_fuknr")]
+WaypointScene = ExtResource("17_mvuvu")
 
 [connection signal="loading_progressed" from="." to="LoadingScreen" method="_on_GameWorld_loading_progressed"]
 [connection signal="reference_body_changed" from="." to="AmbientSounds" method="_on_GameWorld_reference_body_changed"]

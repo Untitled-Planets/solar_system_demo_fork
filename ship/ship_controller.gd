@@ -26,22 +26,22 @@ func _process(delta: float):
 	
 	var motor := Vector3()
 	
-	if Input.is_key_pressed(KEY_S):
+	if Input.is_action_pressed("back"):
 		motor.z -= 1
-	if Input.is_key_pressed(KEY_W) or Input.is_key_pressed(KEY_Z):
+	if Input.is_action_pressed("forward") or Input.is_key_pressed(KEY_Z):
 		motor.z += 1
 #	if Input.is_key_pressed(KEY_A):
 #		motor.x -= 1
 #	if Input.is_key_pressed(KEY_D):
 #		motor.x += 1
-	if Input.is_key_pressed(KEY_SPACE):
+	if Input.is_action_pressed("forward"):
 		motor.y += 1
 	if Input.is_key_pressed(KEY_SHIFT):
 		motor.y -= 1
 
-	if Input.is_key_pressed(KEY_A):
+	if Input.is_action_pressed("left"):
 		_turn_cmd.z -= keyboard_turn_sensitivity
-	if Input.is_key_pressed(KEY_D):
+	if Input.is_action_pressed("right"):
 		_turn_cmd.z += keyboard_turn_sensitivity
 	
 	_ship.set_superspeed_cmd(Input.is_key_pressed(KEY_SPACE))
@@ -58,6 +58,7 @@ func _process(delta: float):
 	_turn_cmd = Vector3()
 	#ship.set_antiroll(not Input.is_key_pressed(KEY_CONTROL))
 #	flyer.set_turn_cmd(turn)
+	
 
 
 func _physics_process(_delta: float):
@@ -123,6 +124,24 @@ func _try_exit_ship():
 	ship.disable_controller()
 
 
+func pm_enabled(p_enabled):
+
+#	if current_character:
+#		return
+	var ship = get_parent()
+
+	set_enabled(!p_enabled)
+	print("pm_enabled ship controller")
+	if p_enabled:
+		print("Disabling planet_mode ship controller")
+		print("---")
+		ship.disable_controller()
+	else:
+		print("Enaling planet_mode ship controller")
+		var camera = get_viewport().get_camera_3d()
+		camera.set_target(ship)
+		ship.enable_controller()
+
 # TODO I could not use `_unhandled_input`
 # because otherwise control is stuck for the duration of the pause menu animations
 # See https://github.com/godotengine/godot/issues/20234
@@ -136,6 +155,9 @@ func _input(event):
 		var cmd = mouse_turn_sensitivity * motion
 		_turn_cmd.x += cmd.x
 		_turn_cmd.y += cmd.y
+		
+	if event.is_action_pressed("planet_mode_toggle"):
+		get_tree().call_group("planet_mode", "pm_try_enable")
 	
 	elif event is InputEventKey:
 		if event.pressed:

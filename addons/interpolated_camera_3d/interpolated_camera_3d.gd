@@ -1,8 +1,8 @@
 # Copyright © 2020-2021 Hugo Locurcio and contributors - MIT License
 # See `LICENSE.md` included in the source distribution for details.
+@icon("interpolated_camera_3d.svg")
 extends Camera3D
 class_name InterpolatedCamera3D
-@icon("interpolated_camera_3d.svg")
 
 # The factor to use for asymptotical translation lerping.
 # If 0, the camera will stop moving. If 1, the camera will move instantly.

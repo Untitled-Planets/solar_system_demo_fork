@@ -1,9 +1,10 @@
-[gd_scene load_steps=10 format=3 uid="uid://dfg7thpcsus18"]
+[gd_scene load_steps=11 format=3 uid="uid://dfg7thpcsus18"]
 
 [ext_resource type="PackedScene" uid="uid://hh0mump0swlx" path="res://character/character.tscn" id="1"]
 [ext_resource type="Texture2D" uid="uid://jfywo4xd75ku" path="res://textures/Rocks07_col.webp" id="2_yc0vv"]
 [ext_resource type="PackedScene" uid="uid://dc4lolnw2ugli" path="res://camera/camera.tscn" id="3"]
-[ext_resource type="PackedScene" path="res://gui/mouse_capture.tscn" id="4"]
+[ext_resource type="PackedScene" uid="uid://bu1ftqx735ygp" path="res://gui/mouse_capture.tscn" id="4"]
+[ext_resource type="Script" path="res://machines/machine_spawner.gd" id="5_mfnhd"]
 
 [sub_resource type="SphereMesh" id="1"]
 radius = 50.0
@@ -54,3 +55,10 @@ distance_to_target = 4.0
 initial_target = NodePath("../Character/Head")
 
 [node name="MouseCapture" parent="." instance=ExtResource("4")]
+layout_mode = 3
+anchors_preset = 0
+
+[node name="machine_spawner" type="Node" parent="." groups=["machine_assets"]]
+script = ExtResource("5_mfnhd")
+
+[editable path="Character"]

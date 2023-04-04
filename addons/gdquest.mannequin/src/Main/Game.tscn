@@ -1,79 +1,288 @@
-[gd_scene load_steps=12 format=2]
+[gd_scene load_steps=23 format=3 uid="uid://no5qoksof48v"]
 
-[ext_resource path="res://addons/gdquest.mannequin/src/Player/Player.tscn" type="PackedScene" id=1]
-[ext_resource path="res://addons/gdquest.mannequin/assets/3d/materials/floor.tres" type="Material" id=2]
-[ext_resource path="res://addons/gdquest.mannequin/src/Main/Game.gd" type="Script" id=3]
-[ext_resource path="res://addons/gdquest.mannequin/assets/3d/level/level_environment.tres" type="Environment" id=4]
-[ext_resource path="res://addons/gdquest.mannequin/src/Level/Playground.tscn" type="PackedScene" id=5]
-[ext_resource path="res://addons/gdquest.mannequin/src/Debug/DebugPanel.tscn" type="PackedScene" id=6]
-[ext_resource path="res://addons/gdquest.mannequin/assets/theme/gdquest.theme" type="Theme" id=7]
-[ext_resource path="res://addons/gdquest.mannequin/src/Debug/DebugDock.gd" type="Script" id=8]
+[ext_resource type="PackedScene" path="res://addons/gdquest.mannequin/src/Player/Player.tscn" id="1"]
+[ext_resource type="Script" path="res://addons/gdquest.mannequin/src/Main/Game.gd" id="3"]
+[ext_resource type="Environment" uid="uid://b7spcnibefyjn" path="res://addons/gdquest.mannequin/assets/3d/level/level_environment.tres" id="4"]
+[ext_resource type="PackedScene" path="res://addons/gdquest.mannequin/src/Level/Playground.tscn" id="5"]
+[ext_resource type="PackedScene" path="res://addons/gdquest.mannequin/src/Debug/DebugPanel.tscn" id="6"]
+[ext_resource type="Theme" path="res://addons/gdquest.mannequin/assets/theme/gdquest.theme" id="7"]
+[ext_resource type="Script" path="res://addons/gdquest.mannequin/src/Debug/DebugDock.gd" id="8"]
 
-[sub_resource type="AnimationNodeStateMachinePlayback" id=1]
+[sub_resource type="Animation" id="3"]
+resource_name = "air_jump"
+length = 0.333333
 
-[sub_resource type="PlaneMesh" id=2]
-size = Vector2( 100, 100 )
+[sub_resource type="Animation" id="4"]
+resource_name = "air_jump_anticipation"
+length = 0.266667
 
-[sub_resource type="BoxShape" id=3]
+[sub_resource type="Animation" id="5"]
+resource_name = "air_land"
+length = 1.23333
+
+[sub_resource type="Animation" id="6"]
+resource_name = "dash"
+length = 0.7
+
+[sub_resource type="Animation" id="7"]
+resource_name = "fight_idle"
+length = 1.5
+
+[sub_resource type="Animation" id="8"]
+resource_name = "fight_kick"
+length = 1.23333
+
+[sub_resource type="Animation" id="9"]
+resource_name = "fight_punch"
+length = 0.5
+
+[sub_resource type="Animation" id="10"]
+resource_name = "idle"
+length = 1.36667
+
+[sub_resource type="Animation" id="11"]
+resource_name = "idle_to_fight"
+length = 0.5
+
+[sub_resource type="Animation" id="12"]
+resource_name = "run"
+length = 0.633333
+
+[sub_resource type="Animation" id="13"]
+resource_name = "walk"
+length = 1.03333
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_2nn2q"]
+_data = {
+"air_jump": SubResource("3"),
+"air_jump_anticipation": SubResource("4"),
+"air_land": SubResource("5"),
+"dash": SubResource("6"),
+"fight_idle": SubResource("7"),
+"fight_kick": SubResource("8"),
+"fight_punch": SubResource("9"),
+"idle": SubResource("10"),
+"idle_to_fight": SubResource("11"),
+"run": SubResource("12"),
+"walk": SubResource("13")
+}
+
+[sub_resource type="AnimationNodeStateMachinePlayback" id="1"]
+
+[sub_resource type="PlaneMesh" id="2"]
+size = Vector2(100, 100)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_jkmq2"]
 margin = 0.001
-extents = Vector3( 50, 1, 50 )
+size = Vector3(100, 2, 100)
 
 [node name="Game" type="Node"]
-script = ExtResource( 3 )
+script = ExtResource("3")
 
-[node name="Player" parent="." instance=ExtResource( 1 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -1.58673, -0.0176746, -5.36121 )
+[node name="Player" parent="." instance=ExtResource("1")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.58673, -0.0176746, -5.36121)
 collision_mask = 2
 
+[node name="Skeleton" parent="Player/Mannequiny/root" index="0"]
+bones/0/position = Vector3(0, 0, 0)
+bones/0/rotation = Quaternion(0, 0, 0, 1)
+bones/0/scale = Vector3(1, 1, 1)
+bones/1/position = Vector3(0, 0, 0)
+bones/1/rotation = Quaternion(0, 0, 0, 1)
+bones/1/scale = Vector3(1, 1, 1)
+bones/2/position = Vector3(0, 0, 0)
+bones/2/rotation = Quaternion(0, 0, 0, 1)
+bones/2/scale = Vector3(1, 1, 1)
+bones/3/position = Vector3(0, 0, 0)
+bones/3/rotation = Quaternion(0, 0, 0, 1)
+bones/3/scale = Vector3(1, 1, 1)
+bones/4/position = Vector3(0, 0, 0)
+bones/4/rotation = Quaternion(0, 0, 0, 1)
+bones/4/scale = Vector3(1, 1, 1)
+bones/5/position = Vector3(0, 0, 0)
+bones/5/rotation = Quaternion(0, 0, 0, 1)
+bones/5/scale = Vector3(1, 1, 1)
+bones/6/position = Vector3(0, 0, 0)
+bones/6/rotation = Quaternion(0, 0, 0, 1)
+bones/6/scale = Vector3(1, 1, 1)
+bones/7/position = Vector3(0, 0, 0)
+bones/7/rotation = Quaternion(0, 0, 0, 1)
+bones/7/scale = Vector3(1, 1, 1)
+bones/8/position = Vector3(0, 0, 0)
+bones/8/rotation = Quaternion(0, 0, 0, 1)
+bones/8/scale = Vector3(1, 1, 1)
+bones/9/position = Vector3(0, 0, 0)
+bones/9/rotation = Quaternion(0, 0, 0, 1)
+bones/9/scale = Vector3(1, 1, 1)
+bones/10/position = Vector3(0, 0, 0)
+bones/10/rotation = Quaternion(0, 0, 0, 1)
+bones/10/scale = Vector3(1, 1, 1)
+bones/11/position = Vector3(0, 0, 0)
+bones/11/rotation = Quaternion(0, 0, 0, 1)
+bones/11/scale = Vector3(1, 1, 1)
+bones/12/position = Vector3(0, 0, 0)
+bones/12/rotation = Quaternion(0, 0, 0, 1)
+bones/12/scale = Vector3(1, 1, 1)
+bones/13/position = Vector3(0, 0, 0)
+bones/13/rotation = Quaternion(0, 0, 0, 1)
+bones/13/scale = Vector3(1, 1, 1)
+bones/14/position = Vector3(0, 0, 0)
+bones/14/rotation = Quaternion(0, 0, 0, 1)
+bones/14/scale = Vector3(1, 1, 1)
+bones/15/position = Vector3(0, 0, 0)
+bones/15/rotation = Quaternion(0, 0, 0, 1)
+bones/15/scale = Vector3(1, 1, 1)
+bones/16/position = Vector3(0, 0, 0)
+bones/16/rotation = Quaternion(0, 0, 0, 1)
+bones/16/scale = Vector3(1, 1, 1)
+bones/17/position = Vector3(0, 0, 0)
+bones/17/rotation = Quaternion(0, 0, 0, 1)
+bones/17/scale = Vector3(1, 1, 1)
+bones/18/position = Vector3(0, 0, 0)
+bones/18/rotation = Quaternion(0, 0, 0, 1)
+bones/18/scale = Vector3(1, 1, 1)
+bones/19/position = Vector3(0, 0, 0)
+bones/19/rotation = Quaternion(0, 0, 0, 1)
+bones/19/scale = Vector3(1, 1, 1)
+bones/20/position = Vector3(0, 0, 0)
+bones/20/rotation = Quaternion(0, 0, 0, 1)
+bones/20/scale = Vector3(1, 1, 1)
+bones/21/position = Vector3(0, 0, 0)
+bones/21/rotation = Quaternion(0, 0, 0, 1)
+bones/21/scale = Vector3(1, 1, 1)
+bones/22/position = Vector3(0, 0, 0)
+bones/22/rotation = Quaternion(0, 0, 0, 1)
+bones/22/scale = Vector3(1, 1, 1)
+bones/23/position = Vector3(0, 0, 0)
+bones/23/rotation = Quaternion(0, 0, 0, 1)
+bones/23/scale = Vector3(1, 1, 1)
+bones/24/position = Vector3(0, 0, 0)
+bones/24/rotation = Quaternion(0, 0, 0, 1)
+bones/24/scale = Vector3(1, 1, 1)
+bones/25/position = Vector3(0, 0, 0)
+bones/25/rotation = Quaternion(0, 0, 0, 1)
+bones/25/scale = Vector3(1, 1, 1)
+bones/26/position = Vector3(0, 0, 0)
+bones/26/rotation = Quaternion(0, 0, 0, 1)
+bones/26/scale = Vector3(1, 1, 1)
+bones/27/position = Vector3(0, 0, 0)
+bones/27/rotation = Quaternion(0, 0, 0, 1)
+bones/27/scale = Vector3(1, 1, 1)
+bones/28/position = Vector3(0, 0, 0)
+bones/28/rotation = Quaternion(0, 0, 0, 1)
+bones/28/scale = Vector3(1, 1, 1)
+bones/29/position = Vector3(0, 0, 0)
+bones/29/rotation = Quaternion(0, 0, 0, 1)
+bones/29/scale = Vector3(1, 1, 1)
+bones/30/position = Vector3(0, 0, 0)
+bones/30/rotation = Quaternion(0, 0, 0, 1)
+bones/30/scale = Vector3(1, 1, 1)
+bones/31/position = Vector3(0, 0, 0)
+bones/31/rotation = Quaternion(0, 0, 0, 1)
+bones/31/scale = Vector3(1, 1, 1)
+bones/32/position = Vector3(0, 0, 0)
+bones/32/rotation = Quaternion(0, 0, 0, 1)
+bones/32/scale = Vector3(1, 1, 1)
+bones/33/position = Vector3(0, 0, 0)
+bones/33/rotation = Quaternion(0, 0, 0, 1)
+bones/33/scale = Vector3(1, 1, 1)
+bones/34/position = Vector3(0, 0, 0)
+bones/34/rotation = Quaternion(0, 0, 0, 1)
+bones/34/scale = Vector3(1, 1, 1)
+bones/35/position = Vector3(0, 0, 0)
+bones/35/rotation = Quaternion(0, 0, 0, 1)
+bones/35/scale = Vector3(1, 1, 1)
+bones/36/position = Vector3(0, 0, 0)
+bones/36/rotation = Quaternion(0, 0, 0, 1)
+bones/36/scale = Vector3(1, 1, 1)
+bones/37/position = Vector3(0, 0, 0)
+bones/37/rotation = Quaternion(0, 0, 0, 1)
+bones/37/scale = Vector3(1, 1, 1)
+bones/38/position = Vector3(0, 0, 0)
+bones/38/rotation = Quaternion(0, 0, 0, 1)
+bones/38/scale = Vector3(1, 1, 1)
+bones/39/position = Vector3(0, 0, 0)
+bones/39/rotation = Quaternion(0, 0, 0, 1)
+bones/39/scale = Vector3(1, 1, 1)
+bones/40/position = Vector3(0, 0, 0)
+bones/40/rotation = Quaternion(0, 0, 0, 1)
+bones/40/scale = Vector3(1, 1, 1)
+bones/41/position = Vector3(0, 0, 0)
+bones/41/rotation = Quaternion(0, 0, 0, 1)
+bones/41/scale = Vector3(1, 1, 1)
+bones/42/position = Vector3(0, 0, 0)
+bones/42/rotation = Quaternion(0, 0, 0, 1)
+bones/42/scale = Vector3(1, 1, 1)
+bones/43/position = Vector3(0, 0, 0)
+bones/43/rotation = Quaternion(0, 0, 0, 1)
+bones/43/scale = Vector3(1, 1, 1)
+bones/44/position = Vector3(0, 0, 0)
+bones/44/rotation = Quaternion(0, 0, 0, 1)
+bones/44/scale = Vector3(1, 1, 1)
+
+[node name="AnimationPlayer" parent="Player/Mannequiny" index="1"]
+libraries = {
+"": SubResource("AnimationLibrary_2nn2q")
+}
+
 [node name="AnimationTree" parent="Player/Mannequiny" index="2"]
-parameters/playback = SubResource( 1 )
+parameters/playback = SubResource("1")
 
-[node name="Playground" parent="." instance=ExtResource( 5 )]
-transform = Transform( -4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 0, 0, -16 )
+[node name="InterpolatedCamera" parent="Player/CameraRig" index="0"]
+_import_path = NodePath("")
+unique_name_in_owner = false
+process_mode = 0
+process_priority = 0
+editor_description = ""
+script = null
 
-[node name="TestMap" type="Spatial" parent="."]
+[node name="Tween" parent="Player/CameraRig/StateMachine/Camera/Aim" index="0"]
+_import_path = NodePath("")
+unique_name_in_owner = false
+process_mode = 0
+process_priority = 0
+editor_description = ""
+script = null
 
-[node name="Ground" type="MeshInstance" parent="TestMap"]
-mesh = SubResource( 2 )
-material/0 = ExtResource( 2 )
+[node name="Playground" parent="." instance=ExtResource("5")]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 0, 0, -16)
 
-[node name="StaticBody" type="StaticBody" parent="TestMap/Ground"]
+[node name="TestMap" type="Node3D" parent="."]
+
+[node name="Ground" type="MeshInstance3D" parent="TestMap"]
+mesh = SubResource("2")
+
+[node name="StaticBody" type="StaticBody3D" parent="TestMap/Ground"]
 collision_layer = 2
 collision_mask = 0
 
-[node name="CollisionShape" type="CollisionShape" parent="TestMap/Ground/StaticBody"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1, 0 )
-shape = SubResource( 3 )
+[node name="CollisionShape" type="CollisionShape3D" parent="TestMap/Ground/StaticBody"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1, 0)
+shape = SubResource("BoxShape3D_jkmq2")
 
-[node name="DirectionalLight" type="DirectionalLight" parent="."]
-transform = Transform( 0.766044, 0.166366, -0.620885, 0.271654, 0.791635, 0.547283, 0.582563, -0.587909, 0.561233, -3.00978, 2.72808, 0 )
+[node name="DirectionalLight" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.766044, 0.166366, -0.620885, 0.271654, 0.791635, 0.547283, 0.582563, -0.587909, 0.561233, -3.00978, 2.72808, 0)
 light_energy = 0.8
 shadow_enabled = true
 directional_shadow_blend_splits = true
-directional_shadow_normal_bias = 0.2
-directional_shadow_bias_split_scale = 0.75
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
-environment = ExtResource( 4 )
+environment = ExtResource("4")
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
+anchors_preset = 9
 anchor_bottom = 1.0
-margin_right = 461.0
-theme = ExtResource( 7 )
-script = ExtResource( 8 )
-__meta__ = {
-"_edit_use_anchors_": false
-}
+theme = ExtResource("7")
+script = ExtResource("8")
 
-[node name="DebugPanel" parent="MarginContainer" instance=ExtResource( 6 )]
-anchor_right = 0.0
-anchor_bottom = 0.0
+[node name="DebugPanel" parent="MarginContainer" instance=ExtResource("6")]
+layout_mode = 2
+reference_path = NodePath("../../Player/CameraRig/InterpolatedCamera")
+properties = PackedStringArray("transform", "fov")
 margin_left = 16.0
 margin_top = 16.0
 margin_right = 445.0
 margin_bottom = 1064.0
-reference_path = NodePath("../../Player/CameraRig/InterpolatedCamera")
-properties = PoolStringArray( "transform", "fov" )
 round_decimals = 3
 
 [editable path="Player"]

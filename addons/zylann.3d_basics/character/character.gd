@@ -2,7 +2,7 @@
 # Processes character physics.
 # This is a simple implementation, enough for testing and simple games.
 # If you need more specialized behavior, feel free to fork it.
-
+class_name Character
 extends CharacterBody3D
 
 const VERTICAL_CORRECTION_SPEED = PI

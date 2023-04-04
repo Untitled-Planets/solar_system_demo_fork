@@ -1,0 +1,10 @@
+[gd_scene load_steps=3 format=3 uid="uid://d20pdti6fffac"]
+
+[ext_resource type="Script" path="res://machines/machine_character.gd" id="1_j7i3q"]
+[ext_resource type="Script" path="res://machines/machine_movement.gd" id="2_mt5gi"]
+
+[node name="Machine" type="Node3D"]
+script = ExtResource("1_j7i3q")
+
+[node name="movement" type="Node" parent="."]
+script = ExtResource("2_mt5gi")

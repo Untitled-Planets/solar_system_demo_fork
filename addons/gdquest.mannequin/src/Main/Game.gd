@@ -17,5 +17,6 @@ func _input(event: InputEvent) -> void:
 		get_viewport().set_input_as_handled()
 
 	if event.is_action_pressed("toggle_fullscreen"):
-		OS.window_fullscreen = not OS.window_fullscreen
+		var mode := DisplayServer.window_get_mode(0)
+		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_FULLSCREEN if mode == DisplayServer.WINDOW_MODE_WINDOWED else mode)
 		get_viewport().set_input_as_handled()

@@ -22,6 +22,7 @@ const BasePlanetVoxelGraph = preload("./voxel_graph_planet_v4.tres")
 const EarthDaySound = preload("res://sounds/earth_surface_day.ogg")
 const EarthNightSound = preload("res://sounds/earth_surface_night.ogg")
 const WindSound = preload("res://sounds/wind.ogg")
+const CameraHints = preload("res://camera/camera_hints.gd")
 
 const SAVE_FOLDER_PATH = "debug_data"
 const LARGE_SCALE = 10.0
@@ -286,6 +287,18 @@ static func _setup_rocky_planet(body: StellarBody, root: Node3D, settings: Setti
 	#volume.set_process_mode(VoxelLodTerrain.PROCESS_MODE_PHYSICS)
 	body.volume = volume
 	root.add_child(volume)
+	
+	var head = Node3D.new()
+	head.name = "head"
+	root.add_child(head)
+	var hints = Node.new()
+	hints.set_script(CameraHints)
+	hints.name = "CameraHints"
+	head.add_child(hints)
+	hints.distance_to_target = body.radius * 2
+	hints.height_modifier = 0
+	hints.target_height_modifier = 0
+	hints.ignore_collision = true
 
 	_configure_instancing_for_planet(body, volume)
 

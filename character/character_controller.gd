@@ -20,7 +20,7 @@ const JUMP_SPEED = 8.0
 
 @onready var _head : Node3D = get_node("../Head")
 @onready var _visual_root : Node3D = get_node("../Visual")
-#@onready var _visual_animated : Mannequiny = get_node("../Visual/Mannequiny")
+#@onready var _visual_animated : Mannequiny = get_node("../mannequiny")
 @onready var _visual_head : Node3D = get_node("../Visual/Head")
 @onready var _flashlight : SpotLight3D = get_node("../Visual/FlashLight")
 @onready var _audio = get_node("../Audio")
@@ -32,6 +32,7 @@ var _build_cmd := false
 var _waypoint_cmd := false
 var _visual_state = Mannequiny.States.IDLE
 var _last_motor := Vector3()
+var _player_id: int = -1
 
 
 func _physics_process(delta):
@@ -212,9 +213,9 @@ func _enter_ship(ship: Ship):
 
 func _set_visual_state(state: Mannequiny.States):
 	# TODO Temporarily removed Mannequinny, it did not port well to Godot4
-	pass
-#	if _visual_state != state:
-#		_visual_state = state
+#	pass
+	if _visual_state != state:
+		_visual_state = state
 #		_visual_animated.transition_to(_visual_state)
 
 
@@ -239,24 +240,36 @@ func _process(delta: float):
 	_visual_root.transform.basis = old_root_basis.slerp(_visual_root.transform.basis, delta * 8.0)
 	
 	# TODO Temporarily removed Mannequinny, it did not port well to Godot4
-	#_process_visual_animated(forward, character_body)
+	_process_visual_animated(forward, character_body)
 	
 	_visual_head.global_transform.basis = head_basis
+	
+	if Input.is_action_just_pressed("spawn_miner_test"):
+		_spawn_miner()
 
 
-#func _process_visual_animated(forward: Vector3, character_body: CharacterBody3D):
+func _process_visual_animated(forward: Vector3, character_body: CharacterBody3D):
 #	_visual_animated.set_move_direction(forward)
-#
-#	var state = Mannequiny.States.RUN
-#	if _last_motor.length_squared() > 0.0:
+
+	var state = Mannequiny.States.RUN
+	if _last_motor.length_squared() > 0.0:
 #		_visual_animated.set_is_moving(true)
-#		state = Mannequiny.States.RUN
-#	else:
+		state = Mannequiny.States.RUN
+	else:
 #		_visual_animated.set_is_moving(false)
-#		state = Mannequiny.States.IDLE
-#	if not character_body.is_landed():
-#		state = Mannequiny.States.AIR
-#	_set_visual_state(state)
+		state = Mannequiny.States.IDLE
+	if not character_body.is_landed():
+		state = Mannequiny.States.AIR
+	_set_visual_state(state)
+
+func get_player_id() -> int:
+	return _player_id
+
+func _spawn_miner() -> void:
+	var sl := SpawnLocation.new()
+	sl.location = Vector2()
+	sl.radius = 0.0
+	Server.miner_spawn(get_player_id(), 0, 0, sl)
 
 
 func _get_solar_system() -> SolarSystem:
