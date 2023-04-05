@@ -1,4 +1,4 @@
-[gd_scene load_steps=21 format=3 uid="uid://dx0qy8pg0q72b"]
+[gd_scene load_steps=23 format=3 uid="uid://dx0qy8pg0q72b"]
 
 [ext_resource type="Script" path="res://solar_system/solar_system.gd" id="1_tcbv5"]
 [ext_resource type="Texture2D" uid="uid://b0s3fc7sjnlof" path="res://solar_system/space_background.png" id="2_06f30"]
@@ -8,6 +8,7 @@
 [ext_resource type="Texture2D" uid="uid://31ebse57lvhs" path="res://gui/crosshair.png" id="6_rc6j7"]
 [ext_resource type="PackedScene" uid="uid://b0omhqytjn0qj" path="res://waypoints/waypoint_hud.tscn" id="7_b4x6s"]
 [ext_resource type="AudioStream" uid="uid://bpacs3ufj22ps" path="res://sounds/ui_planet_hover.wav" id="8_tvaq7"]
+[ext_resource type="PackedScene" uid="uid://0mmp46p8s82q" path="res://gui/inventory/inventory.tscn" id="9_4oxrc"]
 [ext_resource type="Script" path="res://addons/SIsilicon.vfx.lens flare/lens-flare.gd" id="9_w721i"]
 [ext_resource type="PackedScene" uid="uid://bu1ftqx735ygp" path="res://gui/mouse_capture.tscn" id="10_4n27f"]
 [ext_resource type="Script" path="res://gui/loading_screen.gd" id="11_vsdyb"]
@@ -17,6 +18,7 @@
 [ext_resource type="AudioStream" uid="uid://pdsd7xlt73p1" path="res://sounds/deep_space.ogg" id="14_krriv"]
 [ext_resource type="PackedScene" uid="uid://c0s0vh504ph30" path="res://planet_mode.tscn" id="16_fuknr"]
 [ext_resource type="PackedScene" uid="uid://co45bdw7qhu7i" path="res://waypoints/waypoint.tscn" id="17_mvuvu"]
+[ext_resource type="PackedScene" uid="uid://24rdyffsxdln" path="res://assets/asset_inventory.tscn" id="19_vd2ea"]
 
 [sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_cmlyd"]
 panorama = ExtResource("2_06f30")
@@ -37,7 +39,7 @@ glow_intensity = 1.0
 glow_blend_mode = 0
 glow_hdr_threshold = 0.8
 
-[node name="GameWorld" type="Node"]
+[node name="GameWorld" type="Node3D"]
 script = ExtResource("1_tcbv5")
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
@@ -86,12 +88,15 @@ stretch_mode = 4
 
 [node name="WaypointHUD" parent="HUD" instance=ExtResource("7_b4x6s")]
 layout_mode = 1
-anchors_preset = 15
 grow_horizontal = 2
 grow_vertical = 2
 
 [node name="PlanetHoverSound" type="AudioStreamPlayer" parent="HUD"]
 stream = ExtResource("8_tvaq7")
+
+[node name="Inventory" parent="HUD" instance=ExtResource("9_4oxrc")]
+visible = false
+layout_mode = 1
 
 [node name="LensFlare" type="Node" parent="."]
 script = ExtResource("9_w721i")
@@ -157,8 +162,11 @@ bus = &"SFX"
 [node name="planet_mode" parent="." instance=ExtResource("16_fuknr")]
 WaypointScene = ExtResource("17_mvuvu")
 
+[node name="asset_inventory" parent="." instance=ExtResource("19_vd2ea")]
+
 [connection signal="loading_progressed" from="." to="LoadingScreen" method="_on_GameWorld_loading_progressed"]
 [connection signal="reference_body_changed" from="." to="AmbientSounds" method="_on_GameWorld_reference_body_changed"]
+[connection signal="add_machine" from="HUD/Inventory" to="." method="_on_inventory_add_machine"]
 [connection signal="exit_to_menu_requested" from="PauseMenu" to="." method="_on_PauseMenu_exit_to_menu_requested"]
 [connection signal="exit_to_os_requested" from="PauseMenu" to="." method="_on_PauseMenu_exit_to_os_requested"]
 [connection signal="resume_requested" from="PauseMenu" to="." method="_on_PauseMenu_resume_requested"]

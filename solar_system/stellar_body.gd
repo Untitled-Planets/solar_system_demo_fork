@@ -1,4 +1,4 @@
-
+class_name StellarBody
 const PlanetAtmosphere = preload("res://addons/zylann.atmosphere/planet_atmosphere.gd")
 
 const TYPE_SUN = 0
@@ -27,6 +27,8 @@ var day_count := 0
 var year_count := 0
 var static_bodies_are_in_tree := false
 
+#var portal_spawn_point: Node3D = Node3D.new()
+
 var waypoints = []
 
 # Godot stuff
@@ -50,3 +52,19 @@ func get_surface_transform(pos):
 	t = t.translated_local(Vector3(0, 0, radius))
 	
 	return t
+
+func generate_path(from: Quaternion, to: Quaternion, amount: int) -> Array:
+	var step: float = 1.0 / float(amount)
+	var weight := 0.0
+	var points := []
+	
+	while weight < 1.0:
+		var q := from.slerp(to, weight)
+		var direction := q.get_axis()
+		points.append(direction * radius)
+		weight += step
+	return []
+
+# Returns the position relative to the planet to spawn an machine.
+func get_spawn_point() -> Vector3:
+	return node.basis.y * radius

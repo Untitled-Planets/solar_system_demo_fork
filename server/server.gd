@@ -71,5 +71,4 @@ func server_miner_spawn(controller_id, miner_id, planet_id, spawn_location) -> v
 	client_miner_spawn(controller_id, miner_id, planet_id, spawn_location)
 
 func client_miner_spawn(controller_id, miner_id, planet_id, spawn_location) -> void:
-	
 	get_tree().call_group("machine_assets", "spawn_machine", miner_id, spawn_location)

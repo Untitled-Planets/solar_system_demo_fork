@@ -13,7 +13,6 @@ static func find_node_by_type(parent: Node, klass):
 			return res
 	return null
 
-
 static func find_parent_by_type(node: Node, klass):
 	while node.get_parent() != null:
 		node = node.get_parent()

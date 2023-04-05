@@ -11,8 +11,20 @@ var _yaw := 0.0
 
 var distance
 
+#@export var planet_radius: float:
+#	get:
+#		return _planet_radius
+#	set(value):
+#		set_planet_radius(value)
+
+var _planet
 var camera
-var planet
+var planet:
+	get:
+		return _planet
+	set(value):
+		_planet = value
+
 var pivot
 
 func _get_solar_system() -> SolarSystem:
@@ -20,7 +32,6 @@ func _get_solar_system() -> SolarSystem:
 	return get_parent() as SolarSystem
 
 func load_waypoints():
-	
 	var deposits = Server.planet_get_deposits()
 	for mine in deposits:
 		var waypoint = WaypointScene.instantiate()
@@ -29,9 +40,7 @@ func load_waypoints():
 		planet.node.add_child(waypoint)
 		planet.waypoints.append(waypoint)
 
-	
-	
-	
+
 func clear_waypoints():
 	for i in range(planet.waypoints.size(), 0):
 		var w = planet.waypoints[i]

@@ -1,6 +1,6 @@
-extends Node
+extends Node3D
 
-const StellarBody = preload("./stellar_body.gd")
+#const StellarBody = preload("./stellar_body.gd")
 const SolarSystemSetup = preload("./solar_system_setup.gd")
 const Settings = preload("res://settings.gd")
 
@@ -30,6 +30,8 @@ signal exit_to_menu_requested
 @onready var _hud = $HUD
 @onready var _pause_menu = $PauseMenu
 @onready var _lens_flare = $LensFlare
+@onready var _asset_inventory: AssetInventory = $asset_inventory
+
 
 var _ship = null
 
@@ -45,6 +47,7 @@ var _settings_ui : Control
 
 
 func _ready():
+	add_to_group("planet_mode") # TODO. Do this from editor
 	set_physics_process(false)
 	_hud.hide()
 	
@@ -92,6 +95,8 @@ func set_settings(s: Settings):
 func set_settings_ui(ui: Control):
 	_settings_ui = ui
 
+func pm_enabled(value: bool):
+	_hud.set_inventory_enable(value)
 
 func _unhandled_input(event):
 	if event is InputEventKey:
@@ -396,3 +401,21 @@ func _on_PauseMenu_settings_requested():
 	# This makes sure it shows in front.
 	_settings_ui.move_to_front()
 
+
+
+func _on_inventory_add_machine(machine_id: int):
+	var planet: StellarBody = get_reference_stellar_body()
+	var spawn_point := planet.get_spawn_point()
+	var from: Vector3 = planet.node.global_position
+	print(from)
+	var to: Vector3 = from + planet.node.global_transform.basis.y * planet.radius * 3.0
+	print(to)
+	var query := PhysicsRayQueryParameters3D.create(to, from)
+	query.hit_from_inside = true
+	var result := get_world_3d().direct_space_state.intersect_ray(query)
+	if not result.is_empty():
+		var machine: Node3D = _asset_inventory.generate_asset(0)
+		planet.node.add_child(machine)
+		machine.global_position = result.position
+	else:
+		printerr("It didn't collide")

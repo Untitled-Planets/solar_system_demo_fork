@@ -1,5 +1,5 @@
 
-const StellarBody = preload("./stellar_body.gd")
+#const StellarBody = preload("./stellar_body.gd")
 const Settings = preload("res://settings.gd")
 
 const VolumetricAtmosphereScene = preload("res://addons/zylann.atmosphere/planet_atmosphere.tscn")
@@ -255,8 +255,10 @@ static func _setup_rocky_planet(body: StellarBody, root: Node3D, settings: Setti
 
 	var volume := VoxelLodTerrain.new()
 	volume.lod_count = 7 + extra_lods
+#	volume.full_load_mode_enabled = true
+#	volume.lod_count = 0
 	volume.lod_distance = 60.0
-	volume.collision_lod_count = 2
+	volume.collision_lod_count = 0
 	volume.generator = generator
 	volume.stream = stream
 	var view_distance = 100000

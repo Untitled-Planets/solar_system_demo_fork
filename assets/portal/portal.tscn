@@ -1,0 +1,9 @@
+[gd_scene load_steps=2 format=3 uid="uid://bwn2kbde346oo"]
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_s6luk"]
+
+[node name="portal" type="Node3D" groups=["spawner"]]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.11614, 0)
+mesh = SubResource("CapsuleMesh_s6luk")

@@ -55,8 +55,6 @@ distance_to_target = 4.0
 initial_target = NodePath("../Character/Head")
 
 [node name="MouseCapture" parent="." instance=ExtResource("4")]
-layout_mode = 3
-anchors_preset = 0
 
 [node name="machine_spawner" type="Node" parent="." groups=["machine_assets"]]
 script = ExtResource("5_mfnhd")

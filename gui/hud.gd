@@ -1,6 +1,7 @@
+class_name HUD
 extends Control
 
-const StellarBody = preload("../solar_system/stellar_body.gd")
+#const StellarBody = preload("../solar_system/stellar_body.gd")
 const Util = preload("../util/util.gd")
 
 @onready var _solar_system = get_parent()
@@ -8,6 +9,7 @@ const Util = preload("../util/util.gd")
 @onready var _target_label_rect = $TargetPlanetRect
 @onready var _waypoint_hud = $WaypointHUD
 @onready var _planet_hover_audio_player = $PlanetHoverSound
+@onready var _inventory = $Inventory
 
 var _target_planet_screen_pos := Vector2()
 var _pointed_body = null
@@ -91,6 +93,9 @@ func _find_pointed_planet(camera: Camera3D) -> StellarBody:
 				closest_distance_squared = d
 	return pointed_body
 
+
+func set_inventory_enable(value: bool) -> void:
+	_inventory.visible = value
 
 #static func int_max(a: int, b: int) -> int:
 #	return a if a > b else b
