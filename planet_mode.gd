@@ -1,15 +1,22 @@
+class_name PlanetMode
 extends Node
 
-const StellarBody = preload("res://solar_system/stellar_body.gd")
-const SolarSystem = preload("res://solar_system/solar_system.gd")
+#const StellarBody = preload("res://solar_system/stellar_body.gd")
+#const SolarSystem = preload("res://solar_system/solar_system.gd")
+const MOUSE_TURN_SENSITIVITY = 0.1
+
 @export var WaypointScene: PackedScene = null
 
-const MOUSE_TURN_SENSITIVITY = 0.1
 
 var _pitch := 0.0
 var _yaw := 0.0
 
 var distance
+
+var _is_enabled = false
+var is_enabled: bool:
+	get:
+		return _is_enabled
 
 #@export var planet_radius: float:
 #	get:
@@ -36,17 +43,16 @@ func load_waypoints():
 	for mine in deposits:
 		var waypoint = WaypointScene.instantiate()
 		waypoint.transform = planet.get_surface_transform(mine.pos)
-		waypoint.set_meta("mine", mine)
+		waypoint.info = "Mine pos: {}\nAmount: {}".format([mine.pos, mine.amount], "{}")
 		planet.node.add_child(waypoint)
 		planet.waypoints.append(waypoint)
 
 
 func clear_waypoints():
-	for i in range(planet.waypoints.size(), 0):
-		var w = planet.waypoints[i]
-		if w.has_meta("mine"):
-			planet.waypoints.remove(i)
-			w.queue_free()
+	var ws = planet.waypoints
+	planet.waypoints = []
+	for w in ws:
+		w.queue_free()
 
 func enable():
 	print("Enabling planet_mode")
@@ -63,13 +69,14 @@ func enable():
 	get_tree().call_group("planet_mode", "pm_enabled", true)
 	
 	load_waypoints()
+	_is_enabled = true
 
 func disable():
 	set_process_input(false)
 	get_tree().call_group("planet_mode", "pm_enabled", false)
 	
 	clear_waypoints()
-	
+	_is_enabled = false
 
 func _input(event):
 	

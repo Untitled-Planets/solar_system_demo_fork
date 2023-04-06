@@ -1,14 +1,18 @@
+class_name SolarSystem
 extends Node3D
 
 #const StellarBody = preload("./stellar_body.gd")
 const SolarSystemSetup = preload("./solar_system_setup.gd")
 const Settings = preload("res://settings.gd")
 
-const CameraScene = preload("../camera/camera.tscn")
-const ShipScene = preload("../ship/ship.tscn")
+#const CameraScene = preload("../camera/camera.tscn")
+#const ShipScene = preload("../ship/ship.tscn")
 
 const BODY_REFERENCE_ENTRY_RADIUS_FACTOR = 3.0
 const BODY_REFERENCE_EXIT_RADIUS_FACTOR = 3.1 # Must be higher for hysteresis
+
+@export var CameraScene: PackedScene
+@export var ShipScene: PackedScene
 
 class ReferenceChangeInfo:
 	var inverse_transform : Transform3D
@@ -31,6 +35,7 @@ signal exit_to_menu_requested
 @onready var _pause_menu = $PauseMenu
 @onready var _lens_flare = $LensFlare
 @onready var _asset_inventory: AssetInventory = $asset_inventory
+@onready var _planet_mode: PlanetMode = $planet_mode
 
 
 var _ship = null
@@ -87,6 +92,8 @@ func _ready():
 	progress_info.finished = true
 	loading_progressed.emit(progress_info)
 
+func is_planet_mode_enabled() -> bool:
+	return _planet_mode.is_enabled
 
 func set_settings(s: Settings):
 	_settings = s
@@ -109,6 +116,7 @@ func _unhandled_input(event):
 					_mouse_capture.capture()
 				else:
 					_pause_menu.show()
+
 
 
 func _physics_process(delta: float):
@@ -401,15 +409,15 @@ func _on_PauseMenu_settings_requested():
 	# This makes sure it shows in front.
 	_settings_ui.move_to_front()
 
-
-
 func _on_inventory_add_machine(machine_id: int):
+	Server.miner_spawn(0, machine_id, _reference_body_id, null)
+
+
+func _on_add_machine(player_id: int, machine_id: int, planet_id: int, location: SpawnLocation) -> void:
 	var planet: StellarBody = get_reference_stellar_body()
 	var spawn_point := planet.get_spawn_point()
 	var from: Vector3 = planet.node.global_position
-	print(from)
 	var to: Vector3 = from + planet.node.global_transform.basis.y * planet.radius * 3.0
-	print(to)
 	var query := PhysicsRayQueryParameters3D.create(to, from)
 	query.hit_from_inside = true
 	var result := get_world_3d().direct_space_state.intersect_ray(query)
@@ -417,5 +425,6 @@ func _on_inventory_add_machine(machine_id: int):
 		var machine: Node3D = _asset_inventory.generate_asset(0)
 		planet.node.add_child(machine)
 		machine.global_position = result.position
+		machine.configure_waypoint(is_planet_mode_enabled())
 	else:
 		printerr("It didn't collide")

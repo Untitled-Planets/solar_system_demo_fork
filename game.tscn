@@ -1,7 +1,9 @@
-[gd_scene load_steps=23 format=3 uid="uid://dx0qy8pg0q72b"]
+[gd_scene load_steps=25 format=3 uid="uid://dx0qy8pg0q72b"]
 
 [ext_resource type="Script" path="res://solar_system/solar_system.gd" id="1_tcbv5"]
 [ext_resource type="Texture2D" uid="uid://b0s3fc7sjnlof" path="res://solar_system/space_background.png" id="2_06f30"]
+[ext_resource type="PackedScene" uid="uid://dc4lolnw2ugli" path="res://camera/camera.tscn" id="2_hifyg"]
+[ext_resource type="PackedScene" uid="uid://blqdy4acm4wpa" path="res://ship/ship.tscn" id="2_ykjpg"]
 [ext_resource type="Script" path="res://gui/hud.gd" id="3_rlxpp"]
 [ext_resource type="FontFile" path="res://gui/fonts/hack_regular_16_dynamic_font.tres" id="4_5b8os"]
 [ext_resource type="Texture2D" uid="uid://dnkytmccfss5m" path="res://gui/select_rect.png" id="5_hq7jk"]
@@ -39,8 +41,10 @@ glow_intensity = 1.0
 glow_blend_mode = 0
 glow_hdr_threshold = 0.8
 
-[node name="GameWorld" type="Node3D"]
+[node name="GameWorld" type="Node3D" groups=["game_world"]]
 script = ExtResource("1_tcbv5")
+CameraScene = ExtResource("2_hifyg")
+ShipScene = ExtResource("2_ykjpg")
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("2")
@@ -88,8 +92,6 @@ stretch_mode = 4
 
 [node name="WaypointHUD" parent="HUD" instance=ExtResource("7_b4x6s")]
 layout_mode = 1
-grow_horizontal = 2
-grow_vertical = 2
 
 [node name="PlanetHoverSound" type="AudioStreamPlayer" parent="HUD"]
 stream = ExtResource("8_tvaq7")
