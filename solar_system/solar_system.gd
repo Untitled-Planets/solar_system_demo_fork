@@ -428,3 +428,17 @@ func _on_add_machine(player_id: int, machine_id: int, planet_id: int, location: 
 		machine.configure_waypoint(is_planet_mode_enabled())
 	else:
 		printerr("It didn't collide")
+
+
+# Just for testing
+var _machine_selected: MachineCharacter = null
+
+func _on_waypoint_hud_waypoint_selected(waypoint: Waypoint):
+	var so = waypoint.get_selected_object()
+	if so is MachineCharacter and not _machine_selected:
+		print("selected machine")
+		_machine_selected = so
+	if so is StellarBodyWrapper and _machine_selected:
+		print("Selected Planet")
+		Server.move_machine(_machine_selected.get_path(), _machine_selected.position, waypoint.position)
+		_machine_selected = null

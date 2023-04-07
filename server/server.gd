@@ -1,5 +1,7 @@
 extends Node
 
+signal move_machine_requested(node_path, points)
+
 var inventory := {}
 var planets := {
 	
@@ -72,3 +74,26 @@ func server_miner_spawn(controller_id, miner_id, planet_id, spawn_location) -> v
 
 func client_miner_spawn(controller_id, miner_id, planet_id, spawn_location) -> void:
 	get_tree().call_group("game_world", "_on_add_machine", controller_id, miner_id, planet_id, spawn_location)
+
+
+func generate_planet_path(from: Vector3, to: Vector3, amount: int) -> Array[Vector3]:
+	var step: float = 1.0 / float(amount)
+	var weight := 0.0
+	var points: Array[Vector3] = []
+	
+	while weight < 1.0:
+		var direction := from.slerp(to, weight)
+		points.append(direction)
+		weight += step
+	return points
+
+func server_move_machine(miner_node_path, from: Vector3, to: Vector3):
+	# 20 must be calculated based on the distance of the two points
+	var points := generate_planet_path(from, to, 20)
+	client_move_machine(miner_node_path, points)
+
+func client_move_machine(miner_node_path, points: Array[Vector3]):
+	move_machine_requested.emit(miner_node_path, points)
+
+func move_machine(miner_node_path, from: Vector3, to: Vector3):
+	server_move_machine(miner_node_path, from, to)

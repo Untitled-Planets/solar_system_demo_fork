@@ -425,9 +425,10 @@ static func _configure_instancing_for_planet(body: StellarBody, volume: VoxelLod
 static func setup_stellar_body(body: StellarBody, parent: Node, 
 	settings: Settings) -> DirectionalLight3D:
 	
-	var root := Node3D.new()
+	var root := StellarBodyWrapper.new()
 	root.name = body.name
 	body.node = root
+	root.stellar_body = body
 	parent.add_child(root)
 	
 	var sun_light : DirectionalLight3D = null

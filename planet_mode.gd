@@ -26,7 +26,7 @@ var is_enabled: bool:
 
 var _planet
 var camera
-var planet:
+var planet: StellarBody:
 	get:
 		return _planet
 	set(value):
@@ -40,11 +40,14 @@ func _get_solar_system() -> SolarSystem:
 
 func load_waypoints():
 	var deposits = Server.planet_get_deposits()
+#	var ss := _get_solar_system()
 	for mine in deposits:
 		var waypoint = WaypointScene.instantiate()
 		waypoint.transform = planet.get_surface_transform(mine.pos)
 		waypoint.info = "Mine pos: {}\nAmount: {}".format([mine.pos, mine.amount], "{}")
 		planet.node.add_child(waypoint)
+		waypoint.set_enable_debug_mesh(true)
+		waypoint.scale_area(100)
 		planet.waypoints.append(waypoint)
 
 

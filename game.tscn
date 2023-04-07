@@ -166,8 +166,11 @@ WaypointScene = ExtResource("17_mvuvu")
 
 [node name="asset_inventory" parent="." instance=ExtResource("19_vd2ea")]
 
+[node name="SelectionMode" type="Node" parent="."]
+
 [connection signal="loading_progressed" from="." to="LoadingScreen" method="_on_GameWorld_loading_progressed"]
 [connection signal="reference_body_changed" from="." to="AmbientSounds" method="_on_GameWorld_reference_body_changed"]
+[connection signal="waypoint_selected" from="HUD/WaypointHUD" to="." method="_on_waypoint_hud_waypoint_selected"]
 [connection signal="add_machine" from="HUD/Inventory" to="." method="_on_inventory_add_machine"]
 [connection signal="exit_to_menu_requested" from="PauseMenu" to="." method="_on_PauseMenu_exit_to_menu_requested"]
 [connection signal="exit_to_os_requested" from="PauseMenu" to="." method="_on_PauseMenu_exit_to_os_requested"]

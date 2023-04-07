@@ -1,7 +1,7 @@
 extends RigidBody3D
 
-const StellarBody = preload("../solar_system/stellar_body.gd")
-const Util = preload("../util/util.gd")
+#const StellarBody = preload("../solar_system/stellar_body.gd")
+#const Util = preload("../util/util.gd")
 const SolarSystemSetup = preload("../solar_system/solar_system_setup.gd")
 const Settings = preload("res://settings.gd")
 

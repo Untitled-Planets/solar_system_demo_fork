@@ -1,6 +1,8 @@
 class_name WaypointHUD
 extends Control
 
+signal waypoint_selected(waypoint)
+
 @onready var info_label = get_node("waypoint_info")
 
 @export var WaypointTexture: Texture
@@ -63,6 +65,9 @@ func _draw():
 			info_label.set_text(waypoint.info)
 			info_label.position = mouse_pos
 			mouse_collide = true
+			if Input.is_action_just_pressed("select_object"):
+				waypoint_selected.emit(waypoint)
 		
 		if not mouse_collide:
 			info_label.hide()
+			

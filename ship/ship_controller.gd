@@ -131,13 +131,13 @@ func pm_enabled(p_enabled):
 	var ship = get_parent()
 
 	set_enabled(!p_enabled)
-	print("pm_enabled ship controller")
+#	print("pm_enabled ship controller")
 	if p_enabled:
-		print("Disabling planet_mode ship controller")
-		print("---")
+#		print("Disabling planet_mode ship controller")
+#		print("---")
 		ship.disable_controller()
 	else:
-		print("Enaling planet_mode ship controller")
+#		print("Enaling planet_mode ship controller")
 		var camera = get_viewport().get_camera_3d()
 		camera.set_target(ship)
 		ship.enable_controller()

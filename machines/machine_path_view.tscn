@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://qrlnuifj0iri"]
+
+[ext_resource type="Script" path="res://machines/machine_path_view.gd" id="1_imvfs"]
+
+[node name="machine_path_view" type="Node3D"]
+script = ExtResource("1_imvfs")
