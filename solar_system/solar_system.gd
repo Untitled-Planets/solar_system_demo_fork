@@ -424,6 +424,7 @@ func _on_add_machine(player_id: int, machine_id: int, planet_id: int, location: 
 	if not result.is_empty():
 		var machine: Node3D = _asset_inventory.generate_asset(0)
 		planet.node.add_child(machine)
+		machine.set_planet(planet)
 		machine.global_position = result.position
 		machine.configure_waypoint(is_planet_mode_enabled())
 	else:

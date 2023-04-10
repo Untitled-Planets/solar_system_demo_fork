@@ -11,15 +11,17 @@ enum State {
 
 @export var _waypoint_scene: PackedScene
 
-var _planet
+var _planet : StellarBody
 var _waypoint: Waypoint
 
 
 func go_to(location: Vector3) -> void:
 	_movement.go_to(location)
 
+func set_planet(p : StellarBody) -> void:
+	_planet = p
 
-func get_planet():
+func get_planet() -> StellarBody:
 	return _planet
 
 func configure_waypoint(value: bool) -> void:
@@ -35,6 +37,9 @@ func configure_waypoint(value: bool) -> void:
 		if _waypoint:
 			_waypoint.queue_free()
 			_waypoint = null
+
+func get_max_speed() -> float:
+	return _movement._speed
 
 func pm_enabled(value: bool) -> void:
 	configure_waypoint(value)
