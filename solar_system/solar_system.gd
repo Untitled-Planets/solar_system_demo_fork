@@ -416,19 +416,24 @@ func _on_inventory_add_machine(machine_id: int):
 func _on_add_machine(player_id: int, machine_id: int, planet_id: int, location: SpawnLocation) -> void:
 	var planet: StellarBody = get_reference_stellar_body()
 	var spawn_point := planet.get_spawn_point()
-	var from: Vector3 = planet.node.global_position
-	var to: Vector3 = from + planet.node.global_transform.basis.y * planet.radius * 3.0
-	var query := PhysicsRayQueryParameters3D.create(to, from)
-	query.hit_from_inside = true
-	var result := get_world_3d().direct_space_state.intersect_ray(query)
-	if not result.is_empty():
-		var machine: Node3D = _asset_inventory.generate_asset(0)
-		planet.node.add_child(machine)
-		machine.set_planet(planet)
-		machine.global_position = result.position
-		machine.configure_waypoint(is_planet_mode_enabled())
-	else:
-		printerr("It didn't collide")
+	var machine: Node3D = _asset_inventory.generate_asset(0)
+	planet.node.add_child(machine)
+	machine.set_planet(planet)
+	machine.global_position = spawn_point
+	machine.configure_waypoint(is_planet_mode_enabled())
+#	var from: Vector3 = planet.node.global_position
+#	var to: Vector3 = from + planet.node.global_transform.basis.y * planet.radius * 3.0
+#	var query := PhysicsRayQueryParameters3D.create(to, from)
+#	query.hit_from_inside = true
+#	var result := get_world_3d().direct_space_state.intersect_ray(query)
+#	if not result.is_empty():
+#		var machine: Node3D = _asset_inventory.generate_asset(0)
+#		planet.node.add_child(machine)
+#		machine.set_planet(planet)
+#		machine.global_position = result.position
+#		machine.configure_waypoint(is_planet_mode_enabled())
+#	else:
+#		printerr("It didn't collide")
 
 
 # Just for testing
@@ -437,9 +442,12 @@ var _machine_selected: MachineCharacter = null
 func _on_waypoint_hud_waypoint_selected(waypoint: Waypoint):
 	var so = waypoint.get_selected_object()
 	if so is MachineCharacter and not _machine_selected:
-		print("selected machine")
 		_machine_selected = so
 	if so is StellarBodyWrapper and _machine_selected:
-		print("Selected Planet")
-		Server.move_machine(_machine_selected.get_path(), _machine_selected.position, waypoint.position)
+		var data := MoveMachineData.new()
+		data.from = _machine_selected.position
+		data.to = waypoint.position
+		data.machine_speed = _machine_selected.get_max_speed()
+		data.planet_radius = get_reference_stellar_body().radius
+		Server.move_machine(_machine_selected.get_path(), data)
 		_machine_selected = null

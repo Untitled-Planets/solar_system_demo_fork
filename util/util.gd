@@ -100,3 +100,25 @@ static func create_wirecube_mesh(color = Color(1,1,1)) -> Mesh:
 #	print("get_quaternion_from_position")
 #	return Quaternion()
 
+# https://stackoverflow.com/questions/35613741/convert-2-3d-points-to-directional-vectors-to-euler-angles
+# Vector2.x -> Latitude
+# Vector2.y -> Azimuthal
+static func position_to_coordinates(v: Vector3) -> Vector2:
+	if v.normalized().abs() == Vector3.UP:
+		return Vector2(90 * sign(v.y), 0)
+	var original := v
+	v.y = 0.0
+	var azimuthal := v.signed_angle_to(Vector3.FORWARD, Vector3.UP)
+	var latitude := original.signed_angle_to(v, Vector3.RIGHT)
+	return Vector2(rad_to_deg(latitude), rad_to_deg(azimuthal))
+	
+
+# https://math.stackexchange.com/questions/1304169/distance-between-two-points-on-a-sphere
+static func distance_on_sphere(sphere_radius: float, p1: Vector3, p2: Vector3) -> float:
+	return sphere_radius * acos(p1.normalized().dot(p2.normalized()) / (sphere_radius * sphere_radius))
+
+static func coordinate_to_unit_vector(coord: Vector2) -> Vector3:
+	var v := Vector3.FORWARD
+	v = v.rotated(Vector3.UP, deg_to_rad(coord.y))
+	v = v.rotated(Vector3.RIGHT, deg_to_rad(coord.x))
+	return v

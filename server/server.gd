@@ -1,6 +1,6 @@
 extends Node
 
-signal move_machine_requested(node_path, points)
+signal move_machine_requested(node_path, move_data)
 
 var inventory := {}
 var planets := {
@@ -87,13 +87,11 @@ func generate_planet_path(from: Vector3, to: Vector3, amount: int) -> Array[Vect
 		weight += step
 	return points
 
-func server_move_machine(miner_node_path, from: Vector3, to: Vector3):
-	# 20 must be calculated based on the distance of the two points
-	var points := generate_planet_path(from, to, 20)
-	client_move_machine(miner_node_path, points)
+func server_move_machine(miner_node_path, move_data: MoveMachineData):
+	client_move_machine(miner_node_path, move_data)
 
-func client_move_machine(miner_node_path, points: Array[Vector3]):
-	move_machine_requested.emit(miner_node_path, points)
+func client_move_machine(miner_node_path, move_data: MoveMachineData):
+	move_machine_requested.emit(miner_node_path, move_data)
 
-func move_machine(miner_node_path, from: Vector3, to: Vector3):
-	server_move_machine(miner_node_path, from, to)
+func move_machine(miner_node_path, move_data: MoveMachineData):
+	server_move_machine(miner_node_path, move_data)
