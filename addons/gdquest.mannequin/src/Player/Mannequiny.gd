@@ -10,20 +10,8 @@ enum States { IDLE, RUN, AIR, LAND }
 @onready var animation_tree: AnimationTree = $AnimationTree
 @onready var _playback: AnimationNodeStateMachinePlayback = animation_tree["parameters/playback"]
 
-var _move_direction := Vector3.ZERO
-var move_direction := Vector3.ZERO:
-	get:
-		return _move_direction
-	set(value):
-		set_move_direction(value)
-
-
-var _is_moving := false
-var is_moving := false:
-	get:
-		return _is_moving
-	set(value):
-		set_is_moving(value)
+var move_direction := Vector3.ZERO: set = set_move_direction
+var is_moving := false: set = set_is_moving
 
 
 func _ready() -> void:
@@ -31,12 +19,12 @@ func _ready() -> void:
 
 
 func set_move_direction(direction: Vector3) -> void:
-	_move_direction = direction
+	move_direction = direction
 	animation_tree["parameters/move_ground/blend_position"] = direction.length()
 
 
 func set_is_moving(value: bool) -> void:
-	_is_moving = value
+	is_moving = value
 	animation_tree["parameters/conditions/is_moving"] = value
 
 

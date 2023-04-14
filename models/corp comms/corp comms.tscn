@@ -1,0 +1,22 @@
+[gd_scene load_steps=6 format=2]
+
+[ext_resource path="res://models/corp comms/SM_Bld_Corp_Comms_01_Dish_01.mesh" type="ArrayMesh" id=1]
+[ext_resource path="res://models/corp comms/SM_Bld_Corp_Comms_01.mesh" type="ArrayMesh" id=2]
+[ext_resource path="res://models/corp comms/SM_Bld_Corp_Comms_01_Glass_01.mesh" type="ArrayMesh" id=3]
+[ext_resource path="res://materials/SciFi_Planets_SHD.material" type="Material" id=4]
+[ext_resource path="res://materials/Glass_MAT.material" type="Material" id=5]
+
+[node name="corp comms" type="Node3D"]
+
+[node name="SM_Bld_Corp_Comms_01" type="MeshInstance3D" parent="."]
+transform = Transform3D( 0.01, 0, 0, 0, 0, -0.01, 0, 0.01, 0, 0, 0, 0 )
+mesh = ExtResource( 2 )
+material/0 = ExtResource( 4 )
+
+[node name="SM_Bld_Corp_Comms_01_Dish_01" type="MeshInstance3D" parent="SM_Bld_Corp_Comms_01"]
+mesh = ExtResource( 1 )
+material/0 = ExtResource( 4 )
+
+[node name="SM_Bld_Corp_Comms_01_Glass_01" type="MeshInstance3D" parent="SM_Bld_Corp_Comms_01"]
+mesh = ExtResource( 3 )
+material/0 = ExtResource( 5 )

@@ -1,0 +1,21 @@
+[gd_scene load_steps=5 format=3 uid="uid://d0glrouf5co5m"]
+
+[ext_resource type="ArrayMesh" path="res://models/planetary cannon/SM_Bld_Planetary_Cannon_01.mesh" id="1"]
+[ext_resource type="ArrayMesh" path="res://models/planetary cannon/SM_Bld_Planetary_Cannon_01_PowerUnit_01.mesh" id="2"]
+[ext_resource type="ArrayMesh" path="res://models/planetary cannon/SM_Bld_Planetary_Cannon_01_Pivot_01.mesh" id="3"]
+[ext_resource type="ArrayMesh" path="res://models/planetary cannon/SM_Bld_Planetary_Cannon_01_Base_01.mesh" id="4"]
+
+[node name="planetary cannon" type="Node3D"]
+
+[node name="SM_Bld_Planetary_Cannon_01" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.01, 0, 0, 0, 0, -0.01, 0, 0.01, 0, 0, 0, 0)
+mesh = ExtResource("1")
+
+[node name="SM_Bld_Planetary_Cannon_01_Base_01" type="MeshInstance3D" parent="SM_Bld_Planetary_Cannon_01"]
+mesh = ExtResource("4")
+
+[node name="SM_Bld_Planetary_Cannon_01_Pivot_01" type="MeshInstance3D" parent="SM_Bld_Planetary_Cannon_01/SM_Bld_Planetary_Cannon_01_Base_01"]
+mesh = ExtResource("3")
+
+[node name="SM_Bld_Planetary_Cannon_01_PowerUnit_01" type="MeshInstance3D" parent="SM_Bld_Planetary_Cannon_01/SM_Bld_Planetary_Cannon_01_Base_01/SM_Bld_Planetary_Cannon_01_Pivot_01"]
+mesh = ExtResource("2")

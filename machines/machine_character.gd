@@ -4,7 +4,8 @@ extends Node3D
 enum State {
 	WORKING,
 	MOVING,
-	IDLE
+	IDLE,
+	MINING,
 }
 
 @onready var _movement: MachineMovement = $movement

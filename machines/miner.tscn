@@ -1,15 +1,14 @@
-[gd_scene load_steps=3 format=3 uid="uid://3plw8drn1tul"]
+[gd_scene load_steps=4 format=3 uid="uid://3plw8drn1tul"]
 
 [ext_resource type="PackedScene" uid="uid://d20pdti6fffac" path="res://machines/Machine.tscn" id="1_7qetq"]
-
-[sub_resource type="CapsuleMesh" id="CapsuleMesh_tibp5"]
+[ext_resource type="PackedScene" uid="uid://don2libtpth4o" path="res://models/miner.tscn" id="2_cm1i3"]
+[ext_resource type="PackedScene" uid="uid://b2u7640pp47m4" path="res://machines/vfx/miner_laser.tscn" id="2_qgb8n"]
 
 [node name="Miner" instance=ExtResource("1_7qetq")]
 
 [node name="body_pivot" type="Node3D" parent="." index="1"]
-transform = Transform3D(30, 0, 0, 0, 30, 0, 0, 0, 30, 0, 0.0261312, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.0261312, 0)
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="body_pivot" index="0"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.32862, 0)
-mesh = SubResource("CapsuleMesh_tibp5")
-skeleton = NodePath("../..")
+[node name="miner_model" parent="body_pivot" index="0" instance=ExtResource("2_cm1i3")]
+
+[node name="miner_laser" parent="." index="2" instance=ExtResource("2_qgb8n")]

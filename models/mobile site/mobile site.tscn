@@ -1,0 +1,53 @@
+[gd_scene load_steps=13 format=3 uid="uid://dikpdhle43jgn"]
+
+[ext_resource type="ArrayMesh" path="res://models/mobile site/SM_Bld_Corp_MobileSite_01_Pad_lr.mesh" id="1"]
+[ext_resource type="ArrayMesh" path="res://models/mobile site/SM_Bld_Corp_MobileSite_01_Leg_rr.mesh" id="2"]
+[ext_resource type="ArrayMesh" path="res://models/mobile site/SM_Bld_Corp_MobileSite_01_Pad_rr.mesh" id="3"]
+[ext_resource type="ArrayMesh" path="res://models/mobile site/SM_Bld_Corp_MobileSite_01.mesh" id="4"]
+[ext_resource type="ArrayMesh" path="res://models/mobile site/SM_Bld_Corp_MobileSite_01_Leg_rf.mesh" id="5"]
+[ext_resource type="ArrayMesh" path="res://models/mobile site/SM_Bld_Corp_MobileSite_01_Pad_rf.mesh" id="6"]
+[ext_resource type="ArrayMesh" path="res://models/mobile site/SM_Bld_Corp_MobileSite_01_Door_01.mesh" id="7"]
+[ext_resource type="ArrayMesh" path="res://models/mobile site/SM_Bld_Corp_MobileSite_01_DoorGlass_01.mesh" id="8"]
+[ext_resource type="ArrayMesh" path="res://models/mobile site/SM_Bld_Corp_MobileSite_01_Glass_01.mesh" id="9"]
+[ext_resource type="ArrayMesh" path="res://models/mobile site/SM_Bld_Corp_MobileSite_01_Leg_lf.mesh" id="10"]
+[ext_resource type="ArrayMesh" path="res://models/mobile site/SM_Bld_Corp_MobileSite_01_Pad_lf.mesh" id="11"]
+[ext_resource type="ArrayMesh" path="res://models/mobile site/SM_Bld_Corp_MobileSite_01_Leg_lr.mesh" id="12"]
+
+[node name="mobile site" type="Node3D"]
+
+[node name="SM_Bld_Corp_MobileSite_01" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.01, 0, 0, 0, 0, -0.01, 0, 0.01, 0, 0, 0, 0)
+mesh = ExtResource("4")
+
+[node name="SM_Bld_Corp_MobileSite_01_Door_01" type="MeshInstance3D" parent="SM_Bld_Corp_MobileSite_01"]
+mesh = ExtResource("7")
+
+[node name="SM_Bld_Corp_MobileSite_01_DoorGlass_01" type="MeshInstance3D" parent="SM_Bld_Corp_MobileSite_01/SM_Bld_Corp_MobileSite_01_Door_01"]
+mesh = ExtResource("8")
+
+[node name="SM_Bld_Corp_MobileSite_01_Glass_01" type="MeshInstance3D" parent="SM_Bld_Corp_MobileSite_01"]
+mesh = ExtResource("9")
+
+[node name="SM_Bld_Corp_MobileSite_01_Leg_lf" type="MeshInstance3D" parent="SM_Bld_Corp_MobileSite_01"]
+mesh = ExtResource("10")
+
+[node name="SM_Bld_Corp_MobileSite_01_Pad_lf" type="MeshInstance3D" parent="SM_Bld_Corp_MobileSite_01/SM_Bld_Corp_MobileSite_01_Leg_lf"]
+mesh = ExtResource("11")
+
+[node name="SM_Bld_Corp_MobileSite_01_Leg_lr" type="MeshInstance3D" parent="SM_Bld_Corp_MobileSite_01"]
+mesh = ExtResource("12")
+
+[node name="SM_Bld_Corp_MobileSite_01_Pad_lr" type="MeshInstance3D" parent="SM_Bld_Corp_MobileSite_01/SM_Bld_Corp_MobileSite_01_Leg_lr"]
+mesh = ExtResource("1")
+
+[node name="SM_Bld_Corp_MobileSite_01_Leg_rf" type="MeshInstance3D" parent="SM_Bld_Corp_MobileSite_01"]
+mesh = ExtResource("5")
+
+[node name="SM_Bld_Corp_MobileSite_01_Pad_rf" type="MeshInstance3D" parent="SM_Bld_Corp_MobileSite_01/SM_Bld_Corp_MobileSite_01_Leg_rf"]
+mesh = ExtResource("6")
+
+[node name="SM_Bld_Corp_MobileSite_01_Leg_rr" type="MeshInstance3D" parent="SM_Bld_Corp_MobileSite_01"]
+mesh = ExtResource("2")
+
+[node name="SM_Bld_Corp_MobileSite_01_Pad_rr" type="MeshInstance3D" parent="SM_Bld_Corp_MobileSite_01/SM_Bld_Corp_MobileSite_01_Leg_rr"]
+mesh = ExtResource("3")

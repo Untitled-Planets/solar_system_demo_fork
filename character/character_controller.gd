@@ -20,7 +20,7 @@ const JUMP_SPEED = 8.0
 
 @onready var _head : Node3D = get_node("../Head")
 @onready var _visual_root : Node3D = get_node("../Visual")
-#@onready var _visual_animated : Mannequiny = get_node("../mannequiny")
+@onready var _visual_animated : Mannequiny = get_node("../Visual/mannequiny")
 @onready var _visual_head : Node3D = get_node("../Visual/Head")
 @onready var _flashlight : SpotLight3D = get_node("../Visual/FlashLight")
 @onready var _audio = get_node("../Audio")
@@ -216,7 +216,7 @@ func _set_visual_state(state: Mannequiny.States):
 #	pass
 	if _visual_state != state:
 		_visual_state = state
-#		_visual_animated.transition_to(_visual_state)
+		_visual_animated.transition_to(_visual_state)
 
 
 func _process(delta: float):
@@ -249,14 +249,14 @@ func _process(delta: float):
 
 
 func _process_visual_animated(forward: Vector3, character_body: CharacterBody3D):
-#	_visual_animated.set_move_direction(forward)
+	_visual_animated.set_move_direction(forward)
 
 	var state = Mannequiny.States.RUN
 	if _last_motor.length_squared() > 0.0:
-#		_visual_animated.set_is_moving(true)
+		_visual_animated.set_is_moving(true)
 		state = Mannequiny.States.RUN
 	else:
-#		_visual_animated.set_is_moving(false)
+		_visual_animated.set_is_moving(false)
 		state = Mannequiny.States.IDLE
 	if not character_body.is_landed():
 		state = Mannequiny.States.AIR

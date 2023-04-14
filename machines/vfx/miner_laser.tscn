@@ -1,0 +1,23 @@
+[gd_scene load_steps=5 format=3 uid="uid://b2u7640pp47m4"]
+
+[ext_resource type="Shader" path="res://machines/vfx/miner_laser.gdshader" id="1_i38k2"]
+[ext_resource type="Script" path="res://machines/vfx/miner_laser.gd" id="1_pe65n"]
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_8jmtp"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_f6cys"]
+render_priority = 0
+shader = ExtResource("1_i38k2")
+
+[node name="miner_laser" type="Node3D"]
+script = ExtResource("1_pe65n")
+distance = 2.0
+
+[node name="laser_pivot" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 2, 0, 0, 0, 1, 0, 0, 0)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="laser_pivot"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1, 0)
+mesh = SubResource("CylinderMesh_8jmtp")
+skeleton = NodePath("../..")
+surface_material_override/0 = SubResource("ShaderMaterial_f6cys")

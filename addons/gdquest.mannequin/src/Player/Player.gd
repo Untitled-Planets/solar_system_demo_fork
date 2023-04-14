@@ -9,5 +9,5 @@ extends CharacterBody3D
 @onready var state_machine: StateMachine = $StateMachine
 
 
-func _get_configuration_warnings() -> PackedStringArray:
-	return PackedStringArray(["Missing camera node" if not camera else ""])
+func _get_configuration_warnings() -> String:
+	return "Missing camera node" if not camera else ""

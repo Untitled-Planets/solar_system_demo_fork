@@ -1,0 +1,13 @@
+[gd_scene load_steps=3 format=3 uid="uid://plveexnogkgi"]
+
+[ext_resource type="ArrayMesh" path="res://models/refinery/SM_Bld_Scav_Refinery_04.mesh" id="1"]
+[ext_resource type="ArrayMesh" path="res://models/refinery/SM_Bld_Scav_Refinery_04_Glass_01.mesh" id="2"]
+
+[node name="refinery" type="Node3D"]
+
+[node name="SM_Bld_Scav_Refinery_04" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.01, 0, 0, 0, 0, -0.01, 0, 0.01, 0, 0, 0, 0)
+mesh = ExtResource("1")
+
+[node name="SM_Bld_Scav_Refinery_04_Glass_01" type="MeshInstance3D" parent="SM_Bld_Scav_Refinery_04"]
+mesh = ExtResource("2")

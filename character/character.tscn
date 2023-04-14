@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3 uid="uid://hh0mump0swlx"]
+[gd_scene load_steps=15 format=3 uid="uid://hh0mump0swlx"]
 
 [ext_resource type="Script" path="res://addons/zylann.3d_basics/character/character.gd" id="1"]
 [ext_resource type="Script" path="res://character/mouse_look.gd" id="2"]
@@ -6,6 +6,7 @@
 [ext_resource type="Script" path="res://character/character_controller.gd" id="4"]
 [ext_resource type="PackedScene" uid="uid://imb0ullmxpve" path="res://character/mannequiny.tscn" id="4_uk2od"]
 [ext_resource type="Script" path="res://character/character_audio.gd" id="5"]
+[ext_resource type="Script" path="res://addons/gdquest.mannequin/src/Player/Mannequiny.gd" id="5_g6xr8"]
 [ext_resource type="AudioStream" uid="uid://u3v6wu6o27ys" path="res://sounds/place_waypoint.wav" id="6"]
 [ext_resource type="AudioStream" uid="uid://byjc2j67p68vt" path="res://sounds/flash_on.wav" id="7"]
 [ext_resource type="AudioStream" uid="uid://cvilca41rqwpc" path="res://sounds/flash_off.wav" id="8"]
@@ -36,9 +37,6 @@ script = ExtResource("4")
 [node name="MouseLook" type="Node" parent="."]
 script = ExtResource("2")
 
-[node name="mannequiny" parent="." instance=ExtResource("4_uk2od")]
-visible = false
-
 [node name="Head" type="Node3D" parent="."]
 transform = Transform3D(0.999725, 0.0234551, 0, -0.0234551, 0.999725, 0, 0, 0, 1, 0, 1.5976, 0)
 
@@ -62,15 +60,22 @@ spot_angle_attenuation = 0.732043
 
 [node name="Body" type="MeshInstance3D" parent="Visual"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.272492, 0)
+visible = false
 mesh = SubResource("2")
 
 [node name="Head" type="MeshInstance3D" parent="Visual"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.676365, 0)
+visible = false
 mesh = SubResource("3")
 
 [node name="Arms" type="MeshInstance3D" parent="Visual"]
 transform = Transform3D(0.237608, 0, 0, 0, 0.237608, 0, 0, 0, 0.237608, 0, 0.226605, 0.0591713)
+visible = false
 mesh = SubResource("4")
+
+[node name="mannequiny" parent="Visual" instance=ExtResource("4_uk2od")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.876689, 0)
+script = ExtResource("5_g6xr8")
 
 [node name="Audio" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.86435, -0.796673, 0)
