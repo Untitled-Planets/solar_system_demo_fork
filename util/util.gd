@@ -1,4 +1,7 @@
 class_name Util
+
+const TWO_PI = 2.0 * PI
+
 static func get_sphere_volume(r: float) -> float:
 	return PI * r * r * r * 4.0 / 3.0
 
@@ -122,3 +125,15 @@ static func coordinate_to_unit_vector(coord: Vector2) -> Vector3:
 	v = v.rotated(Vector3.UP, deg_to_rad(coord.y))
 	v = v.rotated(Vector3.RIGHT, deg_to_rad(coord.x))
 	return v
+
+static func position_to_normalized_coordinaters(position: Vector3) -> Vector2:
+	var n := position.normalized()
+	var dot := n.dot(Vector3.UP)
+	if  abs(dot) == 1.0: # Maybe a simpler if for x and z does a better job
+		return Vector2(0.0, sign(dot))
+	
+	var y := Vector3(n.x, 0.0, n.z)
+	var y_angle := y.signed_angle_to(Vector3.FORWARD, Vector3.UP)
+	var ref_vector := n.cross(Vector3.UP)
+	var cross_angle := n.signed_angle_to(Vector3.UP, ref_vector)
+	return Vector2(cross_angle / TWO_PI, y_angle / TWO_PI)

@@ -4,7 +4,7 @@
 [ext_resource type="Script" path="res://character/mouse_look.gd" id="2"]
 [ext_resource type="Script" path="res://camera/camera_hints.gd" id="3"]
 [ext_resource type="Script" path="res://character/character_controller.gd" id="4"]
-[ext_resource type="PackedScene" uid="uid://imb0ullmxpve" path="res://character/mannequiny.tscn" id="4_uk2od"]
+[ext_resource type="PackedScene" uid="uid://d082uqfojglr7" path="res://character/mannequiny.tscn" id="4_uk2od"]
 [ext_resource type="Script" path="res://character/character_audio.gd" id="5"]
 [ext_resource type="Script" path="res://addons/gdquest.mannequin/src/Player/Mannequiny.gd" id="5_g6xr8"]
 [ext_resource type="AudioStream" uid="uid://u3v6wu6o27ys" path="res://sounds/place_waypoint.wav" id="6"]

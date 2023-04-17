@@ -1,8 +1,8 @@
 [gd_scene load_steps=4 format=3 uid="uid://don2libtpth4o"]
 
-[ext_resource type="PackedScene" path="res://models/mobile site/mobile site.tscn" id="1"]
-[ext_resource type="PackedScene" path="res://models/refinery/refinery.tscn" id="2"]
-[ext_resource type="PackedScene" path="res://models/planetary cannon/planetary cannon.tscn" id="3"]
+[ext_resource type="PackedScene" uid="uid://dikpdhle43jgn" path="res://models/mobile site/mobile site.tscn" id="1"]
+[ext_resource type="PackedScene" uid="uid://plveexnogkgi" path="res://models/refinery/refinery.tscn" id="2"]
+[ext_resource type="PackedScene" uid="uid://d0glrouf5co5m" path="res://models/planetary cannon/planetary cannon.tscn" id="3"]
 
 [node name="miner_model" type="Node3D"]
 
