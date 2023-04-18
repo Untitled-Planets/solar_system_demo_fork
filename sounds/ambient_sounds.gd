@@ -16,7 +16,7 @@ func get_planet_factor() -> float:
 	return _planet_factor
 
 
-func _process(delta):
+func _process(_delta):
 	var planet_factor = 0.0
 	var day_factor = 1.0
 	var planet = _solar_system.get_reference_stellar_body()
@@ -46,7 +46,7 @@ func _process(delta):
 	_planet_factor = planet_factor
 
 
-func _on_GameWorld_reference_body_changed(info):
+func _on_GameWorld_reference_body_changed(_info):
 	var planet = _solar_system.get_reference_stellar_body()
 	if planet.type == StellarBody.TYPE_SUN:
 		_planet_day_player.stop()

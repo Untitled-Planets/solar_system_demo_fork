@@ -265,14 +265,14 @@ func _process_directional_shadow_distance():
 		ref_body.node.global_transform.origin.distance_to(camera.global_transform.origin)
 	var distance_to_surface = maxf(distance_to_core - ref_body.radius, 0.0)
 
-	var scale := 1.0
+	var s := 1.0
 	if _settings.world_scale_x10:
-		scale = SolarSystemSetup.LARGE_SCALE
+		s = SolarSystemSetup.LARGE_SCALE
 
-	var near_distance := 10.0 * scale
+	var near_distance := 10.0 * s
 	# TODO Increase near shadow distance when flying ship?
 	var near_shadow_distance := 500.0
-	var far_distance := 1000.0 * scale
+	var far_distance := 1000.0 * s
 	var far_shadow_distance := 20000.0
 
 	# Increase shadow distance when far from planets
@@ -353,8 +353,8 @@ func _compute_absolute_body_transform(body: StellarBody) -> Transform3D:
 	var pos := Vector3(cos(orbit_angle), 0, sin(orbit_angle)) * body.distance_to_parent
 	pos = pos.rotated(Vector3(0, 0, 1), body.orbit_tilt)
 	var self_angle := body.self_revolution_progress * TAU
-	var basis := Basis.from_euler(Vector3(0, self_angle, body.self_tilt))
-	var local_transform := Transform3D(basis, pos)
+	var b := Basis.from_euler(Vector3(0, self_angle, body.self_tilt))
+	var local_transform := Transform3D(b, pos)
 	return parent_transform * local_transform
 
 
@@ -413,7 +413,7 @@ func _on_inventory_add_machine(machine_id: int):
 	Server.miner_spawn(0, machine_id, _reference_body_id, null)
 
 
-func _on_add_machine(player_id: int, machine_id: int, planet_id: int, location: SpawnLocation) -> void:
+func _on_add_machine(_player_id: int, _machine_id: int, _planet_id: int, _location: SpawnLocation) -> void:
 	var planet: StellarBody = get_reference_stellar_body()
 	var spawn_point := planet.get_spawn_point()
 	var machine: Node3D = _asset_inventory.generate_asset(0)
@@ -421,33 +421,3 @@ func _on_add_machine(player_id: int, machine_id: int, planet_id: int, location: 
 	machine.set_planet(planet)
 	machine.global_position = spawn_point
 	machine.configure_waypoint(is_planet_mode_enabled())
-#	var from: Vector3 = planet.node.global_position
-#	var to: Vector3 = from + planet.node.global_transform.basis.y * planet.radius * 3.0
-#	var query := PhysicsRayQueryParameters3D.create(to, from)
-#	query.hit_from_inside = true
-#	var result := get_world_3d().direct_space_state.intersect_ray(query)
-#	if not result.is_empty():
-#		var machine: Node3D = _asset_inventory.generate_asset(0)
-#		planet.node.add_child(machine)
-#		machine.set_planet(planet)
-#		machine.global_position = result.position
-#		machine.configure_waypoint(is_planet_mode_enabled())
-#	else:
-#		printerr("It didn't collide")
-
-
-# Just for testing
-var _machine_selected: MachineCharacter = null
-
-func _on_waypoint_hud_waypoint_selected(waypoint: Waypoint):
-	var so = waypoint.get_selected_object()
-	if so is MachineCharacter and not _machine_selected:
-		_machine_selected = so
-	if so is StellarBodyWrapper and _machine_selected:
-		var data := MoveMachineData.new()
-		data.from = _machine_selected.position
-		data.to = waypoint.position
-		data.machine_speed = _machine_selected.get_max_speed()
-		data.planet_radius = get_reference_stellar_body().radius
-		Server.move_machine(_machine_selected.get_path(), data)
-		_machine_selected = null

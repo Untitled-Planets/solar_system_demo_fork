@@ -1,11 +1,12 @@
-[gd_scene load_steps=25 format=3 uid="uid://dx0qy8pg0q72b"]
+[gd_scene load_steps=26 format=3 uid="uid://dx0qy8pg0q72b"]
 
+[ext_resource type="Script" path="res://game.gd" id="1_3cmpg"]
 [ext_resource type="Script" path="res://solar_system/solar_system.gd" id="1_tcbv5"]
 [ext_resource type="Texture2D" uid="uid://b0s3fc7sjnlof" path="res://solar_system/space_background.png" id="2_06f30"]
 [ext_resource type="PackedScene" uid="uid://dc4lolnw2ugli" path="res://camera/camera.tscn" id="2_hifyg"]
-[ext_resource type="PackedScene" uid="uid://blqdy4acm4wpa" path="res://ship/ship.tscn" id="2_ykjpg"]
 [ext_resource type="Script" path="res://gui/hud.gd" id="3_rlxpp"]
 [ext_resource type="FontFile" path="res://gui/fonts/hack_regular_16_dynamic_font.tres" id="4_5b8os"]
+[ext_resource type="PackedScene" uid="uid://blqdy4acm4wpa" path="res://ship/ship.tscn" id="4_fmsd4"]
 [ext_resource type="Texture2D" uid="uid://dnkytmccfss5m" path="res://gui/select_rect.png" id="5_hq7jk"]
 [ext_resource type="Texture2D" uid="uid://31ebse57lvhs" path="res://gui/crosshair.png" id="6_rc6j7"]
 [ext_resource type="PackedScene" uid="uid://b0omhqytjn0qj" path="res://waypoints/waypoint_hud.tscn" id="7_b4x6s"]
@@ -41,18 +42,21 @@ glow_intensity = 1.0
 glow_blend_mode = 0
 glow_hdr_threshold = 0.8
 
-[node name="GameWorld" type="Node3D" groups=["game_world"]]
+[node name="Game" type="Node3D"]
+script = ExtResource("1_3cmpg")
+
+[node name="SolarSystem" type="Node3D" parent="." groups=["game_world"]]
 script = ExtResource("1_tcbv5")
 CameraScene = ExtResource("2_hifyg")
-ShipScene = ExtResource("2_ykjpg")
+ShipScene = ExtResource("4_fmsd4")
 
-[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+[node name="WorldEnvironment" type="WorldEnvironment" parent="SolarSystem"]
 environment = SubResource("2")
 
-[node name="SpawnPoint" type="Marker3D" parent="."]
+[node name="SpawnPoint" type="Marker3D" parent="SolarSystem"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8000, 0, 0)
 
-[node name="HUD" type="Control" parent="."]
+[node name="HUD" type="Control" parent="SolarSystem"]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -62,12 +66,12 @@ grow_vertical = 2
 mouse_filter = 2
 script = ExtResource("3_rlxpp")
 
-[node name="TargetPlanetLabel" type="Label" parent="HUD"]
+[node name="TargetPlanetLabel" type="Label" parent="SolarSystem/HUD"]
 layout_mode = 0
 theme_override_fonts/font = ExtResource("4_5b8os")
 text = "Hello world"
 
-[node name="TargetPlanetRect" type="NinePatchRect" parent="HUD"]
+[node name="TargetPlanetRect" type="NinePatchRect" parent="SolarSystem/HUD"]
 modulate = Color(1, 1, 1, 0.784314)
 layout_mode = 0
 texture = ExtResource("5_hq7jk")
@@ -76,7 +80,7 @@ patch_margin_top = 15
 patch_margin_right = 16
 patch_margin_bottom = 16
 
-[node name="Crosshair" type="CenterContainer" parent="HUD"]
+[node name="Crosshair" type="CenterContainer" parent="SolarSystem/HUD"]
 layout_mode = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -84,23 +88,23 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
-[node name="TextureRect" type="TextureRect" parent="HUD/Crosshair"]
+[node name="TextureRect" type="TextureRect" parent="SolarSystem/HUD/Crosshair"]
 layout_mode = 2
 mouse_filter = 2
 texture = ExtResource("6_rc6j7")
 stretch_mode = 4
 
-[node name="WaypointHUD" parent="HUD" instance=ExtResource("7_b4x6s")]
+[node name="WaypointHUD" parent="SolarSystem/HUD" instance=ExtResource("7_b4x6s")]
 layout_mode = 1
 
-[node name="PlanetHoverSound" type="AudioStreamPlayer" parent="HUD"]
+[node name="PlanetHoverSound" type="AudioStreamPlayer" parent="SolarSystem/HUD"]
 stream = ExtResource("8_tvaq7")
 
-[node name="Inventory" parent="HUD" instance=ExtResource("9_4oxrc")]
+[node name="Inventory" parent="SolarSystem/HUD" instance=ExtResource("9_4oxrc")]
 visible = false
 layout_mode = 1
 
-[node name="LensFlare" type="Node" parent="."]
+[node name="LensFlare" type="Node" parent="SolarSystem"]
 script = ExtResource("9_w721i")
 flareStrength = 4.0
 flareBias = 0.95
@@ -108,10 +112,10 @@ flareBlur = 3.0
 distortion = 7.422
 haloWidth = 0.449
 
-[node name="MouseCapture" parent="." instance=ExtResource("10_4n27f")]
+[node name="MouseCapture" parent="SolarSystem" instance=ExtResource("10_4n27f")]
 capture_mouse_in_ready = false
 
-[node name="LoadingScreen" type="ColorRect" parent="."]
+[node name="LoadingScreen" type="ColorRect" parent="SolarSystem"]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -120,59 +124,59 @@ grow_vertical = 2
 color = Color(0, 0, 0, 0.65098)
 script = ExtResource("11_vsdyb")
 
-[node name="CC" type="CenterContainer" parent="LoadingScreen"]
+[node name="CC" type="CenterContainer" parent="SolarSystem/LoadingScreen"]
 layout_mode = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="PC" type="PanelContainer" parent="LoadingScreen/CC"]
+[node name="PC" type="PanelContainer" parent="SolarSystem/LoadingScreen/CC"]
 custom_minimum_size = Vector2(200, 0)
 layout_mode = 2
 
-[node name="VB" type="VBoxContainer" parent="LoadingScreen/CC/PC"]
+[node name="VB" type="VBoxContainer" parent="SolarSystem/LoadingScreen/CC/PC"]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="LoadingScreen/CC/PC/VB"]
+[node name="Label" type="Label" parent="SolarSystem/LoadingScreen/CC/PC/VB"]
 layout_mode = 2
 text = "Loading..."
 horizontal_alignment = 1
 
-[node name="ProgressBar" type="ProgressBar" parent="LoadingScreen/CC/PC/VB"]
+[node name="ProgressBar" type="ProgressBar" parent="SolarSystem/LoadingScreen/CC/PC/VB"]
 layout_mode = 2
 max_value = 1.0
 
-[node name="PauseMenu" parent="." instance=ExtResource("12_cuwn3")]
+[node name="PauseMenu" parent="SolarSystem" instance=ExtResource("12_cuwn3")]
 visible = false
 
-[node name="VoxelDebugInfo" type="Node" parent="."]
+[node name="VoxelDebugInfo" type="Node" parent="SolarSystem"]
 script = ExtResource("12_ysp6t")
 
-[node name="AmbientSounds" type="Node" parent="."]
+[node name="AmbientSounds" type="Node" parent="SolarSystem"]
 script = ExtResource("13_esoyx")
 
-[node name="DeepSpace" type="AudioStreamPlayer" parent="AmbientSounds"]
+[node name="DeepSpace" type="AudioStreamPlayer" parent="SolarSystem/AmbientSounds"]
 stream = ExtResource("14_krriv")
 autoplay = true
 bus = &"SFX"
 
-[node name="PlanetDay" type="AudioStreamPlayer" parent="AmbientSounds"]
+[node name="PlanetDay" type="AudioStreamPlayer" parent="SolarSystem/AmbientSounds"]
 
-[node name="PlanetNight" type="AudioStreamPlayer" parent="AmbientSounds"]
+[node name="PlanetNight" type="AudioStreamPlayer" parent="SolarSystem/AmbientSounds"]
 
-[node name="planet_mode" parent="." instance=ExtResource("16_fuknr")]
+[node name="planet_mode" parent="SolarSystem" instance=ExtResource("16_fuknr")]
 WaypointScene = ExtResource("17_mvuvu")
 
-[node name="asset_inventory" parent="." instance=ExtResource("19_vd2ea")]
+[node name="asset_inventory" parent="SolarSystem" instance=ExtResource("19_vd2ea")]
 
-[node name="SelectionMode" type="Node" parent="."]
+[node name="SelectionMode" type="Node" parent="SolarSystem"]
 
-[connection signal="loading_progressed" from="." to="LoadingScreen" method="_on_GameWorld_loading_progressed"]
-[connection signal="reference_body_changed" from="." to="AmbientSounds" method="_on_GameWorld_reference_body_changed"]
-[connection signal="waypoint_selected" from="HUD/WaypointHUD" to="." method="_on_waypoint_hud_waypoint_selected"]
-[connection signal="add_machine" from="HUD/Inventory" to="." method="_on_inventory_add_machine"]
-[connection signal="exit_to_menu_requested" from="PauseMenu" to="." method="_on_PauseMenu_exit_to_menu_requested"]
-[connection signal="exit_to_os_requested" from="PauseMenu" to="." method="_on_PauseMenu_exit_to_os_requested"]
-[connection signal="resume_requested" from="PauseMenu" to="." method="_on_PauseMenu_resume_requested"]
-[connection signal="settings_requested" from="PauseMenu" to="." method="_on_PauseMenu_settings_requested"]
+[connection signal="loading_progressed" from="SolarSystem" to="SolarSystem/LoadingScreen" method="_on_GameWorld_loading_progressed"]
+[connection signal="reference_body_changed" from="SolarSystem" to="SolarSystem/AmbientSounds" method="_on_GameWorld_reference_body_changed"]
+[connection signal="waypoint_selected" from="SolarSystem/HUD/WaypointHUD" to="." method="_on_waypoint_hud_waypoint_selected"]
+[connection signal="add_machine" from="SolarSystem/HUD/Inventory" to="SolarSystem" method="_on_inventory_add_machine"]
+[connection signal="exit_to_menu_requested" from="SolarSystem/PauseMenu" to="SolarSystem" method="_on_PauseMenu_exit_to_menu_requested"]
+[connection signal="exit_to_os_requested" from="SolarSystem/PauseMenu" to="SolarSystem" method="_on_PauseMenu_exit_to_os_requested"]
+[connection signal="resume_requested" from="SolarSystem/PauseMenu" to="SolarSystem" method="_on_PauseMenu_resume_requested"]
+[connection signal="settings_requested" from="SolarSystem/PauseMenu" to="SolarSystem" method="_on_PauseMenu_settings_requested"]

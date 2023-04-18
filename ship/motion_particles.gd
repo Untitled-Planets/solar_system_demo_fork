@@ -3,7 +3,7 @@ extends GPUParticles3D
 @onready var base_translation = position
 
 
-func _process(delta):
+func _process(_delta):
 	var rb = get_parent().get_parent().get_parent()
 	
 	var velocity = rb.linear_velocity

@@ -1,6 +1,6 @@
 [gd_scene load_steps=5 format=3 uid="uid://cbcemk8ai1tpl"]
 
-[ext_resource type="Texture2D" uid="uid://dbioocwj8t2dt" path="res://textures/grass_billboard.png" id="1"]
+[ext_resource type="Texture2D" uid="uid://bpnfvcjtl0d6n" path="res://textures/grass_billboard.png" id="1"]
 [ext_resource type="ArrayMesh" uid="uid://cfsbul1larsvw" path="res://props/grass/grass_quad_x2.obj" id="2"]
 [ext_resource type="Shader" path="res://props/grass/grass.gdshader" id="3"]
 

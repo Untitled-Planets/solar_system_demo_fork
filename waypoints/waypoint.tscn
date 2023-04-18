@@ -20,6 +20,7 @@ collision_priority = 10.0
 shape = SubResource("1")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="Area"]
+visible = false
 mesh = SubResource("PrismMesh_sg3xt")
 
 [connection signal="input_event" from="Area" to="." method="_on_area_input_event"]

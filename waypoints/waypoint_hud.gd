@@ -9,7 +9,7 @@ signal waypoint_selected(waypoint)
 
 var _solar_system : SolarSystem
 
-var _labels = []
+#var _labels = []
 var _waypoints := []
 
 
@@ -17,7 +17,7 @@ func set_solar_system(ss : SolarSystem):
 	_solar_system = ss
 
 
-func _process(delta):
+func _process(_delta):
 	queue_redraw()
 
 func add_waypoint(w: Waypoint) -> void:
@@ -38,8 +38,8 @@ func _draw():
 	if camera == null:
 		return
 	
-	var body = _solar_system.get_reference_stellar_body()
-	var font = get_theme_font("font")
+#	var body = _solar_system.get_reference_stellar_body()
+#	var font = get_theme_font("font")
 	var mouse_pos = get_viewport().get_mouse_position()
 	var mouse_collide = false
 	

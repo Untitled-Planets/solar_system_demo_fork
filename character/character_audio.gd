@@ -75,11 +75,11 @@ func _on_Character_jumped():
 	_play_step()
 
 
-func _process(delta):
-	var position = global_transform.origin
+func _process(_delta):
+	var pos = global_transform.origin
 	var landed = get_parent().is_on_floor()
-	if position.distance_to(_last_step_position) > _step_distance and landed:
-		_last_step_position = position
+	if pos.distance_to(_last_step_position) > _step_distance and landed:
+		_last_step_position = pos
 		_play_step()
 		_next_step_distance()
 

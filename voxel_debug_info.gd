@@ -1,5 +1,5 @@
 # Debug stuff. A bunch of hotkeys that do things.
-
+class_name VoxelDebugInfo
 extends Node
 
 const CollisionScannerScene = \
@@ -161,9 +161,9 @@ func _toggle_collision_scanner():
 		get_parent().add_child(overlay)
 
 
-func _process(delta):
+func _process(_delta):
 	DDD.set_text("FPS", Engine.get_frames_per_second())
-	DDD.set_text("Static memory", _format_memory(OS.get_static_memory_usage()))
+	DDD.set_text("Static memory", VoxelDebugInfo._format_memory(OS.get_static_memory_usage()))
 
 	# Global stats
 

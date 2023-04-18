@@ -33,7 +33,7 @@ func set_enable_debug_mesh(value: bool) -> void:
 	_mesh.visible = value
 
 
-func _on_area_input_event(camera, event, position, normal, shape_idx):
+func _on_area_input_event(_camera, _event, _position, _normal, _shape_idx):
 	print("gui_event")
 
 func get_selected_object():

@@ -1,8 +1,9 @@
-[gd_scene load_steps=32 format=3 uid="uid://blqdy4acm4wpa"]
+[gd_scene load_steps=33 format=3 uid="uid://blqdy4acm4wpa"]
 
 [ext_resource type="Script" path="res://ship/ship.gd" id="1"]
 [ext_resource type="Script" path="res://camera/camera_hints.gd" id="2"]
 [ext_resource type="Script" path="res://ship/ship_controller.gd" id="3"]
+[ext_resource type="PackedScene" path="res://character/character.tscn" id="3_yl1y4"]
 [ext_resource type="Shader" path="res://ship/speed_particles.gdshader" id="4"]
 [ext_resource type="Script" path="res://ship/motion_particles.gd" id="5"]
 [ext_resource type="Texture2D" uid="uid://cb4femk463wd7" path="res://ship/speed_particle.png" id="6"]
@@ -147,6 +148,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -2.71605, 0.65127)
 
 [node name="Controller" type="Node" parent="." groups=["planet_mode"]]
 script = ExtResource("3")
+CharacterScene = ExtResource("3_yl1y4")
 keyboard_turn_sensitivity = 1.0
 
 [node name="CommandPanel" type="Area3D" parent="."]

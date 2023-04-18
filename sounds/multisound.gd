@@ -1,4 +1,4 @@
-
+class_name MultiSound
 var _streams = []
 var _players = []
 var _player_round_index := 0

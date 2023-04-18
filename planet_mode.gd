@@ -46,8 +46,8 @@ func load_waypoints():
 		waypoint.transform = planet.get_surface_transform(mine.pos)
 		waypoint.info = "Mine pos: {}\nAmount: {}".format([mine.pos, mine.amount], "{}")
 		planet.node.add_child(waypoint)
-		waypoint.set_enable_debug_mesh(true)
-		waypoint.scale_area(100)
+#		waypoint.set_enable_debug_mesh(true)
+#		waypoint.scale_area(100)
 		planet.waypoints.append(waypoint)
 
 

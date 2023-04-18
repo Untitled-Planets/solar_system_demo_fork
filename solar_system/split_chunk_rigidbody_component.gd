@@ -9,14 +9,14 @@ func _ready():
 	get_parent().gravity_scale = 0.0
 
 
-func _physics_process(delta):
+func _physics_process(_delta):
 	# Assuming planet center is the current world origin
 	var body = get_parent()
 	var gravity_dir = -body.transform.origin.normalized()
 	body.apply_central_force(gravity_dir * 9.8)
 
 
-func _process(delta):
+func _process(_delta):
 	# Remove when far away
 	var cam = get_viewport().get_camera_3d()
 	var body = get_parent()

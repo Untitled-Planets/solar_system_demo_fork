@@ -1,6 +1,6 @@
 [gd_scene load_steps=11 format=3 uid="uid://dfg7thpcsus18"]
 
-[ext_resource type="PackedScene" uid="uid://hh0mump0swlx" path="res://character/character.tscn" id="1"]
+[ext_resource type="PackedScene" path="res://character/character.tscn" id="1"]
 [ext_resource type="Texture2D" uid="uid://jfywo4xd75ku" path="res://textures/Rocks07_col.webp" id="2_yc0vv"]
 [ext_resource type="PackedScene" uid="uid://dc4lolnw2ugli" path="res://camera/camera.tscn" id="3"]
 [ext_resource type="PackedScene" uid="uid://bu1ftqx735ygp" path="res://gui/mouse_capture.tscn" id="4"]

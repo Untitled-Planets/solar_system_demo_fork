@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=3 uid="uid://hh0mump0swlx"]
+[gd_scene load_steps=15 format=3]
 
 [ext_resource type="Script" path="res://addons/zylann.3d_basics/character/character.gd" id="1"]
 [ext_resource type="Script" path="res://character/mouse_look.gd" id="2"]

@@ -4,17 +4,13 @@ extends Node
 @onready var machine: MachineCharacter = get_parent() as MachineCharacter
 
 @export var _speed: float = 10
-@export var _acceptable_radius: float = 1.0
 @export var _height_from_planet: float = 10.0
 
+
 var _state: int = MachineCharacter.State.IDLE
-var _path_index: int = 0
-var _move_path: Array[Vector3] = []
 var _travel_time: float = 0
 var _move_data: MoveMachineData = null
 var _total_time: float = 0.0
-var _from: Vector3
-var _to: Vector3
 var _last_know_secure_height: float
 
 func _ready():
@@ -36,6 +32,10 @@ func _process(delta):
 func _process_movement() -> void:
 	var current_direction := _move_data.from.slerp(_move_data.to, _total_time / _travel_time).normalized()
 	machine.position = current_direction * _move_data.planet_radius
+
+
+
+
 
 func _fix_transform() -> void:
 	var planet := machine.get_planet()

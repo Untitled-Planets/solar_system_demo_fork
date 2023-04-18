@@ -1,9 +1,9 @@
 extends Node
 
-const StellarBody = preload("../solar_system/stellar_body.gd")
-const SolarSystem = preload("../solar_system/solar_system.gd")
+#const StellarBody = preload("../solar_system/stellar_body.gd")
+#const SolarSystem = preload("../solar_system/solar_system.gd")
 const Ship = preload("../ship/ship.gd")
-const Util = preload("../util/util.gd")
+#const Util = preload("../util/util.gd")
 const CollisionLayers = preload("../collision_layers.gd")
 # TODO This is very close to Godot's CharacterBody3D. Introduce prefixes?
 # It could be confusing to not realize this is actually from the project and not Godot
@@ -25,7 +25,7 @@ const JUMP_SPEED = 8.0
 @onready var _flashlight : SpotLight3D = get_node("../Visual/FlashLight")
 @onready var _audio = get_node("../Audio")
 
-var _velocity := Vector3()
+#var _velocity := Vector3()
 var _dig_cmd := false
 var _interact_cmd := false
 var _build_cmd := false
@@ -35,16 +35,20 @@ var _last_motor := Vector3()
 var _player_id: int = -1
 
 
-func _physics_process(delta):
+func _physics_process(_delta):
 	var motor := Vector3()
 	
-	if Input.is_key_pressed(KEY_W):
+#	if Input.is_key_pressed(KEY_W):
+	if Input.is_action_pressed("forward"):
 		motor += Vector3(0, 0, -1)
-	if Input.is_key_pressed(KEY_S):
+#	if Input.is_key_pressed(KEY_S):
+	if Input.is_action_pressed("back"):
 		motor += Vector3(0, 0, 1)
-	if Input.is_key_pressed(KEY_A):
+#	if Input.is_key_pressed(KEY_A):
+	if Input.is_action_pressed("left"):
 		motor += Vector3(-1, 0, 0)
-	if Input.is_key_pressed(KEY_D):
+#	if Input.is_key_pressed(KEY_D):
+	if Input.is_action_pressed("right"):
 		motor += Vector3(1, 0, 0)
 	
 	var character_body := _get_body()

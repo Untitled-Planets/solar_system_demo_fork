@@ -11,7 +11,7 @@ const Util = preload("../util/util.gd")
 @onready var _planet_hover_audio_player = $PlanetHoverSound
 @onready var _inventory = $Inventory
 
-var _target_planet_screen_pos := Vector2()
+#var _target_planet_screen_pos := Vector2()
 var _pointed_body = null
 
 

@@ -18,10 +18,10 @@ func _on_MainMenu_start_requested():
 	_main_menu.hide()
 	var game_scene : PackedScene = load("res://game.tscn")
 	_game = game_scene.instantiate()
-	_game.set_settings(_settings)
-	_game.set_settings_ui(_settings_ui)
-	_game.exit_to_menu_requested.connect(_on_game_exit_to_menu_requested)
 	add_child(_game)
+	_game.get_solar_system().set_settings(_settings)
+	_game.get_solar_system().set_settings_ui(_settings_ui)
+	_game.get_solar_system().exit_to_menu_requested.connect(_on_game_exit_to_menu_requested)
 
 
 func _on_MainMenu_settings_requested():
@@ -38,7 +38,7 @@ func _on_game_exit_to_menu_requested():
 	_main_menu.show()
 
 
-func _process(delta):
+func _process(_delta):
 	AudioServer.set_bus_volume_db(0, linear_to_db(_settings.main_volume_linear))
 	DDD.visible = _settings.debug_text
 	var viewport = get_viewport()

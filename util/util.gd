@@ -36,7 +36,7 @@ static func format_integer_with_commas(n: int) -> String:
 			str((n / 1000) % 10000000).pad_zeros(3), ",", 
 			str(n % 1000).pad_zeros(3))
 	push_error("Number too big for shitty function")
-	assert(false)
+#	assert(false)
 	return "<error>"
 
 
@@ -126,7 +126,7 @@ static func coordinate_to_unit_vector(coord: Vector2) -> Vector3:
 	v = v.rotated(Vector3.RIGHT, deg_to_rad(coord.x))
 	return v
 
-static func position_to_normalized_coordinaters(position: Vector3) -> Vector2:
+static func position_to_unit_coordinates(position: Vector3) -> Vector2:
 	var n := position.normalized()
 	var dot := n.dot(Vector3.UP)
 	if  abs(dot) == 1.0: # Maybe a simpler if for x and z does a better job
@@ -134,6 +134,8 @@ static func position_to_normalized_coordinaters(position: Vector3) -> Vector2:
 	
 	var y := Vector3(n.x, 0.0, n.z)
 	var y_angle := y.signed_angle_to(Vector3.FORWARD, Vector3.UP)
-	var ref_vector := n.cross(Vector3.UP)
-	var cross_angle := n.signed_angle_to(Vector3.UP, ref_vector)
-	return Vector2(cross_angle / TWO_PI, y_angle / TWO_PI)
+	if y_angle < 0.0:
+		y_angle += TWO_PI
+	# the worst name in the world
+	var x_angle := Vector3.UP.angle_to(n)
+	return Vector2(x_angle / PI, y_angle / TWO_PI)

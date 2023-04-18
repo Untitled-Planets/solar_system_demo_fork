@@ -1,7 +1,8 @@
 extends Node
 
-const StellarBody = preload("../solar_system/stellar_body.gd")
-var CharacterScene = load("res://character/character.tscn")
+#const StellarBody = preload("../solar_system/stellar_body.gd")
+#var CharacterScene = load("res://character/character.tscn")
+@export var CharacterScene: PackedScene
 
 @onready var _ship = get_parent()
 @onready var _character_spawn_position_node : Node3D = get_node("../CharacterSpawnPosition")
@@ -19,7 +20,7 @@ func set_enabled(enabled: bool):
 	set_process_input(enabled)
 
 
-func _process(delta: float):
+func _process(_delta: float):
 	if Input.get_mouse_mode() != Input.MOUSE_MODE_CAPTURED:
 		# The UI probably has focus
 		return

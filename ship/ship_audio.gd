@@ -1,6 +1,6 @@
 extends Node3D
 
-const MultiSound = preload("res://sounds/multisound.gd")
+#const MultiSound = preload("res://sounds/multisound.gd")
 
 const ShipIdleOnSound = preload("res://sounds/ship_idle_on.wav")
 const ShipIdleOffSound = preload("res://sounds/ship_idle_off.wav")
@@ -27,7 +27,7 @@ const ShipHitSounds = [
 @onready var _superspeed_stop_player = $SuperSpeedOff
 @onready var _superspeed_loop_player = $SuperSpeedLoop
 # TODO Hardcoded path is not good.
-@onready var _ambient_sounds = get_node("/root/Main/GameWorld/AmbientSounds")
+@onready var _ambient_sounds = get_node("/root/Main/Game/SolarSystem/AmbientSounds") # Refactor this
 @onready var _air_friction_player = $AirFriction
 @onready var _scrape_player = $Scrape
 
@@ -109,6 +109,6 @@ func _process(delta):
 			_scrape_player.stop()
 
 
-func _on_Ship_body_entered(body):
+func _on_Ship_body_entered(_body):
 	#print("Body enter ", body)
 	_hit_multisound.play(global_transform.origin)

@@ -27,10 +27,10 @@ var planets := {
 	}
 }
 
-var planet_id := "dummy"
+var _planet_id := "dummy"
 
-func _call_event(name, params):
-	get_tree().call_group(name, params)
+func _call_event(p_name, params):
+	get_tree().call_group(p_name, params)
 
 func planet_travel(planet_id):
 	_call_event("server_planet_traveled", planet_id)
@@ -39,10 +39,10 @@ func planet_info_refresh():
 	_call_event("server_planet_info_refreshed", 0)
 
 func planet_get_deposits():
-	return planets[planet_id].deposits
-	
+	return planets[_planet_id].deposits
+#
 func planet_get_deposit_info(pos):
-	return planets[planet_id].deposits[pos]
+	return planets[_planet_id].deposits[pos]
 
 func inventory_refresh():
 	_call_event("server_inventory_refreshed", 0)

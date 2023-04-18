@@ -1,7 +1,7 @@
 extends Camera3D
 
-const CameraHints = preload("./camera_hints.gd")
-const Util = preload("../util/util.gd")
+#const CameraHints = preload("./camera_hints.gd")
+#const Util = preload("../util/util.gd")
 
 const HINTS_NODE_NAME = "CameraHints"
 
