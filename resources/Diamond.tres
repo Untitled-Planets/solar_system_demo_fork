@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="PlanetResource" load_steps=2 format=3 uid="uid://dmkxoqjjxt0wc"]
+
+[ext_resource type="Script" path="res://resources/PlanetResource.gd" id="1_mycne"]
+
+[resource]
+script = ExtResource("1_mycne")
+id = 2
+name = "diamond"
+common = 0.1

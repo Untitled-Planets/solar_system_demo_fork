@@ -34,7 +34,7 @@ signal exit_to_menu_requested
 @onready var _hud = $HUD
 @onready var _pause_menu = $PauseMenu
 @onready var _lens_flare = $LensFlare
-@onready var _asset_inventory: AssetInventory = $asset_inventory
+
 @onready var _planet_mode: PlanetMode = $planet_mode
 
 
@@ -60,8 +60,11 @@ func _ready():
 	
 	var progress_info = LoadingProgress.new()
 	
+	var valid_planets: Array[int] = []
 	for i in len(_bodies):
 		var body : StellarBody = _bodies[i]
+		if body.type == StellarBody.TYPE_ROCKY:
+			valid_planets.append(i)
 		
 		progress_info.message = "Generating {0}...".format([body.name])
 		progress_info.progress = float(i) / float(len(_bodies))
@@ -91,6 +94,11 @@ func _ready():
 
 	progress_info.finished = true
 	loading_progressed.emit(progress_info)
+	_generate_deposits(valid_planets)
+	
+
+func _generate_deposits(planet_ids: Array[int]) -> void:
+	Server.generate_deposits(planet_ids)
 
 func is_planet_mode_enabled() -> bool:
 	return _planet_mode.is_enabled
@@ -369,6 +377,8 @@ func get_stellar_body(idx: int) -> StellarBody:
 func get_reference_stellar_body() -> StellarBody:
 	return _bodies[_reference_body_id]
 
+func get_reference_stellar_body_id() -> int:
+	return _reference_body_id
 
 func get_sun_position() -> Vector3:
 	return _directional_light.global_transform.origin
@@ -409,15 +419,6 @@ func _on_PauseMenu_settings_requested():
 	# This makes sure it shows in front.
 	_settings_ui.move_to_front()
 
-func _on_inventory_add_machine(machine_id: int):
-	Server.miner_spawn(0, machine_id, _reference_body_id, null)
 
 
-func _on_add_machine(_player_id: int, _machine_id: int, _planet_id: int, _location: SpawnLocation) -> void:
-	var planet: StellarBody = get_reference_stellar_body()
-	var spawn_point := planet.get_spawn_point()
-	var machine: Node3D = _asset_inventory.generate_asset(0)
-	planet.node.add_child(machine)
-	machine.set_planet(planet)
-	machine.global_position = spawn_point
-	machine.configure_waypoint(is_planet_mode_enabled())
+

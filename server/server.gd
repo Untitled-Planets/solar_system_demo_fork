@@ -1,33 +1,53 @@
 extends Node
 
 signal move_machine_requested(node_path, move_data)
+signal add_machine_requested(controller_id, machine_id, planet_id, spawn_location)
 
 var inventory := {}
-var planets := {
-	
-	"dummy": {
-		
-		"deposits": [
-		
-			{
-				"pos": Vector2(0, 0),
-				"amount": 100,
-			},
-
-			{
-				"pos": Vector2(90, 90),
-				"amount": 100,
-			},
-			
-			{
-				"pos": Vector2(90, -90),
-				"amount": 100,
-			},
-		]
-	}
+var _planets := {
+#
+#	"dummy": {
+#
+#		"deposits": [
+#
+#			{
+#				"pos": Vector2(0, 0),
+#				"amount": 100,
+#			},
+#
+#			{
+#				"pos": Vector2(90, 90),
+#				"amount": 100,
+#			},
+#
+#			{
+#				"pos": Vector2(90, -90),
+#				"amount": 100,
+#			},
+#		]
+#	}
 }
 
 var _planet_id := "dummy"
+
+func generate_deposits(p_planet_ids: Array[int]) -> void:
+	for id in p_planet_ids:
+		_generate_deposits_for_planet(id)
+
+# in this moment generate only 3 deposits
+func _generate_deposits_for_planet(p_planet_id: int) -> void:
+	if not _planets.has(p_planet_id):
+		var deposits := []
+		for i in 3:
+			var uc := Util.generate_unit_coordinates()
+			deposits.append({
+				pos = Vector2(uc.x * 90.0, uc.y * 360),
+				amount = randi() % 1000
+			})
+		_planets[p_planet_id] = {
+			"deposits": deposits
+		}
+
 
 func _call_event(p_name, params):
 	get_tree().call_group(p_name, params)
@@ -38,11 +58,11 @@ func planet_travel(planet_id):
 func planet_info_refresh():
 	_call_event("server_planet_info_refreshed", 0)
 
-func planet_get_deposits():
-	return planets[_planet_id].deposits
+#func planet_get_deposits():
+#	return _planets[_planet_id].deposits
 #
-func planet_get_deposit_info(pos):
-	return planets[_planet_id].deposits[pos]
+func planet_get_deposits(planet_id: int) -> Array:
+	return _planets[planet_id].deposits
 
 func inventory_refresh():
 	_call_event("server_inventory_refreshed", 0)
@@ -73,7 +93,7 @@ func server_miner_spawn(controller_id, miner_id, planet_id, spawn_location) -> v
 	client_miner_spawn(controller_id, miner_id, planet_id, spawn_location)
 
 func client_miner_spawn(controller_id, miner_id, planet_id, spawn_location) -> void:
-	get_tree().call_group("game_world", "_on_add_machine", controller_id, miner_id, planet_id, spawn_location)
+	add_machine_requested.emit(controller_id, miner_id, planet_id, spawn_location)
 
 
 func generate_planet_path(from: Vector3, to: Vector3, amount: int) -> Array[Vector3]:

@@ -1,4 +1,4 @@
-[gd_scene load_steps=26 format=3 uid="uid://dx0qy8pg0q72b"]
+[gd_scene load_steps=27 format=3 uid="uid://dx0qy8pg0q72b"]
 
 [ext_resource type="Script" path="res://game.gd" id="1_3cmpg"]
 [ext_resource type="Script" path="res://solar_system/solar_system.gd" id="1_tcbv5"]
@@ -21,7 +21,8 @@
 [ext_resource type="AudioStream" uid="uid://pdsd7xlt73p1" path="res://sounds/deep_space.ogg" id="14_krriv"]
 [ext_resource type="PackedScene" uid="uid://c0s0vh504ph30" path="res://planet_mode.tscn" id="16_fuknr"]
 [ext_resource type="PackedScene" uid="uid://co45bdw7qhu7i" path="res://waypoints/waypoint.tscn" id="17_mvuvu"]
-[ext_resource type="PackedScene" uid="uid://24rdyffsxdln" path="res://assets/asset_inventory.tscn" id="19_vd2ea"]
+[ext_resource type="PackedScene" path="res://assets/asset_inventory.tscn" id="19_vd2ea"]
+[ext_resource type="PackedScene" uid="uid://c6ts5uteg6kpo" path="res://warehouse/warehouse.tscn" id="23_pk8da"]
 
 [sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_cmlyd"]
 panorama = ExtResource("2_06f30")
@@ -172,10 +173,12 @@ WaypointScene = ExtResource("17_mvuvu")
 
 [node name="SelectionMode" type="Node" parent="SolarSystem"]
 
+[node name="warehouse" parent="." instance=ExtResource("23_pk8da")]
+
 [connection signal="loading_progressed" from="SolarSystem" to="SolarSystem/LoadingScreen" method="_on_GameWorld_loading_progressed"]
 [connection signal="reference_body_changed" from="SolarSystem" to="SolarSystem/AmbientSounds" method="_on_GameWorld_reference_body_changed"]
 [connection signal="waypoint_selected" from="SolarSystem/HUD/WaypointHUD" to="." method="_on_waypoint_hud_waypoint_selected"]
-[connection signal="add_machine" from="SolarSystem/HUD/Inventory" to="SolarSystem" method="_on_inventory_add_machine"]
+[connection signal="add_machine" from="SolarSystem/HUD/Inventory" to="." method="_on_inventory_add_machine"]
 [connection signal="exit_to_menu_requested" from="SolarSystem/PauseMenu" to="SolarSystem" method="_on_PauseMenu_exit_to_menu_requested"]
 [connection signal="exit_to_os_requested" from="SolarSystem/PauseMenu" to="SolarSystem" method="_on_PauseMenu_exit_to_os_requested"]
 [connection signal="resume_requested" from="SolarSystem/PauseMenu" to="SolarSystem" method="_on_PauseMenu_resume_requested"]

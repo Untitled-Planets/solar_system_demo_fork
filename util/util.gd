@@ -1,6 +1,7 @@
 class_name Util
 
 const TWO_PI = 2.0 * PI
+const HALF_PI = 0.5 * PI
 
 static func get_sphere_volume(r: float) -> float:
 	return PI * r * r * r * 4.0 / 3.0
@@ -139,3 +140,16 @@ static func position_to_unit_coordinates(position: Vector3) -> Vector2:
 	# the worst name in the world
 	var x_angle := Vector3.UP.angle_to(n)
 	return Vector2(x_angle / PI, y_angle / TWO_PI)
+
+
+static func generate_unit_coordinates() -> Vector2:
+	var azimuthal := randf()
+	var latitude := randf_range(-1.0, 1.0)
+	return Vector2(latitude, azimuthal)
+
+
+static func unit_coordinates_to_unit_vector(p_coord: Vector2) -> Vector3:
+	var aangle := p_coord.y * TWO_PI
+	var v := Vector3.FORWARD.rotated(Vector3.UP, aangle)
+	var c := v.cross(Vector3.UP)
+	return v.rotated(c, p_coord.x * HALF_PI)

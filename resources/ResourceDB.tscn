@@ -1,0 +1,9 @@
+[gd_scene load_steps=4 format=3 uid="uid://cx8gvgtrn2ttk"]
+
+[ext_resource type="Script" path="res://resources/ResourceDB.gd" id="1_7fy54"]
+[ext_resource type="Resource" uid="uid://dmkxoqjjxt0wc" path="res://resources/Diamond.tres" id="2_563mt"]
+[ext_resource type="Resource" uid="uid://cgqq88y52dhvs" path="res://resources/Carbon.tres" id="3_v3yi7"]
+
+[node name="ResourceDB" type="Node"]
+script = ExtResource("1_7fy54")
+_planet_resources = Array[Resource("res://resources/PlanetResource.gd")]([ExtResource("2_563mt"), ExtResource("3_v3yi7")])

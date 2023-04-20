@@ -39,7 +39,7 @@ func _get_solar_system() -> SolarSystem:
 	return get_parent() as SolarSystem
 
 func load_waypoints():
-	var deposits = Server.planet_get_deposits()
+	var deposits = Server.planet_get_deposits(_get_solar_system().get_reference_stellar_body_id())
 #	var ss := _get_solar_system()
 	for mine in deposits:
 		var waypoint = WaypointScene.instantiate()

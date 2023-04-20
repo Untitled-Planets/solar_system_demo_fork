@@ -1,5 +1,5 @@
 class_name MachineCharacter
-extends Node3D
+extends IWorker
 
 enum State {
 	WORKING,
@@ -9,11 +9,13 @@ enum State {
 }
 
 @onready var _movement: MachineMovement = $movement
+@onready var _tasks_node: Node = $tasks
 
 @export var _waypoint_scene: PackedScene
 
 var _planet : StellarBody
 var _waypoint: Waypoint
+var _current_task: ITask = null
 
 
 func go_to(location: Vector3) -> void:
@@ -24,6 +26,12 @@ func set_planet(p : StellarBody) -> void:
 
 func get_planet() -> StellarBody:
 	return _planet
+
+func is_owner() -> bool:
+	return true
+
+func is_server() -> bool:
+	return true
 
 func configure_waypoint(value: bool) -> void:
 	if value:
@@ -44,3 +52,34 @@ func get_max_speed() -> float:
 
 func pm_enabled(value: bool) -> void:
 	configure_waypoint(value)
+	
+func _process(delta):
+	if _current_task:
+		_current_task.update(delta)
+		if _current_task.get_finished() != ITask.Finished.NONE:
+			print("Task finished")
+			_current_task = null
+
+
+###########################
+# IWorker
+###########################
+
+func get_tasks() -> Array[ITask]:
+	return _tasks_node.get_children() as Array[ITask]
+
+func get_current_task() -> ITask:
+	return _current_task
+
+func do_task(p_task_id: String) -> int:
+	for t in get_tasks():
+		if t.get_task_name() == p_task_id:
+			_current_task = t
+			_current_task.start()
+			return OK
+	push_error("Task {0} not found".format(p_task_id, "{}"))
+	return ERR_INVALID_PARAMETER
+
+###########################
+# IWorker end
+###########################

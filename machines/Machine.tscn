@@ -10,3 +10,5 @@ _waypoint_scene = ExtResource("2_d7rsn")
 
 [node name="movement" type="Node" parent="."]
 script = ExtResource("2_mt5gi")
+
+[node name="tasks" type="Node" parent="."]

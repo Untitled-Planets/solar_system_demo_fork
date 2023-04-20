@@ -1,0 +1,17 @@
+[gd_scene load_steps=5 format=3 uid="uid://dy68vys8biwod"]
+
+[ext_resource type="PackedScene" uid="uid://d20pdti6fffac" path="res://machines/Machine.tscn" id="1_v8j52"]
+[ext_resource type="Script" path="res://machines/miner/Miner.gd" id="2_0ykg2"]
+[ext_resource type="PackedScene" uid="uid://don2libtpth4o" path="res://models/miner.tscn" id="3_l3h6g"]
+[ext_resource type="PackedScene" uid="uid://b2u7640pp47m4" path="res://machines/vfx/miner_laser.tscn" id="4_7jnsw"]
+
+[node name="Miner" instance=ExtResource("1_v8j52")]
+script = ExtResource("2_0ykg2")
+_waypoint_scene = null
+
+[node name="body_pivot" type="Node3D" parent="." index="1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.0261312, 0)
+
+[node name="miner_model" parent="body_pivot" index="0" instance=ExtResource("3_l3h6g")]
+
+[node name="miner_laser" parent="." index="2" instance=ExtResource("4_7jnsw")]

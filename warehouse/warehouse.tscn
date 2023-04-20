@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://c6ts5uteg6kpo"]
+
+[ext_resource type="Script" path="res://warehouse/warehouse.gd" id="1_ubm60"]
+
+[node name="warehouse" type="Node" groups=["warehouse"]]
+script = ExtResource("1_ubm60")
