@@ -1,6 +1,8 @@
 class_name MachineMovement
 extends Node
 
+signal move_request_finished(request_id: int)
+
 @onready var machine: MachineCharacter = get_parent() as MachineCharacter
 
 @export var _speed: float = 10
@@ -14,7 +16,7 @@ var _total_time: float = 0.0
 var _last_know_secure_height: float
 
 func _ready():
-	Server.move_machine_requested.connect(_on_move_requested)
+	pass
 
 func _process(delta):
 	if _state == MachineCharacter.State.MOVING:
@@ -28,13 +30,12 @@ func _process(delta):
 			_fix_orientation()
 		if _total_time >= _travel_time:
 			_state = MachineCharacter.State.IDLE
+			move_request_finished.emit(0)
 
 func _process_movement() -> void:
 	var current_direction := _move_data.from.slerp(_move_data.to, _total_time / _travel_time).normalized()
 	machine.position = current_direction * _move_data.planet_radius
-
-
-
+	
 
 
 func _fix_transform() -> void:
@@ -66,19 +67,18 @@ func _fix_orientation() -> void:
 	t.basis = Basis(right.normalized(), n, forward.normalized())
 	machine.transform = t
 
+func is_moving() -> bool:
+	return _state == MachineCharacter.State.MOVING
+
 func get_state() -> int:
 	return _state
 
-func _on_move_requested(machine_node_path, move_data: MoveMachineData):
-	if machine.get_path() == machine_node_path:
-		_state = MachineCharacter.State.MOVING
-		_travel_time = move_data.get_travel_time()
-		_total_time = 0.0
-		_move_data = move_data
-		_last_know_secure_height = _move_data.planet_radius
+func move_request(move_data: MoveMachineData):
+	_state = MachineCharacter.State.MOVING
+	_travel_time = move_data.get_travel_time()
+	_total_time = 0.0
+	_move_data = move_data
+	_last_know_secure_height = _move_data.planet_radius
 
 func get_self_coordinates() -> Vector2:
 	return Util.position_to_coordinates(machine.position)
-
-func _exit_tree():
-	Server.move_machine_requested.disconnect(_on_move_requested)

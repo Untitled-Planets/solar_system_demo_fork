@@ -66,18 +66,24 @@ func _process(delta):
 ###########################
 
 func get_tasks() -> Array[ITask]:
-	return _tasks_node.get_children() as Array[ITask]
+	var children := _tasks_node.get_children()
+	var a: Array[ITask] = []
+	a.resize(children.size())
+	for index in children.size():
+		a[index] = children[index] as ITask
+	return a
 
 func get_current_task() -> ITask:
 	return _current_task
 
-func do_task(p_task_id: String) -> int:
+func do_task(p_task_id: String, p_data) -> int:
 	for t in get_tasks():
 		if t.get_task_name() == p_task_id:
 			_current_task = t
+			_current_task.data = p_data
 			_current_task.start()
 			return OK
-	push_error("Task {0} not found".format(p_task_id, "{}"))
+	push_error("Task {} not found".format(p_task_id))
 	return ERR_INVALID_PARAMETER
 
 ###########################

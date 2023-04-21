@@ -2,31 +2,10 @@ extends Node
 
 signal move_machine_requested(node_path, move_data)
 signal add_machine_requested(controller_id, machine_id, planet_id, spawn_location)
+signal task_requested(object_id: NodePath, task_id: String, data)
 
 var inventory := {}
-var _planets := {
-#
-#	"dummy": {
-#
-#		"deposits": [
-#
-#			{
-#				"pos": Vector2(0, 0),
-#				"amount": 100,
-#			},
-#
-#			{
-#				"pos": Vector2(90, 90),
-#				"amount": 100,
-#			},
-#
-#			{
-#				"pos": Vector2(90, -90),
-#				"amount": 100,
-#			},
-#		]
-#	}
-}
+var _planets := {}
 
 var _planet_id := "dummy"
 
@@ -106,6 +85,15 @@ func generate_planet_path(from: Vector3, to: Vector3, amount: int) -> Array[Vect
 		points.append(direction)
 		weight += step
 	return points
+
+func machine_mine(p_machine_id, task_id: String, p_data) -> void:
+	server_machine_mine(p_machine_id, task_id, p_data)
+
+func server_machine_mine(p_machine_id, task_id: String, p_data) -> void:
+	client_machine_mine(p_machine_id, task_id, p_data)
+
+func client_machine_mine(p_machine_id, task_id: String, p_data) -> void:
+	task_requested.emit(p_machine_id, task_id, p_data)
 
 func server_move_machine(miner_node_path, move_data: MoveMachineData):
 	client_move_machine(miner_node_path, move_data)

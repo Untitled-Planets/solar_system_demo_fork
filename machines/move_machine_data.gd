@@ -1,9 +1,9 @@
 class_name MoveMachineData
 
-var planet_id: int
+#var planet_id: int
 var planet_radius: float
-var machine_id: int
-var machine_node_path: NodePath
+#var machine_id: int
+#var machine_node_path: NodePath
 var machine_speed: float
 var from: Vector3
 var to: Vector3

@@ -7,7 +7,7 @@ func get_tasks() -> Array[ITask]:
 	assert(false, "")
 	return []
 
-func do_task(task_id: String) -> int:
+func do_task(task_id: String, p_data) -> int:
 	assert(false, "")
 	return -1
 
