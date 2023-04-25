@@ -19,15 +19,10 @@ func _on_waypoint_hud_waypoint_selected(waypoint: Waypoint):
 	if so is MachineCharacter and not _machine_selected:
 		_machine_selected = so
 	if so is StellarBodyWrapper and _machine_selected:
-#		var data := MoveMachineData.new()
-#		data.from = _machine_selected.position
-#		data.to = waypoint.position
-#		data.machine_speed = _machine_selected.get_max_speed()
-#		data.planet_radius = _solar_system.get_reference_stellar_body().radius
-#		Server.move_machine(_machine_selected.get_path(), data)
 		var data := Miner.MineTaskData.new()
 		data.location = Util.position_to_unit_coordinates(waypoint.position)
 		data.planet_id = _solar_system.get_reference_stellar_body_id()
+		data.location_id = waypoint.location_id
 		Server.machine_mine(_machine_selected.get_path(), "mine", data)
 		_machine_selected = null
 

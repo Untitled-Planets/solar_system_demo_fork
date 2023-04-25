@@ -4,6 +4,8 @@ signal move_machine_requested(node_path, move_data)
 signal add_machine_requested(controller_id, machine_id, planet_id, spawn_location)
 signal task_requested(object_id: NodePath, task_id: String, data)
 
+signal planet_resource_collected(machine_id: NodePath, planet_id: int, amount)
+
 var inventory := {}
 var _planets := {}
 
@@ -103,3 +105,33 @@ func client_move_machine(miner_node_path, move_data: MoveMachineData):
 
 func move_machine(miner_node_path, move_data: MoveMachineData):
 	server_move_machine(miner_node_path, move_data)
+
+
+func machine_collect_resource(machine_id: NodePath, planet_id: int, location_id: int, _mine_speed: int = 10) -> void:
+	server_machine_collect_resource(machine_id, planet_id, location_id, _mine_speed)
+
+func server_machine_collect_resource(machine_id: NodePath, planet_id: int, location_id: int, _mine_speed: int = 10) -> void:
+	client_machine_collect_resource(machine_id, planet_id, location_id, _mine_speed)
+
+func client_machine_collect_resource(machine_id: NodePath, planet_id: int, location_id: int, _mine_speed: int = 10) -> void:
+	var amount = _collect_resource(planet_id, location_id, _mine_speed)
+	planet_resource_collected.emit(machine_id, planet_id, amount)
+
+func _collect_resource(planet_id: int, location_id: int, _mine_speed: int = 10) -> int:
+	var location = _planets[planet_id].deposits[location_id]
+	var amount: int = _mine_speed * 0.5
+	var collected_amount: int
+	if amount > location.amount:
+		collected_amount = location.amount
+		location.amount = 0
+	else:
+		collected_amount = amount
+		location.amount -= amount
+	return collected_amount
+
+func get_resource_amount(planet_id: int, location_id: int) -> int:
+	var deposits = _planets[planet_id].deposits
+	if location_id < deposits.size():
+		return _planets[planet_id].deposits[location_id].amount
+	else:
+		return 0.0

@@ -1,3 +1,4 @@
+class_name PlayerCamera
 extends Camera3D
 
 #const CameraHints = preload("./camera_hints.gd")
@@ -26,6 +27,8 @@ var _max_target_speed := 50.0
 
 var _wait_for_fucking_physics := 0
 var _last_ref_change_info = null
+
+var collision_detection_enabled: bool = true
 
 
 func _init():
@@ -122,16 +125,17 @@ func _physics_process(delta: float):
 	var trans := ideal_trans
 	
 	# Collision avoidance
-	var dss := get_world_3d().direct_space_state
-	var ignored := [_target_rigidbody.get_rid()] if _target_rigidbody != null else []
-	var ray_query := PhysicsRayQueryParameters3D.new()
-	ray_query.from = tt.origin
-	ray_query.to = ideal_trans.origin
-	ray_query.exclude = ignored
-	var hit := dss.intersect_ray(ray_query)
-	if not hit.is_empty():
-		#var hit_normal = hit.normal
-		trans.origin = hit.position + 0.3 * hit.normal
+	if collision_detection_enabled:
+		var dss := get_world_3d().direct_space_state
+		var ignored := [_target_rigidbody.get_rid()] if _target_rigidbody != null else []
+		var ray_query := PhysicsRayQueryParameters3D.new()
+		ray_query.from = tt.origin
+		ray_query.to = ideal_trans.origin
+		ray_query.exclude = ignored
+		var hit := dss.intersect_ray(ray_query)
+		if not hit.is_empty():
+			#var hit_normal = hit.normal
+			trans.origin = hit.position + 0.3 * hit.normal
 	
 	# Add latency (using interpolation)
 #	var q1 = Quat(prev_trans.basis)

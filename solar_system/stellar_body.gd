@@ -46,23 +46,12 @@ func _notification(what: int):
 				sb.free()
 
 func get_surface_transform(pos):
-	var t = Transform3D().rotated(Vector3(0, 1, 0), deg_to_rad(pos.y))
-	t = t.rotated(Vector3(1, 0, 0), deg_to_rad(pos.x))
+	var t = Transform3D().rotated(Vector3.UP, deg_to_rad(pos.y))
+	var cross := Vector3.UP.cross(t.basis.z)
+	t = t.rotated(cross, deg_to_rad(pos.x))
 	t = t.translated_local(Vector3(0, 0, radius))
 	
 	return t
-
-#func generate_path(from: Quaternion, to: Quaternion, amount: int) -> Array:
-#	var step: float = 1.0 / float(amount)
-#	var weight := 0.0
-#	var points := []
-#
-#	while weight < 1.0:
-#		var q := from.slerp(to, weight)
-#		var direction := q.get_axis()
-#		points.append(direction * radius)
-#		weight += step
-#	return []
 
 # Returns the position relative to the planet to spawn an machine.
 func get_spawn_point() -> Vector3:

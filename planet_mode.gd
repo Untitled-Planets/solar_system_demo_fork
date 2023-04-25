@@ -41,13 +41,14 @@ func _get_solar_system() -> SolarSystem:
 func load_waypoints():
 	var deposits = Server.planet_get_deposits(_get_solar_system().get_reference_stellar_body_id())
 #	var ss := _get_solar_system()
-	for mine in deposits:
-		var waypoint = WaypointScene.instantiate()
+	for index in deposits.size():
+		var mine = deposits[index]
+		var waypoint: Waypoint = WaypointScene.instantiate()
 		waypoint.transform = planet.get_surface_transform(mine.pos)
+		waypoint.location = mine.pos
 		waypoint.info = "Mine pos: {}\nAmount: {}".format([mine.pos, mine.amount], "{}")
+		waypoint.location_id = index
 		planet.node.add_child(waypoint)
-#		waypoint.set_enable_debug_mesh(true)
-#		waypoint.scale_area(100)
 		planet.waypoints.append(waypoint)
 
 
@@ -72,6 +73,9 @@ func enable():
 	get_tree().call_group("planet_mode", "pm_enabled", true)
 	
 	load_waypoints()
+	
+	_config_camera(false)
+	
 	_is_enabled = true
 
 func disable():
@@ -79,7 +83,16 @@ func disable():
 	get_tree().call_group("planet_mode", "pm_enabled", false)
 	
 	clear_waypoints()
+	
+	_config_camera(true)
+	
 	_is_enabled = false
+
+
+func _config_camera(p_collision_enabled: bool) -> void:
+	var player_camera: PlayerCamera = get_viewport().get_camera_3d()
+	if player_camera:
+		player_camera.collision_detection_enabled = p_collision_enabled
 
 func _input(event):
 	

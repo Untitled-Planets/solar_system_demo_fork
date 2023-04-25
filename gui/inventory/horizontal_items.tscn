@@ -1,0 +1,55 @@
+[gd_scene load_steps=3 format=3 uid="uid://bxe7e3qjais6v"]
+
+[ext_resource type="Script" path="res://gui/inventory/horizontal_items.gd" id="1_0o7qv"]
+[ext_resource type="PackedScene" uid="uid://ulkswuw44lfs" path="res://gui/inventory/asset_panel.tscn" id="2_8g3ne"]
+
+[node name="horizontal_items" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+script = ExtResource("1_0o7qv")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -58.0
+offset_top = -46.0
+offset_right = 58.0
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="AssetPanel" parent="HBoxContainer" instance=ExtResource("2_8g3ne")]
+layout_mode = 2
+_id = 0
+text = "Miner"
+
+[node name="AssetPanel2" parent="HBoxContainer" instance=ExtResource("2_8g3ne")]
+layout_mode = 2
+text = "none"
+
+[node name="AssetPanel3" parent="HBoxContainer" instance=ExtResource("2_8g3ne")]
+layout_mode = 2
+text = "none"
+
+[node name="AssetPanel4" parent="HBoxContainer" instance=ExtResource("2_8g3ne")]
+layout_mode = 2
+text = "none"
+
+[node name="AssetPanel5" parent="HBoxContainer" instance=ExtResource("2_8g3ne")]
+layout_mode = 2
+text = "none"
+
+[node name="AssetPanel6" parent="HBoxContainer" instance=ExtResource("2_8g3ne")]
+layout_mode = 2
+text = "none"
+
+[node name="AssetPanel7" parent="HBoxContainer" instance=ExtResource("2_8g3ne")]
+layout_mode = 2
+text = "none"
+
+[node name="AssetPanel8" parent="HBoxContainer" instance=ExtResource("2_8g3ne")]
+layout_mode = 2
+text = "none"

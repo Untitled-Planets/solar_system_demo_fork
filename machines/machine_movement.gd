@@ -25,12 +25,12 @@ func _process(delta):
 			_process_movement()
 		else:
 			machine.visible = false
-		_fix_transform()
 		if machine.visible:
 			_fix_orientation()
 		if _total_time >= _travel_time:
 			_state = MachineCharacter.State.IDLE
 			move_request_finished.emit(0)
+	_fix_transform()
 
 func _process_movement() -> void:
 	var current_direction := _move_data.from.slerp(_move_data.to, _total_time / _travel_time).normalized()
@@ -78,6 +78,7 @@ func move_request(move_data: MoveMachineData):
 	_travel_time = move_data.get_travel_time()
 	_total_time = 0.0
 	_move_data = move_data
+	print("From: ", _move_data.from, " to: ", _move_data.to)
 	_last_know_secure_height = _move_data.planet_radius
 
 func get_self_coordinates() -> Vector2:

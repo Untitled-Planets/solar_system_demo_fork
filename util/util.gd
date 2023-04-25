@@ -133,12 +133,13 @@ static func position_to_unit_coordinates(position: Vector3) -> Vector2:
 	if  abs(dot) == 1.0: # Maybe a simpler if for x and z does a better job
 		return Vector2(sign(dot), 0.0)
 	
-	var y := Vector3(n.x, 0.0, n.z)
-	var y_angle := y.signed_angle_to(Vector3.FORWARD, Vector3.UP)
+	var y := Vector3(n.x, 0.0, n.z).normalized()
+	var y_angle := Vector3.FORWARD.signed_angle_to(y, Vector3.UP)
 	if y_angle < 0.0:
 		y_angle += TWO_PI
 	# the worst name in the world
-	var x_angle := Vector3.UP.angle_to(n)
+	var c := Vector3.UP.cross(n)
+	var x_angle := Vector3.UP.signed_angle_to(n, c)
 	if x_angle <= HALF_PI:
 		x_angle = (HALF_PI - x_angle)
 	else:
@@ -154,6 +155,7 @@ static func generate_unit_coordinates() -> Vector2:
 
 static func unit_coordinates_to_unit_vector(p_coord: Vector2) -> Vector3:
 	var aangle := p_coord.y * TWO_PI
+	var forward := Vector3.FORWARD
 	var v := Vector3.FORWARD.rotated(Vector3.UP, aangle)
 	var c := v.cross(Vector3.UP)
 	return v.rotated(c, p_coord.x * HALF_PI)

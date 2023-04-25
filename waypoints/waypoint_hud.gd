@@ -62,7 +62,13 @@ func _draw():
 		var dist = mouse_pos.distance_to(center_2d)
 		if dist <= radius:
 			info_label.show()
-			info_label.set_text(waypoint.info)
+			var so = waypoint.get_selected_object()
+			if so is MachineCharacter:
+				info_label.set_text(waypoint.info)
+			else:
+				var planet_id: int = _solar_system.get_reference_stellar_body_id()
+				var info: String = "Location: {0}\nAmount: {1}".format([waypoint.location, Server.get_resource_amount(planet_id, waypoint.location_id)])
+				info_label.set_text(info)
 			info_label.position = mouse_pos
 			mouse_collide = true
 			if Input.is_action_just_pressed("select_object"):

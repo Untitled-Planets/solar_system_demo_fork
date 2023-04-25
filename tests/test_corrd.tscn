@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://bx4tdm75oewbr"]
+
+[ext_resource type="Script" path="res://tests/test_corrd.gd" id="1_nylry"]
+
+[node name="test_corrd" type="Node"]
+script = ExtResource("1_nylry")

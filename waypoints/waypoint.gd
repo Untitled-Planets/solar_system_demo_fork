@@ -9,6 +9,8 @@ signal mouse_exit
 @onready var _attached_object = get_parent()
 
 var waypoint_name : String = "HI"
+var location_id: int = -1
+var location: Vector2
 
 
 var _info: String
