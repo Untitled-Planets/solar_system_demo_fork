@@ -1,0 +1,9 @@
+[gd_scene load_steps=2 format=3 uid="uid://d0ca2ujw44awh"]
+
+[ext_resource type="Script" path="res://gui/action_context_button.gd" id="1_52i7q"]
+
+[node name="action_context_button" type="Button"]
+text = "X"
+script = ExtResource("1_52i7q")
+
+[connection signal="pressed" from="." to="." method="_on_pressed"]

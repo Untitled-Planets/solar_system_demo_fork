@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="PickableInfo" load_steps=3 format=3 uid="uid://64q7nk6cbv2"]
+
+[ext_resource type="Script" path="res://interfaces/pickable_info.gd" id="1_tyuls"]
+[ext_resource type="Texture2D" uid="uid://dm3bbvi83yu4e" path="res://icon.png" id="2_vkiyj"]
+
+[resource]
+script = ExtResource("1_tyuls")
+texture = ExtResource("2_vkiyj")
+info = "A Miner who can do stuff. Crazy right?"

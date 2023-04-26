@@ -1,4 +1,4 @@
-class_name InventoryHorizontalItems
+class_name InventoryMachineItems
 extends Control
 
 signal item_selected(item_id: int)
@@ -8,7 +8,7 @@ func _ready():
 	pass
 
 func _connect_items() -> void:
-	var items := $HBoxContainer.get_children()
+	var items := $ScrollContainer/VBoxContainer.get_children()
 	for index in items.size():
 		var item: AssetPanel = items[index]
 		item.asset_selected.connect(_on_asset_selected)

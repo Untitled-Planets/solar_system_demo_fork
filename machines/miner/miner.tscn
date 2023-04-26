@@ -1,13 +1,15 @@
-[gd_scene load_steps=6 format=3 uid="uid://dy68vys8biwod"]
+[gd_scene load_steps=7 format=3 uid="uid://dy68vys8biwod"]
 
 [ext_resource type="PackedScene" uid="uid://d20pdti6fffac" path="res://machines/Machine.tscn" id="1_v8j52"]
 [ext_resource type="Script" path="res://machines/miner/Miner.gd" id="2_0ykg2"]
+[ext_resource type="Resource" uid="uid://64q7nk6cbv2" path="res://machines/miner/PickableMiner.tres" id="3_6clo4"]
 [ext_resource type="PackedScene" uid="uid://don2libtpth4o" path="res://models/miner.tscn" id="3_l3h6g"]
 [ext_resource type="PackedScene" uid="uid://b2u7640pp47m4" path="res://machines/vfx/miner_laser.tscn" id="4_7jnsw"]
 [ext_resource type="Script" path="res://machines/miner/tasks/MinerMineTask.gd" id="5_ar27r"]
 
 [node name="Miner" instance=ExtResource("1_v8j52")]
 script = ExtResource("2_0ykg2")
+_info = ExtResource("3_6clo4")
 
 [node name="movement" parent="." index="0"]
 _speed = 50.0

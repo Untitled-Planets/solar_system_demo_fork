@@ -12,6 +12,7 @@ enum State {
 @onready var _tasks_node: Node = $tasks
 
 @export var _waypoint_scene: PackedScene
+@export var _info: PickableInfo
 
 var _planet : StellarBody
 var _waypoint: Waypoint
@@ -89,3 +90,7 @@ func do_task(p_task_id: String, p_data) -> int:
 ###########################
 # IWorker end
 ###########################
+
+
+func get_pickable_info() -> PickableInfo:
+	return _info

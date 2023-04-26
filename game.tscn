@@ -11,7 +11,7 @@
 [ext_resource type="Texture2D" uid="uid://31ebse57lvhs" path="res://gui/crosshair.png" id="6_rc6j7"]
 [ext_resource type="PackedScene" uid="uid://b0omhqytjn0qj" path="res://waypoints/waypoint_hud.tscn" id="7_b4x6s"]
 [ext_resource type="AudioStream" uid="uid://bpacs3ufj22ps" path="res://sounds/ui_planet_hover.wav" id="8_tvaq7"]
-[ext_resource type="PackedScene" uid="uid://0mmp46p8s82q" path="res://gui/inventory/inventory.tscn" id="9_4oxrc"]
+[ext_resource type="PackedScene" uid="uid://c37n15l6adtfq" path="res://gui/inventory/inventory.tscn" id="9_4oxrc"]
 [ext_resource type="Script" path="res://addons/SIsilicon.vfx.lens flare/lens-flare.gd" id="9_w721i"]
 [ext_resource type="PackedScene" uid="uid://bu1ftqx735ygp" path="res://gui/mouse_capture.tscn" id="10_4n27f"]
 [ext_resource type="Script" path="res://gui/loading_screen.gd" id="11_vsdyb"]

@@ -4,6 +4,7 @@ extends Node3D
 @onready var _solar_system: SolarSystem = $SolarSystem
 @onready var _warehouse: Warehouse = $warehouse
 @onready var _asset_inventory: AssetInventory = $SolarSystem/asset_inventory
+@onready var _inventory: InventoryHUD = $SolarSystem/HUD/Inventory
 
 var _machine_selected: MachineCharacter = null
 
@@ -18,6 +19,7 @@ func _on_waypoint_hud_waypoint_selected(waypoint: Waypoint):
 	var so = waypoint.get_selected_object()
 	if so is MachineCharacter and not _machine_selected:
 		_machine_selected = so
+		_update_action_panel()
 	if so is StellarBodyWrapper and _machine_selected:
 		var data := Miner.MineTaskData.new()
 		data.location = Util.position_to_unit_coordinates(waypoint.position)
@@ -25,6 +27,18 @@ func _on_waypoint_hud_waypoint_selected(waypoint: Waypoint):
 		data.location_id = waypoint.location_id
 		Server.machine_mine(_machine_selected.get_path(), "mine", data)
 		_machine_selected = null
+	_update_info(so)
+
+func _update_action_panel() -> void:
+	if _machine_selected:
+		_inventory.set_actions(_machine_selected)
+	pass
+
+func _update_info(p_obj) -> void:
+	if p_obj.has_method("get_pickable_info"):
+		_inventory.set_info(p_obj.get_pickable_info())
+	else:
+		_inventory.set_info(null);
 
 func _on_mineral_extracted(id, amount) -> void:
 	_warehouse.add_item(Warehouse.ItemData.new(id, amount))

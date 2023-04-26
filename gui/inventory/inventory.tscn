@@ -1,7 +1,9 @@
-[gd_scene load_steps=3 format=3 uid="uid://0mmp46p8s82q"]
+[gd_scene load_steps=5 format=3 uid="uid://c37n15l6adtfq"]
 
 [ext_resource type="Script" path="res://gui/inventory/inventory.gd" id="1_76g3p"]
-[ext_resource type="PackedScene" uid="uid://bxe7e3qjais6v" path="res://gui/inventory/horizontal_items.tscn" id="2_pymff"]
+[ext_resource type="PackedScene" uid="uid://v40mbbpugn3j" path="res://gui/inventory/machine_items.tscn" id="2_pymff"]
+[ext_resource type="PackedScene" uid="uid://cyt0j8lolut4g" path="res://gui/info_panel.tscn" id="3_121p3"]
+[ext_resource type="PackedScene" uid="uid://cb1dsphpjlxas" path="res://gui/context_action_panel.tscn" id="4_0kekw"]
 
 [node name="Inventory" type="Control"]
 layout_mode = 3
@@ -12,7 +14,7 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_76g3p")
 
-[node name="horizontal_items" parent="." instance=ExtResource("2_pymff")]
+[node name="info_panel" parent="." instance=ExtResource("3_121p3")]
 layout_mode = 1
 anchors_preset = 7
 anchor_left = 0.5
@@ -22,4 +24,22 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 0
 
-[connection signal="item_selected" from="horizontal_items" to="." method="_on_horizontal_items_item_selected"]
+[node name="right_panel" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 11
+anchor_left = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -64.0
+grow_horizontal = 0
+grow_vertical = 2
+
+[node name="machine_items" parent="right_panel" instance=ExtResource("2_pymff")]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="context_action_panel" parent="right_panel" instance=ExtResource("4_0kekw")]
+custom_minimum_size = Vector2(250, 100)
+layout_mode = 2
+
+[connection signal="item_selected" from="right_panel/machine_items" to="." method="_on_horizontal_items_item_selected"]

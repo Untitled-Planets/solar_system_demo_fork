@@ -1,0 +1,19 @@
+[gd_scene load_steps=3 format=3 uid="uid://cb1dsphpjlxas"]
+
+[ext_resource type="Script" path="res://gui/context_action_panel.gd" id="1_1dqag"]
+[ext_resource type="PackedScene" uid="uid://d0ca2ujw44awh" path="res://gui/action_context_button.tscn" id="2_7macs"]
+
+[node name="context_action_panel" type="PanelContainer"]
+custom_minimum_size = Vector2(100, 100)
+script = ExtResource("1_1dqag")
+_button_scene = ExtResource("2_7macs")
+
+[node name="PanelContainer" type="PanelContainer" parent="."]
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="PanelContainer"]
+layout_mode = 2
+
+[node name="Pivot" type="GridContainer" parent="PanelContainer/MarginContainer"]
+layout_mode = 2
+columns = 3
