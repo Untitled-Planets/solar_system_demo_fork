@@ -58,13 +58,22 @@ func _process(delta):
 	if _current_task:
 		_current_task.update(delta)
 		if _current_task.get_finished() != ITask.Finished.NONE:
-			print("Task finished")
 			_current_task = null
+			
 
 
 ###########################
 # IWorker
 ###########################
+
+func get_task(task_id: String) -> ITask:
+	var tasks = get_tasks()
+	var t: ITask = null
+	for task in tasks:
+		if task.get_task_name() == task_id:
+			t = task
+			break
+	return t
 
 func get_tasks() -> Array[ITask]:
 	var children := _tasks_node.get_children()
@@ -86,6 +95,14 @@ func do_task(p_task_id: String, p_data) -> int:
 			return OK
 	push_error("Task {} not found".format(p_task_id))
 	return ERR_INVALID_PARAMETER
+
+func cancel_task(task_id: String) -> void:
+	var t: ITask = get_task(task_id)
+	if t:
+		t.stop()
+	else:
+		push_warning("Task {} not found".format(task_id))
+	
 
 ###########################
 # IWorker end

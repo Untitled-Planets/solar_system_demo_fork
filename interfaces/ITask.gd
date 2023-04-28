@@ -4,7 +4,8 @@ extends Node
 enum Finished {
 	NONE = 0,
 	SUCCESS = 1,
-	FAILED = 2
+	FAILED = 2,
+	STOP = 3,
 }
 
 func get_task_name() -> String:

@@ -2,7 +2,7 @@ class_name HUD
 extends Control
 
 #const StellarBody = preload("../solar_system/stellar_body.gd")
-const Util = preload("../util/util.gd")
+#const Util = preload("../util/util.gd")
 
 @onready var _solar_system = get_parent()
 @onready var _target_planet_label = $TargetPlanetLabel

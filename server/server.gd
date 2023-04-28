@@ -1,8 +1,9 @@
 extends Node
 
-signal move_machine_requested(node_path, move_data)
+#signal machine_move_requested(node_path, move_data)
 signal add_machine_requested(controller_id, machine_id, planet_id, spawn_location)
 signal task_requested(object_id: NodePath, task_id: String, data)
+signal task_cancelled(machine_path_id: NodePath, task_id: String)
 
 signal planet_resource_collected(machine_id: NodePath, planet_id: int, amount)
 
@@ -97,14 +98,14 @@ func server_machine_mine(p_machine_id, task_id: String, p_data) -> void:
 func client_machine_mine(p_machine_id, task_id: String, p_data) -> void:
 	task_requested.emit(p_machine_id, task_id, p_data)
 
-func server_move_machine(miner_node_path, move_data: MoveMachineData):
-	client_move_machine(miner_node_path, move_data)
+func server_machine_move(miner_node_path, task_id: String, move_data: MoveMachineData):
+	client_machine_move(miner_node_path, task_id, move_data)
 
-func client_move_machine(miner_node_path, move_data: MoveMachineData):
-	move_machine_requested.emit(miner_node_path, move_data)
+func client_machine_move(miner_node_path, task_id: String, p_data: MoveMachineData):
+	task_requested.emit(miner_node_path, task_id, p_data)
 
-func move_machine(miner_node_path, move_data: MoveMachineData):
-	server_move_machine(miner_node_path, move_data)
+func machine_move(miner_node_path, task_id: String, move_data: MoveMachineData):
+	server_machine_move(miner_node_path, task_id, move_data)
 
 
 func machine_collect_resource(machine_id: NodePath, planet_id: int, location_id: int, _mine_speed: int = 10) -> void:
@@ -116,6 +117,15 @@ func server_machine_collect_resource(machine_id: NodePath, planet_id: int, locat
 func client_machine_collect_resource(machine_id: NodePath, planet_id: int, location_id: int, _mine_speed: int = 10) -> void:
 	var amount = _collect_resource(planet_id, location_id, _mine_speed)
 	planet_resource_collected.emit(machine_id, planet_id, amount)
+
+func cancel_task(machine_path_id: NodePath, task_name: String) -> void:
+	server_cancel_task(machine_path_id, task_name)
+
+func server_cancel_task(machine_path_id: NodePath, task_name: String) -> void:
+	client_cancel_task(machine_path_id, task_name)
+
+func client_cancel_task(machine_path_id: NodePath, task_name: String) -> void:
+	task_cancelled.emit(machine_path_id, task_name)
 
 func _collect_resource(planet_id: int, location_id: int, _mine_speed: int = 10) -> int:
 	var location = _planets[planet_id].deposits[location_id]

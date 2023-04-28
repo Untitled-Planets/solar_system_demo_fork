@@ -76,10 +76,14 @@ func get_state() -> int:
 func move_request(move_data: MoveMachineData):
 	_state = MachineCharacter.State.MOVING
 	_travel_time = move_data.get_travel_time()
+#	print("travel time: ", _travel_time)
 	_total_time = 0.0
 	_move_data = move_data
-	print("From: ", _move_data.from, " to: ", _move_data.to)
+#	print("From: ", _move_data.from, " to: ", _move_data.to)
 	_last_know_secure_height = _move_data.planet_radius
 
 func get_self_coordinates() -> Vector2:
 	return Util.position_to_coordinates(machine.position)
+
+func cancel_move_request(_request_id = null) -> void:
+	_state = MachineCharacter.State.IDLE

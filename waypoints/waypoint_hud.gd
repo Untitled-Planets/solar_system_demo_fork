@@ -9,7 +9,12 @@ signal waypoint_selected(waypoint)
 
 var _solar_system : SolarSystem
 
-#var _labels = []
+var _selected_waypoint: Waypoint
+var selected_waypoint: Waypoint:
+	get:
+		return _selected_waypoint
+
+
 var _waypoints := []
 
 
@@ -23,6 +28,8 @@ func _process(_delta):
 func add_waypoint(w: Waypoint) -> void:
 	_waypoints.append(w)
 
+func is_on_waypoint() -> bool:
+	return _selected_waypoint != null
 
 # As we cannot guaranty the order in call_group
 # we will wait one frame after the creation of the waypoints.
@@ -43,6 +50,7 @@ func _draw():
 	var mouse_pos = get_viewport().get_mouse_position()
 	var mouse_collide = false
 	
+	var w: Waypoint = null
 	for waypoint in _waypoints:
 		var pos : Vector3 = waypoint.global_transform.origin
 		var center_2d := camera.unproject_position(pos)
@@ -61,6 +69,7 @@ func _draw():
 		
 		var dist = mouse_pos.distance_to(center_2d)
 		if dist <= radius:
+			w = waypoint
 			info_label.show()
 			var so = waypoint.get_selected_object()
 			if so is MachineCharacter:
@@ -71,9 +80,8 @@ func _draw():
 				info_label.set_text(info)
 			info_label.position = mouse_pos
 			mouse_collide = true
-			if Input.is_action_just_pressed("select_object"):
-				waypoint_selected.emit(waypoint)
 		
 		if not mouse_collide:
 			info_label.hide()
 			
+	_selected_waypoint = w

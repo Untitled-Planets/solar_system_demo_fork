@@ -43,7 +43,7 @@ glow_intensity = 1.0
 glow_blend_mode = 0
 glow_hdr_threshold = 0.8
 
-[node name="Game" type="Node3D"]
+[node name="Game" type="Node3D" groups=["game"]]
 script = ExtResource("1_3cmpg")
 
 [node name="SolarSystem" type="Node3D" parent="." groups=["game_world"]]
@@ -177,8 +177,6 @@ WaypointScene = ExtResource("17_mvuvu")
 
 [connection signal="loading_progressed" from="SolarSystem" to="SolarSystem/LoadingScreen" method="_on_GameWorld_loading_progressed"]
 [connection signal="reference_body_changed" from="SolarSystem" to="SolarSystem/AmbientSounds" method="_on_GameWorld_reference_body_changed"]
-[connection signal="waypoint_selected" from="SolarSystem/HUD/WaypointHUD" to="." method="_on_waypoint_hud_waypoint_selected"]
-[connection signal="add_machine" from="SolarSystem/HUD/Inventory" to="." method="_on_inventory_add_machine"]
 [connection signal="exit_to_menu_requested" from="SolarSystem/PauseMenu" to="SolarSystem" method="_on_PauseMenu_exit_to_menu_requested"]
 [connection signal="exit_to_os_requested" from="SolarSystem/PauseMenu" to="SolarSystem" method="_on_PauseMenu_exit_to_os_requested"]
 [connection signal="resume_requested" from="SolarSystem/PauseMenu" to="SolarSystem" method="_on_PauseMenu_resume_requested"]

@@ -18,9 +18,25 @@ var _text: String
 		return _text
 
 
+var _game: Game
+
 func _ready():
 	_label.text = _text
+	
 
 func _on_texture_button_pressed():
 	if _id != -1:
-		emit_signal("asset_selected", _id)
+		emit_signal("asset_selected", self)
+
+func _spawn_machine() -> void:
+	Server.machine
+
+func get_actions() -> Array[IActionsContext.ActionContext]:
+	var spawn_action := IActionsContext.ActionContext.new()
+	spawn_action.name = "s"
+	spawn_action.function = func(): _game.spawn_machine(_id)
+	return [spawn_action]
+
+
+func set_game_ref(p_game: Game) -> void:
+	_game = p_game

@@ -119,7 +119,7 @@ static func position_to_coordinates(v: Vector3) -> Vector2:
 
 # https://math.stackexchange.com/questions/1304169/distance-between-two-points-on-a-sphere
 static func distance_on_sphere(sphere_radius: float, p1: Vector3, p2: Vector3) -> float:
-	return sphere_radius * acos(p1.normalized().dot(p2.normalized()) / (sphere_radius * sphere_radius))
+	return sphere_radius * acos(p1.dot(p2) / (sphere_radius * sphere_radius))
 
 static func coordinate_to_unit_vector(coord: Vector2) -> Vector3:
 	var v := Vector3.FORWARD

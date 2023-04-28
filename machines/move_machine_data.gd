@@ -13,5 +13,5 @@ func get_coordinates(p: Vector3) -> Vector2:
 	return Util.position_to_coordinates(p)
 	
 func get_travel_time() -> float:
-	var distance := Util.distance_on_sphere(planet_radius, from, to)
+	var distance := Util.distance_on_sphere(planet_radius, from.normalized() * planet_radius, to.normalized() * planet_radius)
 	return distance / machine_speed
