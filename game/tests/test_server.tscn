@@ -1,0 +1,27 @@
+[gd_scene load_steps=2 format=3 uid="uid://d3cdpfilx0ewq"]
+
+[ext_resource type="Script" path="res://tests/test_server.gd" id="1_rnpb1"]
+
+[node name="test_server" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+script = ExtResource("1_rnpb1")
+
+[node name="login" type="Button" parent="."]
+layout_mode = 0
+offset_left = 231.0
+offset_top = 94.0
+offset_right = 460.0
+offset_bottom = 271.0
+text = "login"
+
+[node name="send_request" type="Button" parent="."]
+layout_mode = 0
+offset_left = 774.0
+offset_top = 123.0
+offset_right = 997.0
+offset_bottom = 261.0
+text = "request"
+
+[connection signal="pressed" from="login" to="." method="_on_login_pressed"]
+[connection signal="pressed" from="send_request" to="." method="_on_send_request_pressed"]

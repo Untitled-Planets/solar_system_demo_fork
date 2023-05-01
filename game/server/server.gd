@@ -7,6 +7,8 @@ signal task_cancelled(machine_path_id: NodePath, task_id: String)
 
 signal planet_resource_collected(machine_id: NodePath, planet_id: int, amount)
 
+var _http := HTTPServer.new()
+
 var inventory := {}
 var _planets := {}
 
@@ -67,6 +69,9 @@ func sign_in():
 
 func _ready():
 	pass # Replace with function body.
+
+func _process(delta):
+	_http.update()
 
 func server_miner_spawn(controller_id, miner_id, planet_id, spawn_location) -> void:
 	print("Checking spawn condition...")
@@ -145,3 +150,9 @@ func get_resource_amount(planet_id: int, location_id: int) -> int:
 		return _planets[planet_id].deposits[location_id].amount
 	else:
 		return 0.0
+
+func login() -> void:
+	_http.login("", "")
+
+func send_request() -> void:
+	_http.make_request(HTTPClient.METHOD_GET, "/", [], {})
