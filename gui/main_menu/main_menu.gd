@@ -1,13 +1,16 @@
 extends Control
 
 
-signal start_requested
+signal start_requested(username: String)
 signal settings_requested
 signal exit_requested
 
+@onready var _username: LineEdit = $VBoxContainer/PanelContainer/VBoxContainer/HBoxContainer/VBoxContainer/HBoxContainer/username
+
 
 func _on_Start_pressed():
-	start_requested.emit()
+	if _username.text.length() != 0:
+		start_requested.emit(_username.text)
 
 
 func _on_Settings_pressed():

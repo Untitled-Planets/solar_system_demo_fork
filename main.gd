@@ -11,9 +11,11 @@ var _game
 
 func _ready():
 	_settings_ui.set_settings(_settings)
+	Server.login_requested.connect(_on_login_requested)
 
 
-func _on_MainMenu_start_requested():
+func _on_login_requested(p_data: Dictionary) -> void:
+#	print("data", p_data)
 	assert(_game == null)
 	_main_menu.hide()
 	var game_scene : PackedScene = load("res://game.tscn")
@@ -23,6 +25,8 @@ func _on_MainMenu_start_requested():
 	_game.get_solar_system().set_settings_ui(_settings_ui)
 	_game.get_solar_system().exit_to_menu_requested.connect(_on_game_exit_to_menu_requested)
 
+func _on_MainMenu_start_requested(p_username):
+	Server.join(p_username)
 
 func _on_MainMenu_settings_requested():
 	_settings_ui.show()

@@ -6,6 +6,9 @@ signal task_requested(object_id: NodePath, task_id: String, data)
 signal task_cancelled(machine_path_id: NodePath, task_id: String)
 
 signal planet_resource_collected(machine_id: NodePath, planet_id: int, amount)
+signal login_requested(p_data: Dictionary)
+
+@onready var _request = $request
 
 var inventory := {}
 var _planets := {}
@@ -145,3 +148,7 @@ func get_resource_amount(planet_id: int, location_id: int) -> int:
 		return _planets[planet_id].deposits[location_id].amount
 	else:
 		return 0.0
+
+
+func join(p_username):
+	_request.join(p_username)

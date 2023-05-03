@@ -1,0 +1,14 @@
+[gd_scene load_steps=3 format=3 uid="uid://baayeb0s1l23r"]
+
+[ext_resource type="Script" path="res://server/server.gd" id="1_17jlm"]
+[ext_resource type="Script" path="res://server/request.gd" id="2_k6hmx"]
+
+[node name="server" type="Node"]
+script = ExtResource("1_17jlm")
+
+[node name="HTTPRequest" type="HTTPRequest" parent="."]
+
+[node name="request" type="Node" parent="."]
+script = ExtResource("2_k6hmx")
+
+[connection signal="request_completed" from="HTTPRequest" to="request" method="_on_http_request_request_completed"]
