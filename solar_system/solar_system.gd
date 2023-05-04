@@ -55,7 +55,26 @@ func _ready():
 	add_to_group("planet_mode") # TODO. Do this from editor
 	set_physics_process(false)
 	_hud.hide()
+	Server.solar_system_requested.connect(_on_solar_system_data_requested)
+	Server.get_solar_system_data()
+
+
+func _on_solar_system_data_requested(p_data: Dictionary):
+	_settings.world_scale_x10 = p_data["world_scale_x10"]
+	_settings.shadows_enabled = p_data["shadows_enabled"]
+	_settings.lens_flares_enabled = p_data["lens_flares_enabled"]
+	_settings.glow_enabled = p_data["glow_enabled"]
+	_settings.detail_rendering_mode = p_data["detail_rendering_mode"]
+	_settings.main_volume_linear = p_data["main_volume_linear"]
+	_settings.debug_text = p_data["debug_text"]
+	_settings.show_octree_nodes = p_data["show_octree_nodes"]
+	_settings.show_mesh_updates = p_data["show_mesh_updates"]
+	_settings.show_edited_data_blocks = p_data["show_edited_data_blocks"]
+	_settings.wireframe = p_data["wireframe"]
 	
+	config_solar_system()
+
+func config_solar_system():
 	_bodies = SolarSystemSetup.create_solar_system_data(_settings)
 	
 	var progress_info = LoadingProgress.new()

@@ -8,6 +8,8 @@ signal task_cancelled(machine_path_id: NodePath, task_id: String)
 signal planet_resource_collected(machine_id: NodePath, planet_id: int, amount)
 signal login_requested(p_data: Dictionary)
 
+signal solar_system_requested(p_data: Dictionary)
+
 @onready var _request = $request
 
 var inventory := {}
@@ -57,8 +59,8 @@ func miner_get_status(miner_id):
 
 func miner_spawn(controller_id, miner_id, planet_id, spawn_location: SpawnLocation):
 #	_call_event("server_miner_spawn", [controller_id, miner_id, planet_id])
-	await get_tree().process_frame
-	server_miner_spawn(controller_id, miner_id, planet_id, spawn_location)
+#	await get_tree().process_frame
+	_request.spawn_machine(controller_id, miner_id, planet_id, spawn_location)
 	return OK
 
 func miner_attach(miner_id, planet_id, pos):
@@ -108,7 +110,8 @@ func client_machine_move(miner_node_path, task_id: String, p_data: MoveMachineDa
 	task_requested.emit(miner_node_path, task_id, p_data)
 
 func machine_move(miner_node_path, task_id: String, move_data: MoveMachineData):
-	server_machine_move(miner_node_path, task_id, move_data)
+#	server_machine_move(miner_node_path, task_id, move_data)
+	_request.move_machine(miner_node_path, task_id, move_data)
 
 
 func machine_collect_resource(machine_id: NodePath, planet_id: int, location_id: int, _mine_speed: int = 10) -> void:
@@ -152,3 +155,6 @@ func get_resource_amount(planet_id: int, location_id: int) -> int:
 
 func join(p_username):
 	_request.join(p_username)
+
+func get_solar_system_data():
+	_request.get_solar_system()

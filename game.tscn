@@ -152,9 +152,11 @@ max_value = 1.0
 visible = false
 
 [node name="VoxelDebugInfo" type="Node" parent="SolarSystem"]
+process_mode = 4
 script = ExtResource("12_ysp6t")
 
 [node name="AmbientSounds" type="Node" parent="SolarSystem"]
+process_mode = 4
 script = ExtResource("13_esoyx")
 
 [node name="DeepSpace" type="AudioStreamPlayer" parent="SolarSystem/AmbientSounds"]

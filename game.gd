@@ -109,7 +109,7 @@ func _on_task_rquested(object_id: NodePath, task_id: String, p_data) -> void:
 # Helper functions
 ##############################
 func spawn_machine(machine_id: int) -> void:
-	Server.miner_spawn(0, machine_id, _solar_system.get_reference_stellar_body_id(), null)
+	Server.miner_spawn(0, machine_id, _solar_system.get_reference_stellar_body_id(), SpawnLocation.new())
 	
 func machine_move(machine_path_id: NodePath, from, to) -> void:
 	var machine: MachineCharacter = get_node(machine_path_id)
