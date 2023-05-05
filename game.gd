@@ -29,7 +29,7 @@ func _process_input() -> void:
 			machine_move(_machine_selected.get_path(), _machine_selected.position, to)
 			pass
 		elif _is_mine_request(w):
-			machine_mine(_machine_selected.get_path(), w.location_id)
+			machine_mine(_machine_selected.get_path(), w.location_id, Util.position_to_unit_coordinates(w.global_position))
 		else:
 			if w:
 				_on_waypoint_hud_waypoint_selected(w)
@@ -121,9 +121,10 @@ func machine_move(machine_path_id: NodePath, from, to) -> void:
 	Server.machine_move(machine_path_id, "move", data)
 	_machine_selected = null
 
-func machine_mine(machine_path_id: NodePath, to) -> void:
+# TODO remove position. This should be gathered from server.
+func machine_mine(machine_path_id: NodePath, to, p_position) -> void:
 	var data := Miner.MineTaskData.new()
-#	data.location = Util.position_to_unit_coordinates(waypoint.position)
+	data.location = p_position
 	data.planet_id = _solar_system.get_reference_stellar_body_id()
 	data.location_id = to
 	Server.machine_mine(_machine_selected.get_path(), "mine", data)

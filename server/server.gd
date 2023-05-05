@@ -95,7 +95,7 @@ func generate_planet_path(from: Vector3, to: Vector3, amount: int) -> Array[Vect
 	return points
 
 func machine_mine(p_machine_id, task_id: String, p_data) -> void:
-	server_machine_mine(p_machine_id, task_id, p_data)
+	_request.machine_mine(p_machine_id, task_id, p_data)
 
 func server_machine_mine(p_machine_id, task_id: String, p_data) -> void:
 	client_machine_mine(p_machine_id, task_id, p_data)
@@ -125,7 +125,7 @@ func client_machine_collect_resource(machine_id: NodePath, planet_id: int, locat
 	planet_resource_collected.emit(machine_id, planet_id, amount)
 
 func cancel_task(machine_path_id: NodePath, task_name: String) -> void:
-	server_cancel_task(machine_path_id, task_name)
+	_request.cancel_task(machine_path_id, task_name)
 
 func server_cancel_task(machine_path_id: NodePath, task_name: String) -> void:
 	client_cancel_task(machine_path_id, task_name)

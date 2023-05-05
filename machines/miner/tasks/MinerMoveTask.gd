@@ -22,12 +22,8 @@ func start() -> void:
 	if not _task_cancelled:
 		if not _movement.is_moving():
 			_movement.move_request(_data)
-#	_target_location = Util.unit_coordinates_to_unit_vector(_data.location) * _miner.get_planet().radius
-	
 
 func _update_task(delta: float) -> void:
-#	var distance := Util.distance_on_sphere(_target_location.length(), _target_location, _miner.position)
-#	if distance > 10:
 	if _is_on_place:
 		_status = Finished.SUCCESS
 
@@ -41,7 +37,6 @@ func _on_move_finished(request_id: int) -> void:
 
 
 func _on_resource_collected(machine_id: NodePath, planet_id, amount: int) -> void:
-#	print("Collected amount: ", amount)
 	if _miner.get_path() == machine_id:
 		if amount == 0:
 			print("Mining completed...")
@@ -50,4 +45,5 @@ func _on_resource_collected(machine_id: NodePath, planet_id, amount: int) -> voi
 
 func stop() -> void:
 	super.stop()
+	_movement.move_request_finished.disconnect(_on_move_finished)
 	_movement.cancel_move_request(null)
