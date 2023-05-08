@@ -12,15 +12,11 @@ func join(p_username: String):
 func get_solar_system():
 	_http.request("http://127.0.0.1:5000/global_settings", ["Content-Type: application/json"], HTTPClient.METHOD_GET)
 
-func spawn_machine(controller_id, miner_id, planet_id, spawn_location: SpawnLocation):
+func spawn_machine(controller_id, planet_id, miner_id):
 	var data := {
 		owner_id = controller_id,
 		machine_id = miner_id,
-		planet_id = planet_id,
-		spawn_location = {
-			x = spawn_location.location.x,
-			y = spawn_location.location.y
-		}
+		planet_id = planet_id
 	}
 	_http.request("http://127.0.0.1:5000/spawn_machine", ["Content-Type: application/json"], HTTPClient.METHOD_POST, JSON.stringify(data))
 
@@ -86,8 +82,7 @@ func _on_http_request_request_completed(result, response_code, headers, body: Pa
 		elif data.has("spawn_machine"):
 #			func client_miner_spawn(controller_id, miner_id, planet_id, spawn_location) -> void:
 			data = data.spawn_machine
-			var sl := SpawnLocation.new()
-			Server.client_miner_spawn(data.owner_id, data.machine_id, data.planet_id, sl)
+			Server.client_miner_spawn(data.owner_id, data.planet_id, data.machine_asset_id, data.machine_instance_id)
 		elif data.has("move_machine"):
 			data = data.move_machine
 #			var path = Server.get_tree().root.get_node(data.move_data.machine_path)

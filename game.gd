@@ -11,6 +11,7 @@ extends Node3D
 @onready var _waypoint_hud: WaypointHUD = $SolarSystem/HUD/WaypointHUD
 
 var _machine_selected: MachineCharacter = null
+var _machines := {}
 
 func _ready():
 	Server.add_machine_requested.connect(_on_add_machine)
@@ -78,10 +79,12 @@ func _update_info(p_obj) -> void:
 func _on_mineral_extracted(id, amount) -> void:
 	_warehouse.add_item(Warehouse.ItemData.new(id, amount))
 
-func _on_add_machine(_player_id: int, _machine_id: int, _planet_id: int, _location: SpawnLocation) -> void:
+func _on_add_machine(_player_id: int, _planet_id: int, machine_asset_id: int, machine_instance_id: int) -> void:
+	
+	var asset: Node3D = _asset_inventory.generate_asset(machine_asset_id)
+	_machines[machine_instance_id]  = asset
 	var planet: StellarBody = _solar_system.get_reference_stellar_body()
 	var spawn_point := planet.get_spawn_point()
-	var asset: Node3D = _asset_inventory.generate_asset(0)
 	var miner: Miner = asset as Miner
 	if miner:
 		planet.node.add_child(miner)
@@ -109,7 +112,7 @@ func _on_task_rquested(object_id: NodePath, task_id: String, p_data) -> void:
 # Helper functions
 ##############################
 func spawn_machine(machine_id: int) -> void:
-	Server.miner_spawn(0, machine_id, _solar_system.get_reference_stellar_body_id(), SpawnLocation.new())
+	Server.miner_spawn(0, _solar_system.get_reference_stellar_body_id(), machine_id)
 	
 func machine_move(machine_path_id: NodePath, from, to) -> void:
 	var machine: MachineCharacter = get_node(machine_path_id)

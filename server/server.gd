@@ -1,7 +1,7 @@
 extends Node
 
 #signal machine_move_requested(node_path, move_data)
-signal add_machine_requested(controller_id, machine_id, planet_id, spawn_location)
+signal add_machine_requested(controller_id, planet_id, machine_asset_id, machine_instance_id)
 signal task_requested(object_id: NodePath, task_id: String, data)
 signal task_cancelled(machine_path_id: NodePath, task_id: String)
 
@@ -57,10 +57,8 @@ func inventory_refresh():
 func miner_get_status(miner_id):
 	return inventory.miners[miner_id]
 
-func miner_spawn(controller_id, miner_id, planet_id, spawn_location: SpawnLocation):
-#	_call_event("server_miner_spawn", [controller_id, miner_id, planet_id])
-#	await get_tree().process_frame
-	_request.spawn_machine(controller_id, miner_id, planet_id, spawn_location)
+func miner_spawn(controller_id, planet_id, miner_id):
+	_request.spawn_machine(controller_id, planet_id, miner_id)
 	return OK
 
 func miner_attach(miner_id, planet_id, pos):
@@ -73,14 +71,14 @@ func sign_in():
 func _ready():
 	pass # Replace with function body.
 
-func server_miner_spawn(controller_id, miner_id, planet_id, spawn_location) -> void:
+func server_miner_spawn(controller_id, miner_asset_id, machine_instance_id, planet_id, spawn_location) -> void:
 	print("Checking spawn condition...")
 	await get_tree().create_timer(0.1).timeout
 	print("Success. Send broadcast that a player wants to spawn")
-	client_miner_spawn(controller_id, miner_id, planet_id, spawn_location)
+	client_miner_spawn(controller_id, miner_asset_id, machine_instance_id, planet_id)
 
-func client_miner_spawn(controller_id, miner_id, planet_id, spawn_location) -> void:
-	add_machine_requested.emit(controller_id, miner_id, planet_id, spawn_location)
+func client_miner_spawn(controller_id, planet_id, miner_asset_id, machine_instance_id) -> void:
+	add_machine_requested.emit(controller_id, planet_id, miner_asset_id, machine_instance_id)
 
 
 func generate_planet_path(from: Vector3, to: Vector3, amount: int) -> Array[Vector3]:

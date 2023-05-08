@@ -273,7 +273,7 @@ func _spawn_miner() -> void:
 	var sl := SpawnLocation.new()
 	sl.location = Vector2()
 	sl.radius = 0.0
-	Server.miner_spawn(get_player_id(), 0, 0, sl)
+	Server.miner_spawn(get_player_id(), 0, 0)
 
 
 func _get_solar_system() -> SolarSystem:
