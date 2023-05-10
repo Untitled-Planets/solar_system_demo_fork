@@ -45,8 +45,6 @@ func _draw():
 	if camera == null:
 		return
 	
-#	var body = _solar_system.get_reference_stellar_body()
-#	var font = get_theme_font("font")
 	var mouse_pos = get_viewport().get_mouse_position()
 	var mouse_collide = false
 	

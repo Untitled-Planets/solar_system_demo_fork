@@ -12,11 +12,14 @@ extends Node3D
 
 var _machine_selected: MachineCharacter = null
 var _machines := {}
+var _username := ""
 
 func _ready():
 	Server.add_machine_requested.connect(_on_add_machine)
 	Server.task_requested.connect(_on_task_rquested)
 	Server.task_cancelled.connect(_on_task_cancelled)
+	Server.planet_status_requested.connect(_on_planet_status_requested)
+	_solar_system.reference_body_changed.connect(_on_reference_body_changed)
 	
 
 func _process(delta):
@@ -27,7 +30,7 @@ func _process_input() -> void:
 	if Input.is_action_just_pressed("select_object"):
 		if _is_move_request(w):
 			var to := get_click_position()
-			machine_move(_machine_selected.get_path(), _machine_selected.position, to)
+			machine_move(_machine_selected.get_id(), _machine_selected.position, to)
 			pass
 		elif _is_mine_request(w):
 			machine_mine(_machine_selected.get_path(), w.location_id, Util.position_to_unit_coordinates(w.global_position))
@@ -79,14 +82,22 @@ func _update_info(p_obj) -> void:
 func _on_mineral_extracted(id, amount) -> void:
 	_warehouse.add_item(Warehouse.ItemData.new(id, amount))
 
-func _on_add_machine(_player_id: int, _planet_id: int, machine_asset_id: int, machine_instance_id: int) -> void:
-	
+func _on_reference_body_changed(body_info):
+	get_planet_status()
+
+func _on_planet_status_requested(solar_system_id, planet_id, data):
+	var machines  = data.machines
+	for md in machines:
+		_on_add_machine(_username, planet_id, md.asset_id, md.id)
+
+func _on_add_machine(_player_id: String, _planet_id: int, machine_asset_id: int, machine_instance_id: int) -> void:
 	var asset: Node3D = _asset_inventory.generate_asset(machine_asset_id)
 	_machines[machine_instance_id]  = asset
 	var planet: StellarBody = _solar_system.get_reference_stellar_body()
 	var spawn_point := planet.get_spawn_point()
 	var miner: Miner = asset as Miner
 	if miner:
+		miner.set_id(machine_instance_id)
 		planet.node.add_child(miner)
 		miner.set_planet(planet)
 		miner.global_position = spawn_point
@@ -102,9 +113,12 @@ func _on_task_cancelled(machine_path_id: NodePath, task_id: String) -> void:
 	if w:
 		w.cancel_task(task_id)
 
-func _on_task_rquested(object_id: NodePath, task_id: String, p_data) -> void:
+func _on_task_rquested(machine_id: int, task_id: String, p_data) -> void:
 #	print("Requesting task: ", task_id)
-	var worker: IWorker = get_node(object_id)
+	if not _machines.has(machine_id):
+		return
+	
+	var worker: IWorker = _machines[machine_id]
 	if worker.do_task(task_id, p_data) != OK:
 		push_error("Cannot execute task {}".format(task_id))
 
@@ -112,16 +126,18 @@ func _on_task_rquested(object_id: NodePath, task_id: String, p_data) -> void:
 # Helper functions
 ##############################
 func spawn_machine(machine_id: int) -> void:
-	Server.miner_spawn(0, _solar_system.get_reference_stellar_body_id(), machine_id)
+	Server.miner_spawn(_username, _solar_system.get_reference_stellar_body_id(), machine_id)
 	
-func machine_move(machine_path_id: NodePath, from, to) -> void:
-	var machine: MachineCharacter = get_node(machine_path_id)
+func machine_move(machine_id: int, from, to) -> void:
+	if not _machines.has(machine_id):
+		return
+	var machine: MachineCharacter = _machines[machine_id]
 	var data := MoveMachineData.new()
 	data.machine_speed = machine.get_max_speed()
 	data.from = from
 	data.to = to
 	data.planet_radius = _solar_system.get_reference_stellar_body().radius
-	Server.machine_move(machine_path_id, "move", data)
+	Server.machine_move(0, _solar_system.get_reference_stellar_body_id(), _username, machine_id, "move", data)
 	_machine_selected = null
 
 # TODO remove position. This should be gathered from server.
@@ -137,6 +153,9 @@ func machine_mine(machine_path_id: NodePath, to, p_position) -> void:
 func cancel_task(machine_path_id: NodePath, task_id: String) -> void:
 	Server.cancel_task(machine_path_id, task_id)
 
+
+func get_planet_status() -> void:
+	Server.get_planet_status(1, 0, _solar_system.get_reference_stellar_body_id())
 ##############################
 # End Helper functions
 ##############################

@@ -14,20 +14,24 @@ func get_solar_system():
 
 func spawn_machine(controller_id, planet_id, miner_id):
 	var data := {
+		solar_system_id = 0,
 		owner_id = controller_id,
 		machine_id = miner_id,
 		planet_id = planet_id
 	}
 	_http.request("http://127.0.0.1:5000/spawn_machine", ["Content-Type: application/json"], HTTPClient.METHOD_POST, JSON.stringify(data))
 
-func move_machine(miner_node_path: NodePath, task_id: String, move_data: MoveMachineData):
-	var from := move_data.from
-	var to := move_data.to
+func move_machine(p_solar_system_id, p_planet_id, p_requester_id, p_machine_id: int, task_id: String, task_data: MoveMachineData):
+	var from := task_data.from
+	var to := task_data.to
 	var data := {
-		owner_id = 1,
+		requester_id = p_requester_id,
 		task_id = task_id,
-		move_data = {
-			machine_path = miner_node_path.get_concatenated_names(),
+		solar_system_id = p_solar_system_id,
+		planet_id = p_planet_id,
+		machine_id = p_machine_id,
+		task_data = {
+#			machine_path = miner_node_path.get_concatenated_names(),
 			from = {
 				x = from.x,
 				y = from.y,
@@ -38,8 +42,8 @@ func move_machine(miner_node_path: NodePath, task_id: String, move_data: MoveMac
 				y = to.y,
 				z = to.z
 			},
-			planet_radius = move_data.planet_radius,
-			machine_speed = move_data.machine_speed
+			planet_radius = task_data.planet_radius,
+			machine_speed = task_data.machine_speed
 		}
 	}
 	_http.request("http://127.0.0.1:5000/move_machine", ["Content-Type: application/json"], HTTPClient.METHOD_POST, JSON.stringify(data))
@@ -50,6 +54,12 @@ func cancel_task(machine_path_id: NodePath, task_name: String) -> void:
 		task_id = task_name
 	}
 	_http.request("http://127.0.0.1:5000/cancel_task", ["Content-Type: application/json"], HTTPClient.METHOD_POST, JSON.stringify(data))
+
+
+func get_planet_status(user_id, p_solar_system_id: int, p_planet_id: int):
+	var url := "http://127.0.0.1:5000/get_planet_status/{0}/{1}".format([p_solar_system_id, p_planet_id])
+	_http.request(url, ["Content-Type: application/json"], HTTPClient.METHOD_GET)
+	pass
 
 #class MineTaskData:
 #	var location: Vector2
@@ -85,14 +95,12 @@ func _on_http_request_request_completed(result, response_code, headers, body: Pa
 			Server.client_miner_spawn(data.owner_id, data.planet_id, data.machine_asset_id, data.machine_instance_id)
 		elif data.has("move_machine"):
 			data = data.move_machine
-#			var path = Server.get_tree().root.get_node(data.move_data.machine_path)
-			var path = data.move_data.machine_path
 			var md := MoveMachineData.new()
-			md.from = Vector3(data.move_data.from.x, data.move_data.from.y, data.move_data.from.z)
-			md.to = Vector3(data.move_data.to.x, data.move_data.to.y, data.move_data.to.z)
-			md.machine_speed = data.move_data.machine_speed
-			md.planet_radius = data.move_data.planet_radius
-			Server.client_machine_move("/" + path, data.task_id, md)
+			md.from = Vector3(data.task_data.from.x, data.task_data.from.y, data.task_data.from.z)
+			md.to = Vector3(data.task_data.to.x, data.task_data.to.y, data.task_data.to.z)
+			md.machine_speed = data.task_data.machine_speed
+			md.planet_radius = data.task_data.planet_radius
+			Server.client_machine_move(data.machine_id, data.task_id, md)
 		elif data.has("cancel_task"):
 			data = data.cancel_task
 			Server.client_cancel_task("/" + data.machine_path, data.task_id)
@@ -103,3 +111,5 @@ func _on_http_request_request_completed(result, response_code, headers, body: Pa
 			md.planet_id = data.mine_data.planet_id
 			md.location_id = data.mine_data.location_id
 			Server.client_machine_mine("/" + data.machine_id, data.task_id, md)
+		elif data.has("planet_status"):
+			Server.planet_status_requested.emit(data.solar_system_id, data.planet_id, data.planet_status)

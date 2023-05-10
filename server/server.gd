@@ -9,6 +9,7 @@ signal planet_resource_collected(machine_id: NodePath, planet_id: int, amount)
 signal login_requested(p_data: Dictionary)
 
 signal solar_system_requested(p_data: Dictionary)
+signal planet_status_requested(solar_system_id, planet_id, data)
 
 @onready var _request = $request
 
@@ -104,12 +105,12 @@ func client_machine_mine(p_machine_id, task_id: String, p_data) -> void:
 func server_machine_move(miner_node_path, task_id: String, move_data: MoveMachineData):
 	client_machine_move(miner_node_path, task_id, move_data)
 
-func client_machine_move(miner_node_path, task_id: String, p_data: MoveMachineData):
-	task_requested.emit(miner_node_path, task_id, p_data)
+func client_machine_move(machine_id: int, task_id: String, p_data: MoveMachineData):
+	task_requested.emit(machine_id, task_id, p_data)
 
-func machine_move(miner_node_path, task_id: String, move_data: MoveMachineData):
+func machine_move(p_solar_system_id, p_planet_id, p_requester_id, machine_id, task_id: String, move_data: MoveMachineData):
 #	server_machine_move(miner_node_path, task_id, move_data)
-	_request.move_machine(miner_node_path, task_id, move_data)
+	_request.move_machine(p_solar_system_id, p_planet_id, p_requester_id, machine_id, task_id, move_data)
 
 
 func machine_collect_resource(machine_id: NodePath, planet_id: int, location_id: int, _mine_speed: int = 10) -> void:
@@ -156,3 +157,6 @@ func join(p_username):
 
 func get_solar_system_data():
 	_request.get_solar_system()
+
+func get_planet_status(user_id, p_solar_system_id, p_planet_id) -> void:
+	_request.get_planet_status(user_id, p_solar_system_id, p_planet_id)

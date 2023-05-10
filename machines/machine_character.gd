@@ -17,6 +17,7 @@ enum State {
 var _planet : StellarBody
 var _waypoint: Waypoint
 var _current_task: ITask = null
+var _id: int = -1
 
 
 func go_to(location: Vector3) -> void:
@@ -108,6 +109,11 @@ func cancel_task(task_id: String) -> void:
 # IWorker end
 ###########################
 
+func get_id() -> int:
+	return _id
+
+func set_id(p_value) -> void:
+	_id = p_value
 
 func get_pickable_info() -> PickableInfo:
 	return _info

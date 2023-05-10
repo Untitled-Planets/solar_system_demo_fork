@@ -1,12 +1,9 @@
 class_name SolarSystem
 extends Node3D
 
-#const StellarBody = preload("./stellar_body.gd")
+
 const SolarSystemSetup = preload("./solar_system_setup.gd")
 const Settings = preload("res://settings.gd")
-
-#const CameraScene = preload("../camera/camera.tscn")
-#const ShipScene = preload("../ship/ship.tscn")
 
 const BODY_REFERENCE_ENTRY_RADIUS_FACTOR = 3.0
 const BODY_REFERENCE_EXIT_RADIUS_FACTOR = 3.1 # Must be higher for hysteresis
@@ -16,6 +13,7 @@ const BODY_REFERENCE_EXIT_RADIUS_FACTOR = 3.1 # Must be higher for hysteresis
 
 class ReferenceChangeInfo:
 	var inverse_transform : Transform3D
+	var old_id: int
 
 class LoadingProgress:
 	var progress := 0.0
@@ -341,6 +339,7 @@ func set_reference_body(ref_id: int):
 		sb.get_parent().remove_child(sb)
 	previous_body.static_bodies_are_in_tree = false
 	
+	var old_id = _reference_body_id
 	_reference_body_id = ref_id
 	var body = _bodies[_reference_body_id]
 	print("Setting reference to ", ref_id, " (", body.name, ")")
@@ -348,6 +347,7 @@ func set_reference_body(ref_id: int):
 	body.node.transform = Transform3D()
 	
 	var info := ReferenceChangeInfo.new()
+	info.old_id = old_id
 	# TODO Also have relative velocity of the body,
 	# so the ship can integrate it so it looks seamless
 	info.inverse_transform = trans.affine_inverse() * body.node.transform

@@ -7,6 +7,7 @@ const Settings = preload("res://settings.gd")
 
 var _settings = Settings.new()
 var _game
+var _username := ""
 
 
 func _ready():
@@ -15,17 +16,18 @@ func _ready():
 
 
 func _on_login_requested(p_data: Dictionary) -> void:
-#	print("data", p_data)
 	assert(_game == null)
 	_main_menu.hide()
 	var game_scene : PackedScene = load("res://game.tscn")
 	_game = game_scene.instantiate()
+	_game._username = _username
 	add_child(_game)
 	_game.get_solar_system().set_settings(_settings)
 	_game.get_solar_system().set_settings_ui(_settings_ui)
 	_game.get_solar_system().exit_to_menu_requested.connect(_on_game_exit_to_menu_requested)
 
 func _on_MainMenu_start_requested(p_username):
+	_username = p_username
 	Server.join(p_username)
 
 func _on_MainMenu_settings_requested():
