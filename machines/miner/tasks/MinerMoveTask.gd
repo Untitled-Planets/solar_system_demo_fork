@@ -18,7 +18,12 @@ func start() -> void:
 	
 	_movement.move_request_finished.connect(_on_move_finished)
 	_is_on_place = false
-	_data = data
+	var d := MoveMachineData.new()
+	d.from = Vector3(data.from.x, data.from.y, data.from.z)
+	d.to = Vector3(data.to.x, data.to.y, data.to.z)
+	d.planet_radius = data.planet_radius
+	d.machine_speed = data.speed
+	_data = d
 	if not _task_cancelled:
 		if not _movement.is_moving():
 			_movement.move_request(_data)

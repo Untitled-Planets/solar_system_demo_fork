@@ -18,12 +18,6 @@ var is_enabled: bool:
 	get:
 		return _is_enabled
 
-#@export var planet_radius: float:
-#	get:
-#		return _planet_radius
-#	set(value):
-#		set_planet_radius(value)
-
 var _planet
 var camera
 var planet: StellarBody:

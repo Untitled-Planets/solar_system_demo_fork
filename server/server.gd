@@ -10,31 +10,23 @@ signal login_requested(p_data: Dictionary)
 
 signal solar_system_requested(p_data: Dictionary)
 signal planet_status_requested(solar_system_id, planet_id, data)
+signal execute_task_requested(solar_system_id, planet_id, machine_id, requester_id, task_data)
 
 @onready var _request = $request
 
 var inventory := {}
 var _planets := {}
 
-var _planet_id := "dummy"
-
-func generate_deposits(p_planet_ids: Array[int]) -> void:
-	for id in p_planet_ids:
-		_generate_deposits_for_planet(id)
-
-# in this moment generate only 3 deposits
-func _generate_deposits_for_planet(p_planet_id: int) -> void:
+func update_planet_deposits(solar_system_id: int, p_planet_id: int, p_points: Array):
 	if not _planets.has(p_planet_id):
-		var deposits := []
-		for i in 3:
-			var uc := Util.generate_unit_coordinates()
-			deposits.append({
-				pos = Vector2(uc.x * 90.0, uc.y * 360),
-				amount = randi() % 1000
-			})
-		_planets[p_planet_id] = {
-			"deposits": deposits
-		}
+		_planets[p_planet_id] = {}
+	var dps := []
+	for p in p_points:
+		dps.append({
+			pos = Vector2(p.location.x * 90.0, p.location.y * 360.0),
+			amount = p.amount
+		})
+	_planets[p_planet_id]["deposits"] = dps
 
 
 func _call_event(p_name, params):
@@ -46,9 +38,7 @@ func planet_travel(planet_id):
 func planet_info_refresh():
 	_call_event("server_planet_info_refreshed", 0)
 
-#func planet_get_deposits():
-#	return _planets[_planet_id].deposits
-#
+
 func planet_get_deposits(planet_id: int) -> Array:
 	return _planets[planet_id].deposits
 
@@ -58,8 +48,8 @@ func inventory_refresh():
 func miner_get_status(miner_id):
 	return inventory.miners[miner_id]
 
-func miner_spawn(controller_id, planet_id, miner_id):
-	_request.spawn_machine(controller_id, planet_id, miner_id)
+func miner_spawn(solar_system_id, planet_id, requester_id: String, machine_asset_id: int):
+	_request.spawn_machine(solar_system_id, planet_id, requester_id, machine_asset_id)
 	return OK
 
 func miner_attach(miner_id, planet_id, pos):
@@ -73,9 +63,7 @@ func _ready():
 	pass # Replace with function body.
 
 func server_miner_spawn(controller_id, miner_asset_id, machine_instance_id, planet_id, spawn_location) -> void:
-	print("Checking spawn condition...")
 	await get_tree().create_timer(0.1).timeout
-	print("Success. Send broadcast that a player wants to spawn")
 	client_miner_spawn(controller_id, miner_asset_id, machine_instance_id, planet_id)
 
 func client_miner_spawn(controller_id, planet_id, miner_asset_id, machine_instance_id) -> void:
@@ -108,9 +96,6 @@ func server_machine_move(miner_node_path, task_id: String, move_data: MoveMachin
 func client_machine_move(machine_id: int, task_id: String, p_data: MoveMachineData):
 	task_requested.emit(machine_id, task_id, p_data)
 
-func machine_move(p_solar_system_id, p_planet_id, p_requester_id, machine_id, task_id: String, move_data: MoveMachineData):
-#	server_machine_move(miner_node_path, task_id, move_data)
-	_request.move_machine(p_solar_system_id, p_planet_id, p_requester_id, machine_id, task_id, move_data)
 
 
 func machine_collect_resource(machine_id: NodePath, planet_id: int, location_id: int, _mine_speed: int = 10) -> void:
@@ -132,6 +117,7 @@ func server_cancel_task(machine_path_id: NodePath, task_name: String) -> void:
 func client_cancel_task(machine_path_id: NodePath, task_name: String) -> void:
 	task_cancelled.emit(machine_path_id, task_name)
 
+
 func _collect_resource(planet_id: int, location_id: int, _mine_speed: int = 10) -> int:
 	var location = _planets[planet_id].deposits[location_id]
 	var amount: int = _mine_speed * 0.5
@@ -150,6 +136,29 @@ func get_resource_amount(planet_id: int, location_id: int) -> int:
 		return _planets[planet_id].deposits[location_id].amount
 	else:
 		return 0.0
+
+
+func machine_move(p_solar_system_id, p_planet_id, p_machine_id: int, p_requester_id, task_id: String, move_data: MoveMachineData):
+	var data := {
+		task_name = task_id,
+		from = {
+			x = move_data.from.x,
+			y = move_data.from.y,
+			z = move_data.from.z
+		},
+		to = {
+			x = move_data.to.x,
+			y = move_data.to.y,
+			z = move_data.to.z
+		},
+		speed = move_data.machine_speed,
+		planet_radius = move_data.planet_radius
+	}
+	_execute_task(p_solar_system_id, p_planet_id, p_machine_id, p_requester_id, data)
+#	_request.move_machine(p_solar_system_id, p_planet_id, p_requester_id, machine_id, task_id, move_data)
+
+func _execute_task(p_solar_system_id: int, planet_id: int, p_machine_id:  int, requester_id: String, task_data: Dictionary):
+	_request.execute_task(p_solar_system_id, planet_id, p_machine_id, requester_id, task_data)
 
 
 func join(p_username):

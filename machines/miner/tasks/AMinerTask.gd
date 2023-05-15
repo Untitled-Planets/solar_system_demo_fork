@@ -8,6 +8,7 @@ var _task_started: bool = false
 var _task_cancelled: bool = false
 var data
 
+var _id: int = -1
 
 func _ready():
 	_task_started = false
@@ -31,3 +32,6 @@ func puase() -> void:
 func stop() -> void:
 	_task_started = false
 	_task_cancelled = true
+
+func get_id() -> int:
+	return _id

@@ -111,11 +111,10 @@ func config_solar_system():
 
 	progress_info.finished = true
 	loading_progressed.emit(progress_info)
-	_generate_deposits(valid_planets)
+#	_generate_deposits(valid_planets)
 	
 
-func _generate_deposits(planet_ids: Array[int]) -> void:
-	Server.generate_deposits(planet_ids)
+#func _generate_deposits(planet_ids: Arr 
 
 func is_planet_mode_enabled() -> bool:
 	return _planet_mode.is_enabled

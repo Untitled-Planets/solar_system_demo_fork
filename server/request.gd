@@ -12,11 +12,11 @@ func join(p_username: String):
 func get_solar_system():
 	_http.request("http://127.0.0.1:5000/global_settings", ["Content-Type: application/json"], HTTPClient.METHOD_GET)
 
-func spawn_machine(controller_id, planet_id, miner_id):
+func spawn_machine(solar_system_id, planet_id, requester_id: String, machine_asset_id: int):
 	var data := {
-		solar_system_id = 0,
-		owner_id = controller_id,
-		machine_id = miner_id,
+		solar_system_id = solar_system_id,
+		owner_id = requester_id,
+		machine_id = machine_asset_id,
 		planet_id = planet_id
 	}
 	_http.request("http://127.0.0.1:5000/spawn_machine", ["Content-Type: application/json"], HTTPClient.METHOD_POST, JSON.stringify(data))
@@ -60,6 +60,17 @@ func get_planet_status(user_id, p_solar_system_id: int, p_planet_id: int):
 	var url := "http://127.0.0.1:5000/get_planet_status/{0}/{1}".format([p_solar_system_id, p_planet_id])
 	_http.request(url, ["Content-Type: application/json"], HTTPClient.METHOD_GET)
 	pass
+
+func execute_task(p_solar_system_id: int, p_planet_id: int, p_machine_id: int, p_requester_id: String, p_task_data: Dictionary):
+	var data := {
+		solar_system_id = p_solar_system_id,
+		planet_id = p_planet_id,
+		machine_id = p_machine_id,
+		requester_id = p_requester_id,
+		task_data = p_task_data
+	}
+	
+	_http.request("http://127.0.0.1:5000/execute_task", ["Content-Type: application/json"], HTTPClient.METHOD_POST, JSON.stringify(data))
 
 #class MineTaskData:
 #	var location: Vector2
@@ -113,3 +124,8 @@ func _on_http_request_request_completed(result, response_code, headers, body: Pa
 			Server.client_machine_mine("/" + data.machine_id, data.task_id, md)
 		elif data.has("planet_status"):
 			Server.planet_status_requested.emit(data.solar_system_id, data.planet_id, data.planet_status)
+			Server.update_planet_deposits(data.solar_system_id, data.planet_id, data.planet_status.mine_points)
+		
+		elif data.has("execute_task"):
+			data = data.execute_task
+			Server.execute_task_requested.emit(data.solar_system_id, data.planet_id, data.machine_id, data.requester_id, data.task_data)

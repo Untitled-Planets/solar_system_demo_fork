@@ -1,6 +1,11 @@
 class_name ITask
 extends Node
 
+class Data:
+	var id: int = -1
+	var name: String = ""
+	var data: Dictionary = {}
+
 enum Finished {
 	NONE = 0,
 	SUCCESS = 1,
@@ -26,3 +31,7 @@ func stop() -> void:
 func get_finished() -> int:
 	assert(false, "")
 	return Finished.FAILED
+
+func get_id() -> int:
+	assert(false, "")
+	return -1

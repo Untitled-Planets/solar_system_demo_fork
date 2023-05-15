@@ -16,9 +16,10 @@ var _username := ""
 
 func _ready():
 	Server.add_machine_requested.connect(_on_add_machine)
-	Server.task_requested.connect(_on_task_rquested)
+#	Server.task_requested.connect(_on_task_rquested)
 	Server.task_cancelled.connect(_on_task_cancelled)
 	Server.planet_status_requested.connect(_on_planet_status_requested)
+	Server.execute_task_requested.connect(_on_task_requested)
 	_solar_system.reference_body_changed.connect(_on_reference_body_changed)
 	
 
@@ -113,20 +114,20 @@ func _on_task_cancelled(machine_path_id: NodePath, task_id: String) -> void:
 	if w:
 		w.cancel_task(task_id)
 
-func _on_task_rquested(machine_id: int, task_id: String, p_data) -> void:
+func _on_task_requested(solar_system_id: int, planet_id: int, machine_id: int, requester_id: String, p_task_data: Dictionary) -> void:
 #	print("Requesting task: ", task_id)
 	if not _machines.has(machine_id):
 		return
 	
 	var worker: IWorker = _machines[machine_id]
-	if worker.do_task(task_id, p_data) != OK:
-		push_error("Cannot execute task {}".format(task_id))
+	if worker.do_task(p_task_data.task_name, p_task_data) != OK:
+		push_error("Cannot execute task {}".format(p_task_data.task_id))
 
 ##############################
 # Helper functions
 ##############################
 func spawn_machine(machine_id: int) -> void:
-	Server.miner_spawn(_username, _solar_system.get_reference_stellar_body_id(), machine_id)
+	Server.miner_spawn(0, _solar_system.get_reference_stellar_body_id(), _username, machine_id)
 	
 func machine_move(machine_id: int, from, to) -> void:
 	if not _machines.has(machine_id):
@@ -137,7 +138,8 @@ func machine_move(machine_id: int, from, to) -> void:
 	data.from = from
 	data.to = to
 	data.planet_radius = _solar_system.get_reference_stellar_body().radius
-	Server.machine_move(0, _solar_system.get_reference_stellar_body_id(), _username, machine_id, "move", data)
+#machine_move(p_solar_system_id, p_planet_id, p_machine_id: int, machine_id, p_requester_id, task_id: String, move_data: MoveMachineData):
+	Server.machine_move(0, _solar_system.get_reference_stellar_body_id(), machine_id, _username, "move", data)
 	_machine_selected = null
 
 # TODO remove position. This should be gathered from server.

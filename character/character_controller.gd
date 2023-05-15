@@ -33,7 +33,11 @@ var _waypoint_cmd := false
 var _visual_state = Mannequiny.States.IDLE
 var _last_motor := Vector3()
 var _player_id: int = -1
+var _game: Game
 
+
+func _ready():
+	_game = get_tree().get_nodes_in_group("game")[0]
 
 func _physics_process(_delta):
 	var motor := Vector3()
@@ -273,7 +277,7 @@ func _spawn_miner() -> void:
 	var sl := SpawnLocation.new()
 	sl.location = Vector2()
 	sl.radius = 0.0
-	Server.miner_spawn(get_player_id(), 0, 0)
+#	Server.miner_spawn(0, _game.get_solar_system().get_reference_stellar_body_id(), _game._username, )
 
 
 func _get_solar_system() -> SolarSystem:
