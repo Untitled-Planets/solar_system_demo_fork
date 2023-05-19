@@ -14,6 +14,8 @@ var _travel_time: float = 0
 var _move_data: MoveMachineData = null
 var _total_time: float = 0.0
 var _last_know_secure_height: float
+var _from: Vector3
+var _to: Vector3
 
 func _ready():
 	pass
@@ -33,17 +35,19 @@ func _process(delta):
 	_fix_transform()
 
 func _process_movement() -> void:
-	var current_direction := _move_data.from.slerp(_move_data.to, _total_time / _travel_time).normalized()
+	var current_direction := _from.slerp(_to, minf(_total_time / _travel_time, 1.0)).normalized()
 	machine.position = current_direction * _move_data.planet_radius
 	
 
+func set_total_time(p_time: float) -> void:
+	_total_time = p_time
 
 func _fix_transform() -> void:
 	var planet := machine.get_planet()
 	var state := machine.get_world_3d().direct_space_state
 	var dir := -machine.position.normalized()
 	var query := PhysicsRayQueryParameters3D.new()
-	query.from = machine.global_position + (-dir * 100.0)
+	query.from = machine.global_position + (-dir * 900.0)
 	query.to = planet.node.global_position
 	var result := state.intersect_ray(query)
 	if not result.is_empty():
@@ -54,7 +58,6 @@ func _fix_transform() -> void:
 		_last_know_secure_height = machine.position.length()
 	else:
 		machine.position = (-dir) * _last_know_secure_height
-#	_fix_orientation()
 
 func _fix_orientation() -> void:
 	var n := machine.position.normalized()
@@ -76,10 +79,10 @@ func get_state() -> int:
 func move_request(move_data: MoveMachineData):
 	_state = MachineCharacter.State.MOVING
 	_travel_time = move_data.get_travel_time()
-#	print("travel time: ", _travel_time)
 	_total_time = 0.0
 	_move_data = move_data
-#	print("From: ", _move_data.from, " to: ", _move_data.to)
+	_from = Util.unit_coordinates_to_unit_vector(_move_data.from)
+	_to = Util.unit_coordinates_to_unit_vector(_move_data.to)
 	_last_know_secure_height = _move_data.planet_radius
 
 func get_self_coordinates() -> Vector2:

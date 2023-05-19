@@ -15,12 +15,11 @@ func _ready():
 
 func start() -> void:
 	super.start()
-	
 	_movement.move_request_finished.connect(_on_move_finished)
 	_is_on_place = false
 	var d := MoveMachineData.new()
-	d.from = Vector3(data.from.x, data.from.y, data.from.z)
-	d.to = Vector3(data.to.x, data.to.y, data.to.z)
+	d.from = Vector2(data.from.x, data.from.y)
+	d.to = Vector2(data.to.x, data.to.y)
 	d.planet_radius = data.planet_radius
 	d.machine_speed = data.speed
 	_data = d
@@ -31,6 +30,7 @@ func start() -> void:
 func _update_task(delta: float) -> void:
 	if _is_on_place:
 		_status = Finished.SUCCESS
+	
 
 func get_finished() -> int:
 	return _status
@@ -44,9 +44,14 @@ func _on_move_finished(request_id: int) -> void:
 func _on_resource_collected(machine_id: NodePath, planet_id, amount: int) -> void:
 	if _miner.get_path() == machine_id:
 		if amount == 0:
-			print("Mining completed...")
 			_status = ITask.Finished.SUCCESS
 
+func resume_task(p_task_data: Dictionary) -> void:
+	data = p_task_data
+	pass
+
+func set_started_time_delta(p_started_time: float):
+	_movement.set_total_time(p_started_time)
 
 func stop() -> void:
 	super.stop()

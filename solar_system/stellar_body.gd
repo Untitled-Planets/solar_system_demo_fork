@@ -38,6 +38,8 @@ var instancer : VoxelInstancer
 var atmosphere : PlanetAtmosphere
 var static_bodies := []
 
+var _machine_pivot: Node3D
+var _waypoint_pivot: Node3D
 
 func _notification(what: int):
 	if what == NOTIFICATION_PREDELETE:
@@ -50,8 +52,20 @@ func get_surface_transform(pos):
 	var cross := Vector3.UP.cross(t.basis.z)
 	t = t.rotated(cross, deg_to_rad(pos.x))
 	t = t.translated_local(Vector3(0, 0, radius))
-	
 	return t
+
+func add_machine(p_machine: MachineCharacter) -> void:
+	_machine_pivot.add_child(p_machine)
+
+func remove_machines() -> void:
+	for c in _machine_pivot.get_children():
+		c.queue_free()
+
+
+func add_waypoint(p_index: int, p_waypoint: Waypoint):
+	if p_index > _waypoint_pivot.get_child_count():
+		pass
+	pass
 
 # Returns the position relative to the planet to spawn an machine.
 func get_spawn_point() -> Vector3:

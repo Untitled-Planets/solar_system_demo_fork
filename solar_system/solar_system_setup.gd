@@ -428,6 +428,8 @@ static func setup_stellar_body(body: StellarBody, parent: Node,
 	var root := StellarBodyWrapper.new()
 	root.name = body.name
 	body.node = root
+	body._machine_pivot = Node3D.new()
+	body.node.add_child(body._machine_pivot)
 	root.stellar_body = body
 	parent.add_child(root)
 	

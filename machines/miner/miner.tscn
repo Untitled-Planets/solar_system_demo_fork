@@ -27,3 +27,4 @@ script = ExtResource("5_ar27r")
 
 [node name="move" type="Node" parent="tasks" index="1"]
 script = ExtResource("7_aq5ft")
+_mine_interval = null

@@ -93,17 +93,6 @@ static func create_wirecube_mesh(color = Color(1,1,1)) -> Mesh:
 	mesh.add_surface_from_arrays(Mesh.PRIMITIVE_LINES, arrays)
 	return mesh
 
-# Target position is relative to the planet.
-# planet origin is always 0
-# ref: https://math.stackexchange.com/questions/923279/find-a-vector-parallel-to-the-plane-z-2x3y
-#static func get_quaternion_from_position(target_position: Vector3, planet_transform: Transform3D) -> Quaternion:
-#	var cathetus: float = target_position.y
-#	var angle: float = asin((cathetus * cathetus) / target_position.length_squared())
-#	var fvector: Vector3 = target_position.normalized()
-#	var plane := Plane(fvector, 0.0)
-#	print("get_quaternion_from_position")
-#	return Quaternion()
-
 # https://stackoverflow.com/questions/35613741/convert-2-3d-points-to-directional-vectors-to-euler-angles
 # Vector2.x -> Latitude
 # Vector2.y -> Azimuthal

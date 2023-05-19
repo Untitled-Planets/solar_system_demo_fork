@@ -18,7 +18,12 @@ var _planet : StellarBody
 var _waypoint: Waypoint
 var _current_task: ITask = null
 var _id: int = -1
+var _game: Game
 
+var _task_data_queue: Array = []
+
+func _ready():
+	_game = get_tree().get_nodes_in_group("game")[0]
 
 func go_to(location: Vector3) -> void:
 	_movement.go_to(location)
@@ -58,7 +63,8 @@ func pm_enabled(value: bool) -> void:
 func _process(delta):
 	if _current_task:
 		_current_task.update(delta)
-		if _current_task.get_finished() != ITask.Finished.NONE:
+		if _current_task.get_finished() == ITask.Finished.SUCCESS:
+			_game.finish_task(get_id(), _current_task.get_id())
 			_current_task = null
 			
 
@@ -93,17 +99,25 @@ func do_task(p_task_id: String, p_data) -> int:
 			_current_task = t
 			_current_task.data = p_data
 			_current_task.start()
+			_current_task.set_id(p_data.task_id)
 			return OK
 	push_error("Task {} not found".format(p_task_id))
 	return ERR_INVALID_PARAMETER
 
-func cancel_task(task_id: String) -> void:
-	var t: ITask = get_task(task_id)
-	if t:
-		t.stop()
-	else:
-		push_warning("Task {} not found".format(task_id))
+func cancel_task(task_id: int) -> void:
+	if _current_task and _current_task.get_id() == task_id:
+		_current_task.stop()
+
+func set_task_batch(p_batch: Array) -> void:
+	if p_batch.size() == 0:
+		return
 	
+	var current_task_data = p_batch[0]
+	do_task(current_task_data.task_name, current_task_data.data)
+	_current_task.set_id(current_task_data.task_id)
+	_current_task.set_started_time_delta(current_task_data.started_delta)
+	
+	pass
 
 ###########################
 # IWorker end

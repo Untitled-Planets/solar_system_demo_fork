@@ -3,7 +3,7 @@ extends Node
 #signal machine_move_requested(node_path, move_data)
 signal add_machine_requested(controller_id, planet_id, machine_asset_id, machine_instance_id)
 signal task_requested(object_id: NodePath, task_id: String, data)
-signal task_cancelled(machine_path_id: NodePath, task_id: String)
+signal task_cancelled(solar_system_id: int, planet_id: int, machine_id: int, task_id: int, requester_id: String)
 
 signal planet_resource_collected(machine_id: NodePath, planet_id: int, amount)
 signal login_requested(p_data: Dictionary)
@@ -40,7 +40,9 @@ func planet_info_refresh():
 
 
 func planet_get_deposits(planet_id: int) -> Array:
-	return _planets[planet_id].deposits
+	if _planets.has(planet_id):
+		return _planets[planet_id].deposits
+	return []
 
 func inventory_refresh():
 	_call_event("server_inventory_refreshed", 0)
@@ -81,8 +83,18 @@ func generate_planet_path(from: Vector3, to: Vector3, amount: int) -> Array[Vect
 		weight += step
 	return points
 
-func machine_mine(p_machine_id, task_id: String, p_data) -> void:
-	_request.machine_mine(p_machine_id, task_id, p_data)
+func machine_mine(p_solar_system_id: int, p_planet_id, p_machine_id: int, p_requester_id: String, task_name: String, p_data) -> void:
+	var data := {
+		task_name = task_name,
+		location = {
+			x = p_data.location.x,
+			y = p_data.location.y,
+#			z = p_data.location.z
+		},
+		location_id = p_data.location_id,
+		planet_id = p_data.planet_id
+	}
+	_execute_task(p_solar_system_id, p_planet_id, p_machine_id, p_requester_id, data)
 
 func server_machine_mine(p_machine_id, task_id: String, p_data) -> void:
 	client_machine_mine(p_machine_id, task_id, p_data)
@@ -108,8 +120,8 @@ func client_machine_collect_resource(machine_id: NodePath, planet_id: int, locat
 	var amount = _collect_resource(planet_id, location_id, _mine_speed)
 	planet_resource_collected.emit(machine_id, planet_id, amount)
 
-func cancel_task(machine_path_id: NodePath, task_name: String) -> void:
-	_request.cancel_task(machine_path_id, task_name)
+func cancel_task(solar_system_id: int, planet_id: int, machine_id: int, task_id: int, requester_id: String) -> void:
+	_request.cancel_task(solar_system_id, planet_id, machine_id, task_id, requester_id)
 
 func server_cancel_task(machine_path_id: NodePath, task_name: String) -> void:
 	client_cancel_task(machine_path_id, task_name)
@@ -138,24 +150,24 @@ func get_resource_amount(planet_id: int, location_id: int) -> int:
 		return 0.0
 
 
-func machine_move(p_solar_system_id, p_planet_id, p_machine_id: int, p_requester_id, task_id: String, move_data: MoveMachineData):
+func machine_move(p_solar_system_id, p_planet_id, p_machine_id: int, p_requester_id, task_name: String, move_data: MoveMachineData):
 	var data := {
-		task_name = task_id,
+		task_name = task_name,
 		from = {
 			x = move_data.from.x,
-			y = move_data.from.y,
-			z = move_data.from.z
+			y = move_data.from.y
 		},
 		to = {
 			x = move_data.to.x,
-			y = move_data.to.y,
-			z = move_data.to.z
+			y = move_data.to.y
 		},
 		speed = move_data.machine_speed,
 		planet_radius = move_data.planet_radius
 	}
 	_execute_task(p_solar_system_id, p_planet_id, p_machine_id, p_requester_id, data)
-#	_request.move_machine(p_solar_system_id, p_planet_id, p_requester_id, machine_id, task_id, move_data)
+
+func finish_task(p_solar_system_id: int, planet_id: int, p_machine_id:  int, task_id: int, requester_id: String):
+	_request.finish_task(p_solar_system_id, planet_id, p_machine_id, task_id, requester_id)
 
 func _execute_task(p_solar_system_id: int, planet_id: int, p_machine_id:  int, requester_id: String, task_data: Dictionary):
 	_request.execute_task(p_solar_system_id, planet_id, p_machine_id, requester_id, task_data)

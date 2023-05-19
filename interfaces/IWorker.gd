@@ -11,11 +11,15 @@ func do_task(task_id: String, p_data) -> int:
 	assert(false, "")
 	return -1
 
-func get_task(task_id) -> ITask:
+func get_task(task_id: String) -> ITask:
 	assert(false)
 	return null
 
-func cancel_task(task_id: String) -> void:
+func set_task_batch(p_batch: Array[Dictionary]) -> void:
+	assert(false)
+	pass
+
+func cancel_task(task_id: int) -> void:
 	assert(false, "Not implemented")
 
 func get_current_task() -> ITask:

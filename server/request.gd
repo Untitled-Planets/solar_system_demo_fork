@@ -34,13 +34,11 @@ func move_machine(p_solar_system_id, p_planet_id, p_requester_id, p_machine_id: 
 #			machine_path = miner_node_path.get_concatenated_names(),
 			from = {
 				x = from.x,
-				y = from.y,
-				z = from.z
+				y = from.y
 			},
 			to = {
 				x = to.x,
-				y = to.y,
-				z = to.z
+				y = to.y
 			},
 			planet_radius = task_data.planet_radius,
 			machine_speed = task_data.machine_speed
@@ -48,10 +46,13 @@ func move_machine(p_solar_system_id, p_planet_id, p_requester_id, p_machine_id: 
 	}
 	_http.request("http://127.0.0.1:5000/move_machine", ["Content-Type: application/json"], HTTPClient.METHOD_POST, JSON.stringify(data))
 
-func cancel_task(machine_path_id: NodePath, task_name: String) -> void:
+func cancel_task(p_solar_system_id: int, p_planet_id: int, p_machine_id: int, p_task_id: int, p_username: String) -> void:
 	var data := {
-		machine_path = machine_path_id.get_concatenated_names(),
-		task_id = task_name
+		solar_system_id = p_solar_system_id,
+		planet_id = p_planet_id,
+		machine_id = p_machine_id,
+		task_id = p_task_id,
+		requester_id = p_username
 	}
 	_http.request("http://127.0.0.1:5000/cancel_task", ["Content-Type: application/json"], HTTPClient.METHOD_POST, JSON.stringify(data))
 
@@ -72,10 +73,6 @@ func execute_task(p_solar_system_id: int, p_planet_id: int, p_machine_id: int, p
 	
 	_http.request("http://127.0.0.1:5000/execute_task", ["Content-Type: application/json"], HTTPClient.METHOD_POST, JSON.stringify(data))
 
-#class MineTaskData:
-#	var location: Vector2
-#	var planet_id:  int
-#	var location_id: int = -1
 func machine_mine(p_machine_id: NodePath, task_id: String, p_data) -> void:
 	var data := {
 		machine_id = p_machine_id.get_concatenated_names(),
@@ -92,6 +89,16 @@ func machine_mine(p_machine_id: NodePath, task_id: String, p_data) -> void:
 	
 	_http.request("http://127.0.0.1:5000/mine_task", ["Content-Type: application/json"], HTTPClient.METHOD_POST, JSON.stringify(data))
 
+func finish_task(p_solar_system_id: int, p_planet_id: int, p_machine_id: int, p_task_id: int, p_username: String) -> void:
+	var data := {
+		solar_system_id = p_solar_system_id,
+		planet_id = p_planet_id,
+		machine_id = p_machine_id,
+		task_id = p_task_id,
+		requester_id = p_username
+	}
+	_http.request("http://127.0.0.1:5000/finish_task", ["Content-Type: application/json"], HTTPClient.METHOD_POST, JSON.stringify(data))
+
 func _on_http_request_request_completed(result, response_code, headers, body: PackedByteArray):
 #	print(response_code)
 	if response_code == 200:
@@ -101,27 +108,14 @@ func _on_http_request_request_completed(result, response_code, headers, body: Pa
 		elif data.has("login"):
 			Server.login_requested.emit(data)
 		elif data.has("spawn_machine"):
-#			func client_miner_spawn(controller_id, miner_id, planet_id, spawn_location) -> void:
 			data = data.spawn_machine
 			Server.client_miner_spawn(data.owner_id, data.planet_id, data.machine_asset_id, data.machine_instance_id)
-		elif data.has("move_machine"):
-			data = data.move_machine
-			var md := MoveMachineData.new()
-			md.from = Vector3(data.task_data.from.x, data.task_data.from.y, data.task_data.from.z)
-			md.to = Vector3(data.task_data.to.x, data.task_data.to.y, data.task_data.to.z)
-			md.machine_speed = data.task_data.machine_speed
-			md.planet_radius = data.task_data.planet_radius
-			Server.client_machine_move(data.machine_id, data.task_id, md)
 		elif data.has("cancel_task"):
 			data = data.cancel_task
-			Server.client_cancel_task("/" + data.machine_path, data.task_id)
-		elif data.has("mine_task"):
-			data = data.mine_task
-			var md := Miner.MineTaskData.new()
-			md.location = Vector2(data.mine_data.location.x, data.mine_data.location.y)
-			md.planet_id = data.mine_data.planet_id
-			md.location_id = data.mine_data.location_id
-			Server.client_machine_mine("/" + data.machine_id, data.task_id, md)
+			if data.is_empty():
+				push_error("Failed to cancel task")
+			else:
+				Server.task_cancelled.emit(data.solar_system_id, data.planet_id, data.machine_id, data.task_id, data.requester_id)
 		elif data.has("planet_status"):
 			Server.planet_status_requested.emit(data.solar_system_id, data.planet_id, data.planet_status)
 			Server.update_planet_deposits(data.solar_system_id, data.planet_id, data.planet_status.mine_points)

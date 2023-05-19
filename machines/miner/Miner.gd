@@ -9,10 +9,10 @@ class MineTaskData:
 signal mineral_extracted(id, amount)
 
 var _actions: Array[IActionsContext.ActionContext] = []
-var _game: Game
+#var _game: Game
 
 func _ready():
-#	super._ready()
+	super._ready()
 	_game = get_tree().get_nodes_in_group("game")[0]
 	var action := IActionsContext.ActionContext.new()
 	action.name = "Move"
@@ -21,7 +21,7 @@ func _ready():
 	
 	action = IActionsContext.ActionContext.new()
 	action.name = "CM"
-	action.function = func(): _game.cancel_task(get_path(), "mine")
+	action.function = func(): _game.cancel_task(get_id(), get_current_task().get_id())
 	_actions.append(action)
 	
 

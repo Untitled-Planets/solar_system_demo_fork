@@ -35,3 +35,6 @@ func stop() -> void:
 
 func get_id() -> int:
 	return _id
+
+func set_id(p_id: int) -> void:
+	_id = p_id

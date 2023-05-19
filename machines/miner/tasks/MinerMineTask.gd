@@ -15,7 +15,11 @@ func _ready():
 
 func start() -> void:
 	super.start()
-	_data = data
+	var d := Miner.MineTaskData.new()
+	d.location = Vector2(data.location.x, data.location.y)
+	d.location_id = data.location_id
+	d.planet_id = data.planet_id
+	_data = d
 	_is_on_place = false
 	_movement.move_request_finished.connect(_on_move_finished)
 	_target_location = Util.unit_coordinates_to_unit_vector(_data.location) * _miner.get_planet().radius
@@ -28,8 +32,8 @@ func _update_task(delta: float) -> void:
 		if not _is_on_place:
 			if not _movement.is_moving():
 				var d := MoveMachineData.new()
-				d.to = _target_location
-				d.from = _miner.position
+#				d.to = _target_location
+#				d.from = _miner.position
 				d.machine_speed = _miner.get_max_speed()
 				d.planet_radius = _miner.get_planet().radius
 				_movement.move_request(d)
