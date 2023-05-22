@@ -19,6 +19,7 @@ config/icon="res://icon.png"
 
 DDD="*res://addons/zylann.debug_draw/debug_draw.gd"
 Server="*res://server/server.tscn"
+WaypointManager="*res://waypoints/waypoint_manager.gd"
 
 [input]
 
