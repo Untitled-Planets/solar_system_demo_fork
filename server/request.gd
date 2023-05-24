@@ -1,6 +1,10 @@
 extends Node
 
 @onready var _http: HTTPRequest = get_parent().get_node("HTTPRequest")
+var _queue: Array = []
+
+class Data:
+	var url : String
 
 func join(p_username: String):
 	var d := {
@@ -99,6 +103,10 @@ func finish_task(p_solar_system_id: int, p_planet_id: int, p_machine_id: int, p_
 	}
 	_http.request("http://127.0.0.1:5000/finish_task", ["Content-Type: application/json"], HTTPClient.METHOD_POST, JSON.stringify(data))
 
+func get_machine_assets(p_requester: String):
+	var url := "http://127.0.0.1:5000/get_inventory/{0}".format([p_requester])
+	_http.request(url, ["Content-Type: application/json"], HTTPClient.METHOD_GET)
+
 func _on_http_request_request_completed(result, response_code, headers, body: PackedByteArray):
 #	print(response_code)
 	if response_code == 200:
@@ -119,7 +127,11 @@ func _on_http_request_request_completed(result, response_code, headers, body: Pa
 		elif data.has("planet_status"):
 			Server.planet_status_requested.emit(data.solar_system_id, data.planet_id, data.planet_status)
 			Server.update_planet_deposits(data.solar_system_id, data.planet_id, data.planet_status.mine_points)
-		
 		elif data.has("execute_task"):
 			data = data.execute_task
 			Server.execute_task_requested.emit(data.solar_system_id, data.planet_id, data.machine_id, data.requester_id, data.task_data)
+		elif data.has("inventory_updated"):
+			data = data.inventory_updated
+			Server.inventory_updated.emit(data)
+		elif data.has("mining"):
+			Server.update_mining(data.solar_system_id, data.planet_id, data.mine_points)

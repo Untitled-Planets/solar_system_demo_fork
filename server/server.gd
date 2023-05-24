@@ -4,6 +4,7 @@ extends Node
 signal add_machine_requested(controller_id, planet_id, machine_asset_id, machine_instance_id)
 signal task_requested(object_id: NodePath, task_id: String, data)
 signal task_cancelled(solar_system_id: int, planet_id: int, machine_id: int, task_id: int, requester_id: String)
+signal inventory_updated(p_assets: Array)
 
 signal planet_resource_collected(machine_id: NodePath, planet_id: int, amount)
 signal login_requested(p_data: Dictionary)
@@ -28,6 +29,8 @@ func update_planet_deposits(solar_system_id: int, p_planet_id: int, p_points: Ar
 		})
 	_planets[p_planet_id]["deposits"] = dps
 
+
+func update_mining(p_solar_system_id, p_planet_id, p_)
 
 func _call_event(p_name, params):
 	get_tree().call_group(p_name, params)
@@ -181,3 +184,6 @@ func get_solar_system_data():
 
 func get_planet_status(user_id, p_solar_system_id, p_planet_id) -> void:
 	_request.get_planet_status(user_id, p_solar_system_id, p_planet_id)
+
+func get_machine_assets(p_requester: String) -> void:
+	_request.get_machine_assets(p_requester)

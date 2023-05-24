@@ -177,6 +177,7 @@ WaypointScene = ExtResource("17_mvuvu")
 
 [node name="warehouse" parent="." instance=ExtResource("23_pk8da")]
 
+[connection signal="loading_progressed" from="SolarSystem" to="." method="_on_solar_system_loading_progressed"]
 [connection signal="loading_progressed" from="SolarSystem" to="SolarSystem/LoadingScreen" method="_on_GameWorld_loading_progressed"]
 [connection signal="reference_body_changed" from="SolarSystem" to="SolarSystem/AmbientSounds" method="_on_GameWorld_reference_body_changed"]
 [connection signal="exit_to_menu_requested" from="SolarSystem/PauseMenu" to="SolarSystem" method="_on_PauseMenu_exit_to_menu_requested"]

@@ -7,6 +7,7 @@
 offset_right = 64.0
 offset_bottom = 354.0
 script = ExtResource("1_0o7qv")
+_asset_panel_scene = ExtResource("2_8g3ne")
 
 [node name="ScrollContainer" type="ScrollContainer" parent="."]
 layout_mode = 2
@@ -17,36 +18,3 @@ layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 alignment = 1
-
-[node name="AssetPanel" parent="ScrollContainer/VBoxContainer" instance=ExtResource("2_8g3ne")]
-layout_mode = 2
-_id = 0
-text = "Miner"
-
-[node name="AssetPanel2" parent="ScrollContainer/VBoxContainer" instance=ExtResource("2_8g3ne")]
-layout_mode = 2
-text = "none"
-
-[node name="AssetPanel3" parent="ScrollContainer/VBoxContainer" instance=ExtResource("2_8g3ne")]
-layout_mode = 2
-text = "none"
-
-[node name="AssetPanel4" parent="ScrollContainer/VBoxContainer" instance=ExtResource("2_8g3ne")]
-layout_mode = 2
-text = "none"
-
-[node name="AssetPanel5" parent="ScrollContainer/VBoxContainer" instance=ExtResource("2_8g3ne")]
-layout_mode = 2
-text = "none"
-
-[node name="AssetPanel6" parent="ScrollContainer/VBoxContainer" instance=ExtResource("2_8g3ne")]
-layout_mode = 2
-text = "none"
-
-[node name="AssetPanel7" parent="ScrollContainer/VBoxContainer" instance=ExtResource("2_8g3ne")]
-layout_mode = 2
-text = "none"
-
-[node name="AssetPanel8" parent="ScrollContainer/VBoxContainer" instance=ExtResource("2_8g3ne")]
-layout_mode = 2
-text = "none"

@@ -22,7 +22,9 @@ var _game: Game
 
 func _ready():
 	_label.text = _text
-	
+
+func set_id(p_id: int) -> void:
+	_id = p_id
 
 func _on_texture_button_pressed():
 	if _id != -1:

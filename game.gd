@@ -166,3 +166,8 @@ func get_planet_status() -> void:
 ##############################
 # End Helper functions
 ##############################
+
+
+func _on_solar_system_loading_progressed(info):
+	if info.finished:
+		Server.get_machine_assets(_username)
