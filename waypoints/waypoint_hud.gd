@@ -33,14 +33,15 @@ func is_on_waypoint() -> bool:
 
 # As we cannot guaranty the order in call_group
 # we will wait one frame after the creation of the waypoints.
-func pm_enabled(value: bool) -> void:
-	if value:
-		await get_tree().process_frame
-		_waypoints = get_tree().get_nodes_in_group("waypoint")
-	else:
-		_waypoints = []
+#func (value: bool) -> void:
+#	if value:
+#		await get_tree().process_frame
+#		_waypoints = get_tree().get_nodes_in_group("waypoint")
+#	else:
+#		_waypoints = []
 
 func _draw():
+	_waypoints = WaypointManager.get_waypoints()
 	var camera := get_viewport().get_camera_3d()
 	if camera == null:
 		return
@@ -64,6 +65,7 @@ func _draw():
 		var pos_2d = center_2d - Vector2(radius, radius) * 0.5
 		draw_texture_rect(
 			WaypointTexture, Rect2(pos_2d, Vector2(radius, radius)), false, Color(0.3, 1.0, 0.3))
+#		draw_string()
 		
 		var dist = mouse_pos.distance_to(center_2d)
 		if dist <= radius:
@@ -74,7 +76,7 @@ func _draw():
 				info_label.set_text(waypoint.info)
 			else:
 				var planet_id: int = _solar_system.get_reference_stellar_body_id()
-				var info: String = "Location: {0}\nAmount: {1}".format([waypoint.location, Server.get_resource_amount(planet_id, waypoint.location_id)])
+				var info: String = "Location: {0}\nAmount: {1}.\nUnit Coordinates: {2}\nLocation_id: {3}".format([waypoint.location, Server.get_resource_amount(planet_id, waypoint.location_id), Util.position_to_unit_coordinates(waypoint.global_position), waypoint.location_id])
 				info_label.set_text(info)
 			info_label.position = mouse_pos
 			mouse_collide = true

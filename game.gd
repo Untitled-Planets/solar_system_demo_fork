@@ -10,13 +10,14 @@ extends Node3D
 @onready var _inventory: InventoryHUD = $SolarSystem/HUD/Inventory
 @onready var _waypoint_hud: WaypointHUD = $SolarSystem/HUD/WaypointHUD
 
+@export var WaypointScene: PackedScene = null
+
 var _machine_selected: MachineCharacter = null
 var _machines := {}
 var _username := ""
 
 func _ready():
 	Server.add_machine_requested.connect(_on_add_machine)
-#	Server.task_requested.connect(_on_task_rquested)
 	Server.task_cancelled.connect(_on_task_cancelled)
 	Server.planet_status_requested.connect(_on_planet_status_requested)
 	Server.execute_task_requested.connect(_on_task_requested)
@@ -34,7 +35,7 @@ func _process_input() -> void:
 			machine_move(_machine_selected.get_id(), _machine_selected.position, to)
 			pass
 		elif _is_mine_request(w):
-			machine_mine(_machine_selected.get_path(), w.location_id, Util.position_to_unit_coordinates(w.global_position))
+			machine_mine(_machine_selected.get_id(), w.location_id)
 		else:
 			if w:
 				_on_waypoint_hud_waypoint_selected(w)
@@ -97,6 +98,7 @@ func _on_planet_status_requested(solar_system_id, planet_id, data):
 		m.set_task_batch(md.tasks) 
 		var final_position = Util.unit_coordinates_to_unit_vector(Vector2(md.location.x, md.location.y)) * planet.radius
 		m.global_position = final_position
+	load_waypoints()
 
 func _on_add_machine(_player_id: String, _planet_id: int, machine_asset_id: int, machine_instance_id: int) -> void:
 	var asset: Node3D = _asset_inventory.generate_asset(machine_asset_id)
@@ -127,6 +129,21 @@ func _on_task_requested(solar_system_id: int, planet_id: int, machine_id: int, r
 	if worker.do_task(p_task_data.task_name, p_task_data) != OK:
 		push_error("Cannot execute task {}".format(p_task_data.task_id))
 
+
+func load_waypoints():
+	var deposits = Server.planet_get_deposits(_solar_system.get_reference_stellar_body_id())
+#	var ss := _get_solar_system()
+	for index in deposits.size():
+		var mine = deposits[index]
+		var waypoint: Waypoint = WaypointScene.instantiate()
+		var planet := _solar_system.get_reference_stellar_body()
+#		waypoint.transform = planet.get_surface_transform(mine.pos)
+		waypoint.location = mine.pos
+		waypoint.info = "Mine pos: {}\nAmount: {}".format([mine.pos, mine.amount], "{}")
+		waypoint.location_id = index
+		planet.node.add_child(waypoint)
+		planet.waypoints.append(waypoint)
+		waypoint.global_position = Util.coordinate_to_unit_vector(mine.pos) * planet.radius
 ##############################
 # Helper functions
 ##############################
@@ -146,11 +163,13 @@ func machine_move(machine_id: int, from, to) -> void:
 	_machine_selected = null
 
 # TODO remove position. This should be gathered from server.
-func machine_mine(machine_path_id: NodePath, to, p_position) -> void:
+func machine_mine(p_machine_id: int, p_to: int) -> void:
 	var data := Miner.MineTaskData.new()
-	data.location = p_position
 	data.planet_id = _solar_system.get_reference_stellar_body_id()
-	data.location_id = to
+	print("Sending location ID: {0}".format([p_to]))
+	data.location_id = p_to
+	data.machine_id = _machine_selected.get_id()
+	print("Sending Going to: {0}".format([Util.coordinate_to_unit_coordinates(Server.get_deposit_coordinate(0, get_solar_system().get_reference_stellar_body_id(), p_to))]))
 	Server.machine_mine(0, get_solar_system().get_reference_stellar_body_id(), _machine_selected.get_id(), _username, "mine", data)
 	_machine_selected = null
 

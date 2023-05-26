@@ -13,7 +13,7 @@ script = ExtResource("2_0ykg2")
 _info = ExtResource("3_6clo4")
 
 [node name="movement" parent="." index="0"]
-_speed = 100.0
+_speed = 50.0
 
 [node name="body_pivot" type="Node3D" parent="." index="1"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.0261312, 0)

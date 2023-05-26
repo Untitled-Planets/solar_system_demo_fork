@@ -32,18 +32,18 @@ func _get_solar_system() -> SolarSystem:
 	# TODO That looks really bad. Probably need to use injection some day
 	return get_parent() as SolarSystem
 
-func load_waypoints():
-	var deposits = Server.planet_get_deposits(_get_solar_system().get_reference_stellar_body_id())
-#	var ss := _get_solar_system()
-	for index in deposits.size():
-		var mine = deposits[index]
-		var waypoint: Waypoint = WaypointScene.instantiate()
-		waypoint.transform = planet.get_surface_transform(mine.pos)
-		waypoint.location = mine.pos
-		waypoint.info = "Mine pos: {}\nAmount: {}".format([mine.pos, mine.amount], "{}")
-		waypoint.location_id = index
-		planet.node.add_child(waypoint)
-		planet.waypoints.append(waypoint)
+#func load_waypoints():
+#	var deposits = Server.planet_get_deposits(_get_solar_system().get_reference_stellar_body_id())
+##	var ss := _get_solar_system()
+#	for index in deposits.size():
+#		var mine = deposits[index]
+#		var waypoint: Waypoint = WaypointScene.instantiate()
+#		waypoint.transform = planet.get_surface_transform(mine.pos)
+#		waypoint.location = mine.pos
+#		waypoint.info = "Mine pos: {}\nAmount: {}".format([mine.pos, mine.amount], "{}")
+#		waypoint.location_id = index
+#		planet.node.add_child(waypoint)
+#		planet.waypoints.append(waypoint)
 
 
 func clear_waypoints():
@@ -66,7 +66,7 @@ func enable():
 
 	get_tree().call_group("planet_mode", "pm_enabled", true)
 	
-	load_waypoints()
+#	load_waypoints()
 	
 	_config_camera(false)
 	
@@ -76,7 +76,7 @@ func disable():
 	set_process_input(false)
 	get_tree().call_group("planet_mode", "pm_enabled", false)
 	
-	clear_waypoints()
+#	clear_waypoints()
 	
 	_config_camera(true)
 	

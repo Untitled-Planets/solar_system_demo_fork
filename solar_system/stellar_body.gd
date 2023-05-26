@@ -47,12 +47,14 @@ func _notification(what: int):
 			for sb in static_bodies:
 				sb.free()
 
-func get_surface_transform(pos):
-	var t = Transform3D().rotated(Vector3.UP, deg_to_rad(pos.y))
+
+func get_surface_transform(pos: Vector2):
+	var t = Transform3D().rotated(Vector3.UP, pos.y)
 	var cross := Vector3.UP.cross(t.basis.z)
-	t = t.rotated(cross, deg_to_rad(pos.x))
+	t = t.rotated(cross, pos.x)
 	t = t.translated_local(Vector3(0, 0, radius))
 	return t
+
 
 func add_machine(p_machine: MachineCharacter) -> void:
 	_machine_pivot.add_child(p_machine)

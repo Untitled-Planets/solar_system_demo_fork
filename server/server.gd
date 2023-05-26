@@ -24,13 +24,14 @@ func update_planet_deposits(solar_system_id: int, p_planet_id: int, p_points: Ar
 	var dps := []
 	for p in p_points:
 		dps.append({
-			pos = Vector2(p.location.x * 90.0, p.location.y * 360.0),
+			pos = Vector2(p.location.x * Util.HALF_PI, p.location.y * Util.TWO_PI),
 			amount = p.amount
 		})
 	_planets[p_planet_id]["deposits"] = dps
 
 
-func update_mining(p_solar_system_id, p_planet_id, p_)
+func update_mining(p_solar_system_id, p_planet_id, p_minig_points):
+	pass
 
 func _call_event(p_name, params):
 	get_tree().call_group(p_name, params)
@@ -89,11 +90,6 @@ func generate_planet_path(from: Vector3, to: Vector3, amount: int) -> Array[Vect
 func machine_mine(p_solar_system_id: int, p_planet_id, p_machine_id: int, p_requester_id: String, task_name: String, p_data) -> void:
 	var data := {
 		task_name = task_name,
-		location = {
-			x = p_data.location.x,
-			y = p_data.location.y,
-#			z = p_data.location.z
-		},
 		location_id = p_data.location_id,
 		planet_id = p_data.planet_id
 	}
@@ -152,6 +148,8 @@ func get_resource_amount(planet_id: int, location_id: int) -> int:
 	else:
 		return 0.0
 
+func get_deposit_coordinate(p_solar_system_id: int, p_planet_id: int, p_location_id: int) -> Vector2:
+	return _planets[p_planet_id]["deposits"][p_location_id].pos
 
 func machine_move(p_solar_system_id, p_planet_id, p_machine_id: int, p_requester_id, task_name: String, move_data: MoveMachineData):
 	var data := {

@@ -81,8 +81,10 @@ func move_request(move_data: MoveMachineData):
 	_travel_time = move_data.get_travel_time()
 	_total_time = 0.0
 	_move_data = move_data
+	print("Coordinate: from: {0}. To: {1}".format([_move_data.from, _move_data.to]))
 	_from = Util.unit_coordinates_to_unit_vector(_move_data.from)
 	_to = Util.unit_coordinates_to_unit_vector(_move_data.to)
+	print("Location: from: {0}. To: {1}".format([_from, _to]))
 	_last_know_secure_height = _move_data.planet_radius
 
 func get_self_coordinates() -> Vector2:

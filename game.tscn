@@ -45,6 +45,7 @@ glow_hdr_threshold = 0.8
 
 [node name="Game" type="Node3D" groups=["game"]]
 script = ExtResource("1_3cmpg")
+WaypointScene = ExtResource("17_mvuvu")
 
 [node name="SolarSystem" type="Node3D" parent="." groups=["game_world"]]
 script = ExtResource("1_tcbv5")

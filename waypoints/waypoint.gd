@@ -20,6 +20,9 @@ var info: String:
 	get:
 		return _info
 
+func _ready():
+	WaypointManager.add_waypoint(self)
+
 func _on_area_mouse_entered():
 	print("Mouse entered")
 	mouse_entered.emit()

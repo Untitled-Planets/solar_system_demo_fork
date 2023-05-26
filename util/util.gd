@@ -111,9 +111,12 @@ static func distance_on_sphere(sphere_radius: float, p1: Vector3, p2: Vector3) -
 	return sphere_radius * acos(p1.dot(p2) / (sphere_radius * sphere_radius))
 
 static func coordinate_to_unit_vector(coord: Vector2) -> Vector3:
+	if abs(coord.x) == 1.0:
+		return Vector3.UP * sign(coord.x)
 	var v := Vector3.FORWARD
-	v = v.rotated(Vector3.UP, deg_to_rad(coord.y))
-	v = v.rotated(Vector3.RIGHT, deg_to_rad(coord.x))
+	v = v.rotated(Vector3.UP, coord.y)
+	var c: Vector3 = Vector3.UP.cross(v)
+	v = v.rotated(c, -coord.x)
 	return v
 
 static func position_to_unit_coordinates(position: Vector3) -> Vector2:
@@ -148,3 +151,7 @@ static func unit_coordinates_to_unit_vector(p_coord: Vector2) -> Vector3:
 	var v := Vector3.FORWARD.rotated(Vector3.UP, aangle)
 	var c := v.cross(Vector3.UP)
 	return v.rotated(c, p_coord.x * HALF_PI)
+
+# p_coordinates must be in radians
+static func coordinate_to_unit_coordinates(p_coordinate: Vector2) -> Vector2:
+	return Vector2(p_coordinate.x / HALF_PI, p_coordinate.y / TWO_PI)
