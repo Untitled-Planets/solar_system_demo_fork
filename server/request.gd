@@ -87,13 +87,13 @@ func cancel_task(p_solar_system_id: int, p_planet_id: int, p_machine_id: int, p_
 	data.url = "http://127.0.0.1:5000/cancel_task"
 	data.headers = ["Content-Type: application/json"]
 	data.method_type = HTTPClient.METHOD_POST
-	data.data = JSON.stringify(data)
+	data.data = JSON.stringify(d)
 	_make_request(data)
 
 
-func get_planet_status(user_id, p_solar_system_id: int, p_planet_id: int):
+func get_planet_status(p_solar_system_id: int, p_planet_id: int, user_id: String):
 	var data := Data.new()
-	data.url = "http://127.0.0.1:5000/get_planet_status/{0}/{1}".format([p_solar_system_id, p_planet_id])
+	data.url = "http://127.0.0.1:5000/get_planet_status/{0}/{1}/{2}".format([p_solar_system_id, p_planet_id, user_id])
 	data.headers = ["Content-Type: application/json"]
 	data.method_type = HTTPClient.METHOD_GET
 	data.data = ""
@@ -136,6 +136,23 @@ func machine_mine(p_machine_id: NodePath, task_id: String, p_data) -> void:
 	data.data = JSON.stringify(d)
 	_make_request(data)
 
+func collect_resource(p_solar_system_id: int, p_planet_id: int, p_location_id: int, p_machine_id: int, p_requester_id: String) -> void:
+	var d := {
+		solar_system_id = p_solar_system_id,
+		planet_id = p_planet_id,
+		machine_id = p_machine_id,
+		requester_id = p_requester_id,
+		location_id = p_location_id
+#		task_data = p_task_data
+	}
+	
+	var data := Data.new()
+	data.url = "http://127.0.0.1:5000/mine_planet"
+	data.headers = ["Content-Type: application/json"]
+	data.method_type = HTTPClient.METHOD_POST
+	data.data = JSON.stringify(d)
+	_make_request(data)
+
 func finish_task(p_solar_system_id: int, p_planet_id: int, p_machine_id: int, p_task_id: int, p_username: String) -> void:
 	var d := {
 		solar_system_id = p_solar_system_id,
@@ -158,6 +175,23 @@ func get_machine_assets(p_requester: String):
 	data.headers = ["Content-Type: application/json"]
 	data.method_type = HTTPClient.METHOD_GET
 	data.data = ""
+	_make_request(data)
+
+
+func despawn_machine(p_solar_system_id: int, p_planet_id: int, p_machine_id: int, p_requester_id: String) -> void:
+	var d := {
+		solar_system_id = p_solar_system_id,
+		planet_id = p_planet_id,
+		machine_id = p_machine_id,
+#		task_id = p_task_id,
+		requester_id = p_requester_id
+	}
+	
+	var data := Data.new()
+	data.url = "http://127.0.0.1:5000/despawn_machine"
+	data.headers = ["Content-Type: application/json"]
+	data.method_type = HTTPClient.METHOD_POST
+	data.data = JSON.stringify(d)
 	_make_request(data)
 
 func _make_request(p_data: Data):
@@ -194,6 +228,13 @@ func _on_http_request_request_completed(result, response_code, headers, body: Pa
 			Server.inventory_updated.emit(data)
 		elif data.has("mining"):
 			Server.update_mining(data.solar_system_id, data.planet_id, data.mine_points)
+		elif data.has("mine_planet"):
+			data = data.mine_planet
+#			print("Returning mining action")
+			Server.set_mine_point_amount(data.solar_system_id, data.planet_id, data.location_id, data.remaining_amount)
+		elif data.has("despawn_machine"):
+			data = data.despawn_machine
+			Server.despawn_machine_requested.emit(data.solar_system_id, data.planet_id, data.machine_id)
 	
 	_is_requesting = false
 

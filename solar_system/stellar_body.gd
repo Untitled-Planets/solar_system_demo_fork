@@ -72,3 +72,14 @@ func add_waypoint(p_index: int, p_waypoint: Waypoint):
 # Returns the position relative to the planet to spawn an machine.
 func get_spawn_point() -> Vector3:
 	return node.basis.y * radius
+
+
+func set_focus(p_value: bool) -> void:
+#	_is_focussed = p_value
+	pass
+
+func get_color() -> Color:
+	return Color.WHITE
+
+func is_focussed() -> bool:
+	return false

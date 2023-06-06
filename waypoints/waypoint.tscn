@@ -1,6 +1,8 @@
-[gd_scene load_steps=5 format=3 uid="uid://co45bdw7qhu7i"]
+[gd_scene load_steps=7 format=3 uid="uid://co45bdw7qhu7i"]
 
 [ext_resource type="Script" path="res://waypoints/waypoint.gd" id="1"]
+[ext_resource type="Texture2D" uid="uid://su5hn77l08iy" path="res://gui/waypoint.png" id="2_co51v"]
+[ext_resource type="Texture2D" uid="uid://dnkytmccfss5m" path="res://gui/select_rect.png" id="3_xilou"]
 
 [sub_resource type="SphereShape3D" id="1"]
 
@@ -12,6 +14,8 @@ material = SubResource("StandardMaterial3D_fs3ia")
 
 [node name="Waypoint" type="Node3D" groups=["waypoint"]]
 script = ExtResource("1")
+_normal_texture = ExtResource("3_xilou")
+_focus_texture = ExtResource("2_co51v")
 
 [node name="Area" type="Area3D" parent="."]
 collision_priority = 10.0

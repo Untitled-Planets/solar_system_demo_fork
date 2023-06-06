@@ -44,7 +44,7 @@ func _update_task(delta: float) -> void:
 		else:
 			_mine_acc += delta
 			if _mine_acc > _mine_interval:
-				Server.machine_collect_resource(_miner.get_path(), _data.planet_id, _data.location_id)
+				Server.machine_collect_resource(0, _data.planet_id, _data.location_id, _miner.get_id(), _game.get_user_id())
 				_mine_acc = 0.0
 			_miner.set_mining(true)
 

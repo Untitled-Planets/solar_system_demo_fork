@@ -15,7 +15,7 @@ var selected_waypoint: Waypoint:
 		return _selected_waypoint
 
 
-var _waypoints := []
+#var _waypoints := []
 
 
 func set_solar_system(ss : SolarSystem):
@@ -25,8 +25,8 @@ func set_solar_system(ss : SolarSystem):
 func _process(_delta):
 	queue_redraw()
 
-func add_waypoint(w: Waypoint) -> void:
-	_waypoints.append(w)
+#func add_waypoint(w: Waypoint) -> void:
+#	_waypoints.append(w)
 
 func is_on_waypoint() -> bool:
 	return _selected_waypoint != null
@@ -41,7 +41,7 @@ func is_on_waypoint() -> bool:
 #		_waypoints = []
 
 func _draw():
-	_waypoints = WaypointManager.get_waypoints()
+	var _w = WaypointManager.get_waypoints()
 	var camera := get_viewport().get_camera_3d()
 	if camera == null:
 		return
@@ -50,7 +50,7 @@ func _draw():
 	var mouse_collide = false
 	
 	var w: Waypoint = null
-	for waypoint in _waypoints:
+	for waypoint in _w:
 		var pos : Vector3 = waypoint.global_transform.origin
 		var center_2d := camera.unproject_position(pos)
 		var size_3d = 2.0
@@ -59,12 +59,14 @@ func _draw():
 			continue
 		var radius = center_2d.distance_to(center_2d_side)
 		var min_scale = 0.5
-		if radius < WaypointTexture.get_width() * min_scale:
-			radius = WaypointTexture.get_width() * min_scale
+		var nt : Texture = waypoint.get_focus_texture()
+		var color: Color = waypoint.get_color()
+		if radius < nt.get_width() * min_scale:
+			radius = nt.get_width() * min_scale
 		#draw_string(font, pos_2d, waypoint.waypoint_name, Color(0.3, 1.0, 0.3))
 		var pos_2d = center_2d - Vector2(radius, radius) * 0.5
 		draw_texture_rect(
-			WaypointTexture, Rect2(pos_2d, Vector2(radius, radius)), false, Color(0.3, 1.0, 0.3))
+			nt, Rect2(pos_2d, Vector2(radius, radius)), false, color)
 #		draw_string()
 		
 		var dist = mouse_pos.distance_to(center_2d)

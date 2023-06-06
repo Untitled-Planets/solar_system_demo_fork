@@ -1,19 +1,36 @@
-[gd_scene load_steps=3 format=3 uid="uid://v40mbbpugn3j"]
+[gd_scene load_steps=4 format=3 uid="uid://v40mbbpugn3j"]
 
 [ext_resource type="Script" path="res://gui/inventory/machine_items.gd" id="1_0o7qv"]
 [ext_resource type="PackedScene" uid="uid://ulkswuw44lfs" path="res://gui/inventory/asset_panel.tscn" id="2_8g3ne"]
+[ext_resource type="PackedScene" uid="uid://dx4uphlm8mhab" path="res://gui/inventory/instance_panel.tscn" id="3_xcori"]
 
 [node name="machine_items" type="PanelContainer"]
 offset_right = 64.0
 offset_bottom = 354.0
 script = ExtResource("1_0o7qv")
 _asset_panel_scene = ExtResource("2_8g3ne")
+_instance_panel_scene = ExtResource("3_xcori")
 
-[node name="ScrollContainer" type="ScrollContainer" parent="."]
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
 layout_mode = 2
+
+[node name="AssetsScroll" type="ScrollContainer" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
 horizontal_scroll_mode = 0
 
-[node name="VBoxContainer" type="VBoxContainer" parent="ScrollContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/AssetsScroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+alignment = 1
+
+[node name="InstancesScroll" type="ScrollContainer" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/InstancesScroll"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3

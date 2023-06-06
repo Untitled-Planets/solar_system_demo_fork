@@ -1,6 +1,5 @@
 class_name PickableInfo
-extends Resource
 
-
-@export var texture: Texture
-@export var info: String
+var type: String
+var name: String
+var meta: Dictionary

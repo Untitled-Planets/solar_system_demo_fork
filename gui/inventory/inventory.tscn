@@ -42,4 +42,5 @@ size_flags_vertical = 3
 custom_minimum_size = Vector2(250, 100)
 layout_mode = 2
 
+[connection signal="item_instance_selected" from="right_panel/machine_items" to="." method="_on_machine_items_item_instance_selected"]
 [connection signal="item_selected" from="right_panel/machine_items" to="." method="_on_horizontal_items_item_selected"]

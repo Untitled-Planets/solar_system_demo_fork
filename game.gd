@@ -1,7 +1,7 @@
 class_name Game
 extends Node3D
 
-
+signal machine_instance_from_ui_selected(machine_id: int)
 
 
 @onready var _solar_system: SolarSystem = $SolarSystem
@@ -15,21 +15,45 @@ extends Node3D
 var _machine_selected: MachineCharacter = null
 var _machines := {}
 var _username := ""
+var _info_object = null
+var _task_ui_from_node_selected: ITask = null
 
 func _ready():
 	Server.add_machine_requested.connect(_on_add_machine)
 	Server.task_cancelled.connect(_on_task_cancelled)
 	Server.planet_status_requested.connect(_on_planet_status_requested)
 	Server.execute_task_requested.connect(_on_task_requested)
+	Server.despawn_machine_requested.connect(_on_despawn_machine_requested)
 	_solar_system.reference_body_changed.connect(_on_reference_body_changed)
+	machine_instance_from_ui_selected.connect(_on_machine_instance_from_ui_selected)
 	
 
 func _process(delta):
 	_process_input()
+	if _info_object:
+		_update_info(_info_object)
+
+
+func _on_machine_instance_from_ui_selected(p_machine_id: int):
+	_on_waypoint_hud_waypoint_selected(_machines[p_machine_id])
+	_machine_selected.set_focus(true)
+
 
 func _process_input() -> void:
 	var w: Waypoint = _waypoint_hud.selected_waypoint
-	if Input.is_action_just_pressed("select_object"):
+	if Input.is_action_just_pressed("no_context_select_object"):
+		if w:
+			_info_object = w.get_selected_object()
+			_machine_selected = _info_object if _info_object is MachineCharacter else null
+			_machine_selected.set_focus(true)
+		elif _task_ui_from_node_selected and not w:
+			var to := get_click_position()
+#			_machine_selected.set_focus(false)
+			machine_move(_machine_selected.get_id(), _machine_selected.position, to)
+			_task_ui_from_node_selected = null
+			_machine_selected = null
+	
+	elif Input.is_action_just_pressed("select_object"):
 		if _is_move_request(w):
 			var to := get_click_position()
 			machine_move(_machine_selected.get_id(), _machine_selected.position, to)
@@ -38,7 +62,7 @@ func _process_input() -> void:
 			machine_mine(_machine_selected.get_id(), w.location_id)
 		else:
 			if w:
-				_on_waypoint_hud_waypoint_selected(w)
+				_on_waypoint_hud_waypoint_selected(w.get_selected_object())
 
 func get_solar_system() -> SolarSystem:
 	return _solar_system
@@ -63,12 +87,11 @@ func _is_move_request(p_waypoint: Waypoint) -> bool:
 func _is_mine_request(p_waypoint: Waypoint) -> bool:
 	return _machine_selected and p_waypoint
 
-func _on_waypoint_hud_waypoint_selected(waypoint: Waypoint):
-	var so = waypoint.get_selected_object()
-	if so is MachineCharacter and not _machine_selected:
-		_machine_selected = so
+func _on_waypoint_hud_waypoint_selected(p_object):
+	if p_object is MachineCharacter and not _machine_selected:
+		_machine_selected = p_object
 		_update_action_panel()
-	_update_info(so)
+		_info_object = p_object
 
 func _update_action_panel() -> void:
 	if _machine_selected:
@@ -93,14 +116,14 @@ func _on_planet_status_requested(solar_system_id, planet_id, data):
 	var machines  = data.machines
 	var planet: StellarBody = _solar_system.get_reference_stellar_body_by_id(planet_id)
 	for md in machines:
-		_on_add_machine(_username, planet_id, md.asset_id, md.id)
+		_on_add_machine(md.owner_id, planet_id, md.asset_id, md.id)
 		var m: MachineCharacter = _machines[int(md.id)]
 		m.set_task_batch(md.tasks) 
 		var final_position = Util.unit_coordinates_to_unit_vector(Vector2(md.location.x, md.location.y)) * planet.radius
 		m.global_position = final_position
 	load_waypoints()
 
-func _on_add_machine(_player_id: String, _planet_id: int, machine_asset_id: int, machine_instance_id: int) -> void:
+func _on_add_machine(player_id: String, _planet_id: int, machine_asset_id: int, machine_instance_id: int) -> void:
 	var asset: Node3D = _asset_inventory.generate_asset(machine_asset_id)
 	_machines[machine_instance_id]  = asset
 	var planet: StellarBody = _solar_system.get_reference_stellar_body()
@@ -110,6 +133,7 @@ func _on_add_machine(_player_id: String, _planet_id: int, machine_asset_id: int,
 		miner.set_id(machine_instance_id)
 		planet.add_machine(miner)
 		miner.set_planet(planet)
+		miner.set_owner_id(player_id)
 		miner.global_position = spawn_point
 		miner.configure_waypoint(_solar_system.is_planet_mode_enabled())
 		miner.mineral_extracted.connect(_on_mineral_extracted)
@@ -132,18 +156,18 @@ func _on_task_requested(solar_system_id: int, planet_id: int, machine_id: int, r
 
 func load_waypoints():
 	var deposits = Server.planet_get_deposits(_solar_system.get_reference_stellar_body_id())
-#	var ss := _get_solar_system()
 	for index in deposits.size():
 		var mine = deposits[index]
 		var waypoint: Waypoint = WaypointScene.instantiate()
 		var planet := _solar_system.get_reference_stellar_body()
-#		waypoint.transform = planet.get_surface_transform(mine.pos)
 		waypoint.location = mine.pos
 		waypoint.info = "Mine pos: {}\nAmount: {}".format([mine.pos, mine.amount], "{}")
 		waypoint.location_id = index
 		planet.node.add_child(waypoint)
 		planet.waypoints.append(waypoint)
 		waypoint.global_position = Util.coordinate_to_unit_vector(mine.pos) * planet.radius
+
+
 ##############################
 # Helper functions
 ##############################
@@ -166,10 +190,10 @@ func machine_move(machine_id: int, from, to) -> void:
 func machine_mine(p_machine_id: int, p_to: int) -> void:
 	var data := Miner.MineTaskData.new()
 	data.planet_id = _solar_system.get_reference_stellar_body_id()
-	print("Sending location ID: {0}".format([p_to]))
+#	print("Sending location ID: {0}".format([p_to]))
 	data.location_id = p_to
 	data.machine_id = _machine_selected.get_id()
-	print("Sending Going to: {0}".format([Util.coordinate_to_unit_coordinates(Server.get_deposit_coordinate(0, get_solar_system().get_reference_stellar_body_id(), p_to))]))
+#	print("Sending Going to: {0}".format([Util.coordinate_to_unit_coordinates(Server.get_deposit_coordinate(0, get_solar_system().get_reference_stellar_body_id(), p_to))]))
 	Server.machine_mine(0, get_solar_system().get_reference_stellar_body_id(), _machine_selected.get_id(), _username, "mine", data)
 	_machine_selected = null
 
@@ -181,7 +205,11 @@ func finish_task(machine_id: int, task_id: int) -> void:
 
 
 func get_planet_status() -> void:
-	Server.get_planet_status(1, 0, _solar_system.get_reference_stellar_body_id())
+	Server.get_planet_status(0, _solar_system.get_reference_stellar_body_id(), _username)
+
+func despawn_machine(p_machine_id: int) -> void:
+	Server.despawn_machine(0, _solar_system.get_reference_stellar_body_id(), p_machine_id, _username)
+
 ##############################
 # End Helper functions
 ##############################
@@ -190,3 +218,19 @@ func get_planet_status() -> void:
 func _on_solar_system_loading_progressed(info):
 	if info.finished:
 		Server.get_machine_assets(_username)
+
+func get_user_id() -> String:
+	return _username
+
+
+func prepare_task(p_task_node: ITask):
+	_task_ui_from_node_selected = p_task_node
+
+func _on_despawn_machine_requested(p_solar_system_id: int, p_planet_id: int, p_machine_id: int):
+	var m: MachineCharacter = _machines[p_machine_id]
+	if m == _info_object:
+		_info_object = null
+	
+	_machines.erase(p_machine_id)
+	m.destroy_machine()
+#	m.queue_free()

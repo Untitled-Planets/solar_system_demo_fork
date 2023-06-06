@@ -17,12 +17,17 @@ func _ready():
 	_game = get_tree().get_nodes_in_group("game")[0]
 	var action := IActionsContext.ActionContext.new()
 	action.name = "Move"
-	action.function = _move_request
+	action.function = func(): _game.prepare_task(get_task("move"))
 	_actions.append(action)
 	
 	action = IActionsContext.ActionContext.new()
 	action.name = "CM"
 	action.function = func(): _game.cancel_task(get_id(), get_current_task().get_id())
+	_actions.append(action)
+	
+	action = IActionsContext.ActionContext.new()
+	action.name = "Despawn"
+	action.function = func(): _game.despawn_machine(get_id())
 	_actions.append(action)
 	
 

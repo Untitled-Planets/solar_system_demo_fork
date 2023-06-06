@@ -12,6 +12,7 @@ signal login_requested(p_data: Dictionary)
 signal solar_system_requested(p_data: Dictionary)
 signal planet_status_requested(solar_system_id, planet_id, data)
 signal execute_task_requested(solar_system_id, planet_id, machine_id, requester_id, task_data)
+signal despawn_machine_requested(solar_system_id: int, planet_id: int, machine_id: int)
 
 @onready var _request = $request
 
@@ -30,8 +31,17 @@ func update_planet_deposits(solar_system_id: int, p_planet_id: int, p_points: Ar
 	_planets[p_planet_id]["deposits"] = dps
 
 
-func update_mining(p_solar_system_id, p_planet_id, p_minig_points):
-	pass
+func set_mine_point_amount(p_solar_system_id: int, p_planet_id: int, p_location_id: int, p_remaining_amount: int) -> void:
+	if not _planets.has(p_planet_id):
+		return
+	
+	if p_location_id > _planets[p_planet_id].deposits.size():
+		return
+	
+	_planets[p_planet_id].deposits[p_location_id].amount = p_remaining_amount
+
+#func update_mining(p_solar_system_id, p_planet_id, p_minig_points):
+#	pass
 
 func _call_event(p_name, params):
 	get_tree().call_group(p_name, params)
@@ -109,8 +119,9 @@ func client_machine_move(machine_id: int, task_id: String, p_data: MoveMachineDa
 
 
 
-func machine_collect_resource(machine_id: NodePath, planet_id: int, location_id: int, _mine_speed: int = 10) -> void:
-	server_machine_collect_resource(machine_id, planet_id, location_id, _mine_speed)
+func machine_collect_resource(p_solar_system_id: int, planet_id: int, location_id: int, machine_id: int, p_username: String) -> void:
+#	server_machine_collect_resource(machine_id, planet_id, location_id)
+	_request.collect_resource(p_solar_system_id, planet_id, location_id, machine_id, p_username)
 
 func server_machine_collect_resource(machine_id: NodePath, planet_id: int, location_id: int, _mine_speed: int = 10) -> void:
 	client_machine_collect_resource(machine_id, planet_id, location_id, _mine_speed)
@@ -162,7 +173,7 @@ func machine_move(p_solar_system_id, p_planet_id, p_machine_id: int, p_requester
 			x = move_data.to.x,
 			y = move_data.to.y
 		},
-		speed = move_data.machine_speed,
+		machine_speed = move_data.machine_speed,
 		planet_radius = move_data.planet_radius
 	}
 	_execute_task(p_solar_system_id, p_planet_id, p_machine_id, p_requester_id, data)
@@ -173,15 +184,18 @@ func finish_task(p_solar_system_id: int, planet_id: int, p_machine_id:  int, tas
 func _execute_task(p_solar_system_id: int, planet_id: int, p_machine_id:  int, requester_id: String, task_data: Dictionary):
 	_request.execute_task(p_solar_system_id, planet_id, p_machine_id, requester_id, task_data)
 
-
 func join(p_username):
 	_request.join(p_username)
 
 func get_solar_system_data():
 	_request.get_solar_system()
 
-func get_planet_status(user_id, p_solar_system_id, p_planet_id) -> void:
-	_request.get_planet_status(user_id, p_solar_system_id, p_planet_id)
+func get_planet_status(p_solar_system_id: int, p_planet_id: int, user_id: String) -> void:
+	_request.get_planet_status(p_solar_system_id, p_planet_id, user_id)
 
 func get_machine_assets(p_requester: String) -> void:
 	_request.get_machine_assets(p_requester)
+
+
+func despawn_machine(p_solar_system_id: int, p_planet_id: int, p_machine_id: int, p_requester_id: String) -> void:
+	_request.despawn_machine(p_solar_system_id, p_planet_id, p_machine_id, p_requester_id)

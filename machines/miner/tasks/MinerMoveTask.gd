@@ -15,13 +15,14 @@ func _ready():
 
 func start() -> void:
 	super.start()
+	_status = ITask.Finished.NONE
 	_movement.move_request_finished.connect(_on_move_finished)
 	_is_on_place = false
 	var d := MoveMachineData.new()
 	d.from = Vector2(data.from.x, data.from.y)
 	d.to = Vector2(data.to.x, data.to.y)
 	d.planet_radius = data.planet_radius
-	d.machine_speed = data.speed
+	d.machine_speed = data.machine_speed
 	_data = d
 	if not _task_cancelled:
 		if not _movement.is_moving():
@@ -55,5 +56,7 @@ func set_started_time_delta(p_started_time: float):
 
 func stop() -> void:
 	super.stop()
+	_is_on_place = false
+	_status = ITask.Finished.NONE
 	_movement.move_request_finished.disconnect(_on_move_finished)
 	_movement.cancel_move_request(null)

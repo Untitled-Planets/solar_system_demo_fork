@@ -97,6 +97,9 @@ func _find_pointed_planet(camera: Camera3D) -> StellarBody:
 func set_inventory_enable(value: bool) -> void:
 	_inventory.visible = value
 
+
+func add_machine_instance(instance: MachineCharacter) -> void:
+	_inventory.add_instance_item(instance)
 #static func int_max(a: int, b: int) -> int:
 #	return a if a > b else b
 
