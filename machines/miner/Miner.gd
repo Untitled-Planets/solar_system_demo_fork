@@ -30,6 +30,16 @@ func _ready():
 	action.function = func(): _game.despawn_machine(get_id())
 	_actions.append(action)
 	
+	action = IActionsContext.ActionContext.new()
+	action.name = "Mine"
+	action.function = func(): _game.machine_mine(get_id())
+	_actions.append(action)
+	
+	action = IActionsContext.ActionContext.new()
+	action.name = "CMine"
+	action.function = func(): _game.cancel_task(get_id(), get_current_task().get_id())
+	_actions.append(action)
+	
 
 func set_mining(value: bool) -> void:
 	pass

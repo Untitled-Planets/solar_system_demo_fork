@@ -20,15 +20,10 @@ func start() -> void:
 	d.location_id = data.location_id
 	d.planet_id = data.planet_id
 	_data = d
-	print("Going to location ID: {0}".format([d.location_id]))
 	var coordinate: Vector2 = Server.get_deposit_coordinate(0, _game.get_solar_system().get_reference_stellar_body_id(), d.location_id)
-	print("Target coordinate: {0}".format([coordinate]))
-#	coordinate = Vector2(coordinate.x, coordinate.y)
 	_target_coordinate = Util.coordinate_to_unit_coordinates(coordinate)
-	print("Target unit coordinate: {0}".format([_target_coordinate]))
-	_is_on_place = false
+	_is_on_place = true
 	_movement.move_request_finished.connect(_on_move_finished)
-#	_target_coordinate = Util.unit_coordinates_to_unit_vector(target_coordinate) * _miner.get_planet().radius
 	
 
 func _update_task(delta: float) -> void:
@@ -58,10 +53,23 @@ func _on_move_finished(request_id: int) -> void:
 	_is_on_place = true
 
 
-func _on_resource_collected(machine_id: NodePath, planet_id, amount: int) -> void:
-	if _miner.get_path() == machine_id:
+func _on_resource_collected(machine_id: int, planet_id, amount: int) -> void:
+	if machine_id == _miner.get_id():
 		if amount == 0:
 			_status = ITask.Finished.SUCCESS
+#			var t: ITask = _miner.get_current_task()
+#			Server.finish_task(0, _data.planet_id, _miner.get_id(), _miner.get_current_task().get_id(), _game._username)
+
+
+func resume_task(p_task_data: Dictionary) -> void:
+	data = p_task_data
+	pass
+
+func set_started_time_delta(p_started_time: float):
+#	_movement.set_total_time(p_started_time)
+	Server.cosume_mine_amount_by_location_id(0, data.planet_id, data.location_id, p_started_time)
+	pass
+
 
 
 func stop() -> void:

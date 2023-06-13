@@ -26,6 +26,8 @@ var _is_focussed: bool = false
 
 var _task_data_queue: Array = []
 
+var _planet_mine_location_id: int = -1
+
 func _ready():
 	_game = get_tree().get_nodes_in_group("game")[0]
 	
@@ -80,6 +82,12 @@ func _process(delta):
 			_current_task = null
 			
 
+
+func set_planet_mine_location(p_value: int) -> void:
+	_planet_mine_location_id = p_value
+
+func get_planet_mine_location_id() -> int:
+	return _planet_mine_location_id
 
 ###########################
 # IWorker
@@ -150,6 +158,9 @@ func set_id(p_value) -> void:
 
 func set_owner_id(p_owner_id) -> void:
 	_owner = p_owner_id
+
+func get_owner_id() -> String:
+	return _owner
 
 func get_pickable_info() -> PickableInfo:
 	var info := PickableInfo.new()

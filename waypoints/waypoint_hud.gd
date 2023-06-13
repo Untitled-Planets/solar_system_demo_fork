@@ -63,11 +63,9 @@ func _draw():
 		var color: Color = waypoint.get_color()
 		if radius < nt.get_width() * min_scale:
 			radius = nt.get_width() * min_scale
-		#draw_string(font, pos_2d, waypoint.waypoint_name, Color(0.3, 1.0, 0.3))
 		var pos_2d = center_2d - Vector2(radius, radius) * 0.5
 		draw_texture_rect(
-			nt, Rect2(pos_2d, Vector2(radius, radius)), false, color)
-#		draw_string()
+			nt, Rect2(pos_2d, Vector2(radius, radius) * 2.0), false, color)
 		
 		var dist = mouse_pos.distance_to(center_2d)
 		if dist <= radius:
@@ -85,5 +83,6 @@ func _draw():
 		
 		if not mouse_collide:
 			info_label.hide()
-			
 	_selected_waypoint = w
+
+# Target waypoint to circle

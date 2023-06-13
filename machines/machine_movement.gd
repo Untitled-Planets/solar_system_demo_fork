@@ -27,12 +27,12 @@ func _process(delta):
 			_process_movement()
 		else:
 			machine.visible = false
-		if machine.visible:
-			_fix_orientation()
 		if _total_time >= _travel_time:
 			_state = MachineCharacter.State.IDLE
 			move_request_finished.emit(0)
 	_fix_transform()
+	if machine.visible:
+		_fix_orientation()
 
 func _process_movement() -> void:
 	var current_direction := _from.slerp(_to, minf(_total_time / _travel_time, 1.0)).normalized()
@@ -60,6 +60,8 @@ func _fix_transform() -> void:
 		machine.position = (-dir) * _last_know_secure_height
 
 func _fix_orientation() -> void:
+	if machine.position == Vector3.ZERO:
+		return
 	var n := machine.position.normalized()
 	var up := machine.basis.y
 	if n.is_equal_approx(up):

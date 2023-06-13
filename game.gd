@@ -58,8 +58,8 @@ func _process_input() -> void:
 			var to := get_click_position()
 			machine_move(_machine_selected.get_id(), _machine_selected.position, to)
 			pass
-		elif _is_mine_request(w):
-			machine_mine(_machine_selected.get_id(), w.location_id)
+		elif _is_mine_request(w): # move_request instead
+			machine_move_at_location_id(_machine_selected.get_id(), w.location_id)
 		else:
 			if w:
 				_on_waypoint_hud_waypoint_selected(w.get_selected_object())
@@ -113,6 +113,7 @@ func _on_reference_body_changed(body_info):
 	get_planet_status()
 
 func _on_planet_status_requested(solar_system_id, planet_id, data):
+	await get_tree().create_timer(1.5).timeout
 	var machines  = data.machines
 	var planet: StellarBody = _solar_system.get_reference_stellar_body_by_id(planet_id)
 	for md in machines:
@@ -120,6 +121,9 @@ func _on_planet_status_requested(solar_system_id, planet_id, data):
 		var m: MachineCharacter = _machines[int(md.id)]
 		m.set_task_batch(md.tasks) 
 		var final_position = Util.unit_coordinates_to_unit_vector(Vector2(md.location.x, md.location.y)) * planet.radius
+		var location_id: int = Server.get_mine_deposit_id_by_unit_coordinates(solar_system_id, planet_id, Vector2(md.location.x, md.location.y))
+#		print("Location id: ", location_id)
+		m.set_planet_mine_location(location_id)
 		m.global_position = final_position
 	load_waypoints()
 
@@ -172,12 +176,16 @@ func load_waypoints():
 # Helper functions
 ##############################
 func spawn_machine(machine_id: int) -> void:
+	if _machines.has(machine_id):
+		print("This amchine already exists in the game")
+		return
 	Server.miner_spawn(0, _solar_system.get_reference_stellar_body_id(), _username, machine_id)
 	
 func machine_move(machine_id: int, from, to) -> void:
 	if not _machines.has(machine_id):
 		return
 	var machine: MachineCharacter = _machines[machine_id]
+	machine.set_planet_mine_location(-1)
 	var data := MoveMachineData.new()
 	data.machine_speed = machine.get_max_speed()
 	data.from = Util.position_to_unit_coordinates(from)
@@ -185,16 +193,39 @@ func machine_move(machine_id: int, from, to) -> void:
 	data.planet_radius = _solar_system.get_reference_stellar_body().radius
 	Server.machine_move(0, _solar_system.get_reference_stellar_body_id(), machine_id, _username, "move", data)
 	_machine_selected = null
+	
+func machine_move_at_location_id(machine_id: int, location_id: int) -> void:
+	if not _machines.has(machine_id):
+		return
+	var machine: MachineCharacter = _machines[machine_id]
+	machine.set_planet_mine_location(location_id)
+	var data := MoveMachineData.new()
+	data.machine_speed = machine.get_max_speed()
+	data.from = Util.position_to_unit_coordinates(machine.position)
+	var to: Vector2 = Server.planet_get_deposits(_solar_system.get_reference_stellar_body_id())[location_id].pos
+	data.to = Util.coordinate_to_unit_coordinates(to)
+	data.planet_radius = _solar_system.get_reference_stellar_body().radius
+	Server.machine_move(0, _solar_system.get_reference_stellar_body_id(), machine_id, _username, "move", data)
+	_machine_selected = null
 
 # TODO remove position. This should be gathered from server.
-func machine_mine(p_machine_id: int, p_to: int) -> void:
+func machine_mine(p_machine_id: int) -> void:
+	if not _machines.has(p_machine_id):
+		return
+	var machine: MachineCharacter = _machines[p_machine_id]
+	
+	if machine.get_current_task() != null:
+		print("Cannot mine while doing another task")
+		return
 	var data := Miner.MineTaskData.new()
 	data.planet_id = _solar_system.get_reference_stellar_body_id()
-#	print("Sending location ID: {0}".format([p_to]))
-	data.location_id = p_to
-	data.machine_id = _machine_selected.get_id()
-#	print("Sending Going to: {0}".format([Util.coordinate_to_unit_coordinates(Server.get_deposit_coordinate(0, get_solar_system().get_reference_stellar_body_id(), p_to))]))
-	Server.machine_mine(0, get_solar_system().get_reference_stellar_body_id(), _machine_selected.get_id(), _username, "mine", data)
+	var location_id: int = machine.get_planet_mine_location_id()
+	if location_id == -1:
+		print("the machine is not located on any mine location")
+		return
+	data.location_id = location_id
+	data.machine_id = machine.get_id()
+	Server.machine_mine(0, get_solar_system().get_reference_stellar_body_id(), machine.get_id(), _username, "mine", data)
 	_machine_selected = null
 
 func cancel_task(machine_id: int, task_id: int) -> void:
@@ -209,6 +240,7 @@ func get_planet_status() -> void:
 
 func despawn_machine(p_machine_id: int) -> void:
 	Server.despawn_machine(0, _solar_system.get_reference_stellar_body_id(), p_machine_id, _username)
+
 
 ##############################
 # End Helper functions
