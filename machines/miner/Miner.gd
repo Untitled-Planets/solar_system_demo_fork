@@ -10,6 +10,7 @@ class MineTaskData:
 signal mineral_extracted(id, amount)
 
 var _actions: Array[IActionsContext.ActionContext] = []
+var _mining_amount: int = 0
 #var _game: Game
 
 func _ready():
@@ -50,3 +51,7 @@ func _move_request() -> void:
 
 func get_actions() -> Array[IActionsContext.ActionContext]:
 	return _actions
+
+func set_machine_data(p_data: Dictionary) -> void:
+	super.set_machine_data(p_data)
+	_mining_amount = p_data.mining_speed

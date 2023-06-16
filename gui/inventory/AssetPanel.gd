@@ -7,6 +7,13 @@ signal asset_selected(asset_id)
 
 @export var _id: int = -1
 
+var _pickable_info: PickableInfo = null
+var pickable_info: PickableInfo:
+	set(value):
+		_pickable_info = value
+	get:
+		return _pickable_info
+
 var _text: String
 @export var text: String:
 	set(value):
@@ -25,6 +32,9 @@ func _ready():
 
 func set_id(p_id: int) -> void:
 	_id = p_id
+
+func get_id():
+	return _id
 
 func _on_texture_button_pressed():
 	if _id != -1:

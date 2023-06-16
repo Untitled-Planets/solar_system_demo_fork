@@ -1,7 +1,7 @@
 extends Node
 
 #signal machine_move_requested(node_path, move_data)
-signal add_machine_requested(controller_id, planet_id, machine_asset_id, machine_instance_id)
+signal add_machine_requested(controller_id, planet_id, machine_asset_id, machine_instance_id, data)
 signal task_requested(object_id: NodePath, task_id: String, data)
 signal task_cancelled(solar_system_id: int, planet_id: int, machine_id: int, task_id: int, requester_id: String)
 signal inventory_updated(p_assets: Array)
@@ -78,12 +78,12 @@ func sign_in():
 func _ready():
 	pass # Replace with function body.
 
-func server_miner_spawn(controller_id, miner_asset_id, machine_instance_id, planet_id, spawn_location) -> void:
-	await get_tree().create_timer(0.1).timeout
-	client_miner_spawn(controller_id, miner_asset_id, machine_instance_id, planet_id)
+#func server_miner_spawn(controller_id, miner_asset_id, machine_instance_id, planet_id, spawn_location) -> void:
+#	await get_tree().create_timer(0.1).timeout
+#	client_miner_spawn(controller_id, miner_asset_id, machine_instance_id, planet_id)
 
-func client_miner_spawn(controller_id, planet_id, miner_asset_id, machine_instance_id) -> void:
-	add_machine_requested.emit(controller_id, planet_id, miner_asset_id, machine_instance_id)
+func client_miner_spawn(controller_id, planet_id, miner_asset_id, machine_instance_id, p_data) -> void:
+	add_machine_requested.emit(controller_id, planet_id, miner_asset_id, machine_instance_id, p_data)
 
 func get_mine_deposit_id_by_unit_coordinates(_p_solar_system_id: int, p_planet_id: int, p_unit_coord: Vector2) -> int:
 	var deposits: Array = _planets[p_planet_id].deposits

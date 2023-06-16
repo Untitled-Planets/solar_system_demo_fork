@@ -177,7 +177,8 @@ func set_focus(p_value: bool) -> void:
 	_is_focussed = p_value
 
 func is_focussed() -> bool:
-	return _is_focussed
+	return get_current_task() != null
+#	return _is_focussed
 
 func destroy_machine():
 	WaypointManager.remove_waypoint(_waypoint)
@@ -187,6 +188,9 @@ func get_color() -> Color:
 	if _current_task != null:
 		return Color.BLUE
 	return Color.WHITE
+
+func set_machine_data(p_data: Dictionary) -> void:
+	_movement.set_speed(p_data.speed)
 
 #func _exit_tree():
 #	WaypointManager.remove_waypoint(_waypoint)

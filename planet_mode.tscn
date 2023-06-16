@@ -2,5 +2,5 @@
 
 [ext_resource type="Script" path="res://planet_mode.gd" id="1_ap620"]
 
-[node name="planet_mode" type="Node" groups=["planet_mode"]]
+[node name="planet_mode" type="Node" groups=["planet_mode", "planet_mode_script"]]
 script = ExtResource("1_ap620")

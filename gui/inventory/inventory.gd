@@ -41,7 +41,12 @@ func add_instance_item(instance: MachineCharacter) -> void:
 	pass
 
 func _on_horizontal_items_item_selected(p_asset_panel):
-	set_actions(p_asset_panel)
+	var m: MachineCharacter = _game.get_machine(p_asset_panel.get_id())
+	var dac: DynamicActionContext = DynamicActionContext.new()
+	dac.add_actions(p_asset_panel.get_actions())
+	if m != null:
+		dac.add_actions(m.get_actions())
+	set_actions(dac)
 
 func set_info(p_info: PickableInfo) -> void:
 	_info_panel.set_info(p_info)

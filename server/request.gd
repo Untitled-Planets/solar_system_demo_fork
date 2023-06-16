@@ -210,7 +210,7 @@ func _on_http_request_request_completed(result, response_code, headers, body: Pa
 			Server.login_requested.emit(data)
 		elif data.has("spawn_machine"):
 			data = data.spawn_machine
-			Server.client_miner_spawn(data.owner_id, data.planet_id, data.machine_asset_id, data.machine_instance_id)
+			Server.client_miner_spawn(data.owner_id, data.planet_id, data.machine_asset_id, data.machine_instance_id, data)
 		elif data.has("cancel_task"):
 			data = data.cancel_task
 			if data.is_empty():

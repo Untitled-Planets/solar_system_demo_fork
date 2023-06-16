@@ -3,7 +3,7 @@
 [ext_resource type="Script" path="res://waypoints/waypoint_hud.gd" id="1"]
 [ext_resource type="Texture2D" uid="uid://su5hn77l08iy" path="res://gui/waypoint.png" id="2_bjbm7"]
 
-[node name="WaypointHUD" type="Control" groups=["planet_mode", "waypoint_hud"]]
+[node name="WaypointHUD" type="Control" groups=["waypoint_hud"]]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0

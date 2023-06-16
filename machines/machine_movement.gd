@@ -19,6 +19,10 @@ var _to: Vector3
 
 func _ready():
 	pass
+	
+
+func set_speed(p_value: float) -> void:
+	_speed = p_value
 
 func _process(delta):
 	if _state == MachineCharacter.State.MOVING:
@@ -57,7 +61,7 @@ func _fix_transform() -> void:
 		machine.position += diff
 		_last_know_secure_height = machine.position.length()
 	else:
-		machine.position = (-dir) * _last_know_secure_height
+		machine.position = (-dir) * planet.radius
 
 func _fix_orientation() -> void:
 	if machine.position == Vector3.ZERO:

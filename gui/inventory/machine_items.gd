@@ -24,10 +24,24 @@ func _connect_items() -> void:
 		item.set_game_ref(_game)
 
 func add_asset_item(p_item: Dictionary) -> void:
-	var instance = _asset_panel_scene.instantiate()
+	var instance: AssetPanel = _asset_panel_scene.instantiate()
 	_assets.add_child(instance)
 	instance.asset_selected.connect(_on_asset_selected)
 	instance.set_game_ref(_game)
+	var pi: PickableInfo = PickableInfo.new()
+	pi.name = p_item.name
+	pi.type = "machine"
+	pi.meta = {
+		owner = p_item.owner_id,
+		texture = null,
+		current_task_name = p_item.tasks[0].task_name if p_item.tasks.size() != 0 else ""
+	}
+#	info.meta = {
+#		owner = _owner,
+#		texture = _machine_view,
+#		current_task_name = _current_task.get_task_name() if _current_task != null else ""
+#	}
+	instance.pickable_info = pi
 	instance.set_id(p_item.id)
 	instance.text = p_item.name
 

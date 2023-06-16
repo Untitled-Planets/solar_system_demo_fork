@@ -4,7 +4,7 @@ extends Node
 var _waypoints: Array[Waypoint] = []
 
 func _ready():
-	add_to_group("planet_mode")
+#	add_to_group("planet_mode")
 	pass
 
 #func add_waypoints_to_group(group_id: String, p_waypoints: Array):

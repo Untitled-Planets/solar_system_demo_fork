@@ -43,9 +43,10 @@ func _process_input() -> void:
 	var w: Waypoint = _waypoint_hud.selected_waypoint
 	if Input.is_action_just_pressed("no_context_select_object"):
 		if w:
-			_info_object = w.get_selected_object()
+#			_info_object = w.get_selected_object()
+			_on_waypoint_hud_waypoint_selected(w.get_selected_object())
 			_machine_selected = _info_object if _info_object is MachineCharacter else null
-			_machine_selected.set_focus(true)
+#			_machine_selected.set_focus(true)
 		elif _task_ui_from_node_selected and not w:
 			var to := get_click_position()
 #			_machine_selected.set_focus(false)
@@ -58,7 +59,7 @@ func _process_input() -> void:
 			var to := get_click_position()
 			machine_move(_machine_selected.get_id(), _machine_selected.position, to)
 			pass
-		elif _is_mine_request(w): # move_request instead
+		elif _is_move_at_location_request(w):
 			machine_move_at_location_id(_machine_selected.get_id(), w.location_id)
 		else:
 			if w:
@@ -84,8 +85,8 @@ func get_click_position() -> Vector3:
 func _is_move_request(p_waypoint: Waypoint) -> bool:
 	return _machine_selected and not p_waypoint
 
-func _is_mine_request(p_waypoint: Waypoint) -> bool:
-	return _machine_selected and p_waypoint
+func _is_move_at_location_request(p_waypoint: Waypoint) -> bool:
+	return _machine_selected and p_waypoint and p_waypoint.get_selected_object() != _machine_selected
 
 func _on_waypoint_hud_waypoint_selected(p_object):
 	if p_object is MachineCharacter and not _machine_selected:
@@ -113,13 +114,14 @@ func _on_reference_body_changed(body_info):
 	get_planet_status()
 
 func _on_planet_status_requested(solar_system_id, planet_id, data):
-	await get_tree().create_timer(1.5).timeout
+#	await get_tree().create_timer(1.5).timeout
 	var machines  = data.machines
 	var planet: StellarBody = _solar_system.get_reference_stellar_body_by_id(planet_id)
 	for md in machines:
-		_on_add_machine(md.owner_id, planet_id, md.asset_id, md.id)
+		_on_add_machine(md.owner_id, planet_id, md.asset_id, md.id, md)
 		var m: MachineCharacter = _machines[int(md.id)]
-		m.set_task_batch(md.tasks) 
+		m.set_task_batch(md.tasks)
+		
 		var final_position = Util.unit_coordinates_to_unit_vector(Vector2(md.location.x, md.location.y)) * planet.radius
 		var location_id: int = Server.get_mine_deposit_id_by_unit_coordinates(solar_system_id, planet_id, Vector2(md.location.x, md.location.y))
 #		print("Location id: ", location_id)
@@ -127,7 +129,7 @@ func _on_planet_status_requested(solar_system_id, planet_id, data):
 		m.global_position = final_position
 	load_waypoints()
 
-func _on_add_machine(player_id: String, _planet_id: int, machine_asset_id: int, machine_instance_id: int) -> void:
+func _on_add_machine(player_id: String, _planet_id: int, machine_asset_id: int, machine_instance_id: int, p_data) -> void:
 	var asset: Node3D = _asset_inventory.generate_asset(machine_asset_id)
 	_machines[machine_instance_id]  = asset
 	var planet: StellarBody = _solar_system.get_reference_stellar_body()
@@ -141,6 +143,8 @@ func _on_add_machine(player_id: String, _planet_id: int, machine_asset_id: int, 
 		miner.global_position = spawn_point
 		miner.configure_waypoint(_solar_system.is_planet_mode_enabled())
 		miner.mineral_extracted.connect(_on_mineral_extracted)
+	var md: Dictionary = p_data.machine_data if p_data.has("machine_data") else p_data
+	miner.set_machine_data(md)
 
 
 func _on_task_cancelled(solar_system_id: int, planet_id: int, machine_id: int, task_id: int, requester_id: String) -> void:
@@ -266,3 +270,7 @@ func _on_despawn_machine_requested(p_solar_system_id: int, p_planet_id: int, p_m
 	_machines.erase(p_machine_id)
 	m.destroy_machine()
 #	m.queue_free()
+
+
+func get_machine(p_machine_id: int) -> MachineCharacter:
+	return _machines.get(p_machine_id, null)

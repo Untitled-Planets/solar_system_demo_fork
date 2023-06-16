@@ -14,9 +14,10 @@ var selected_waypoint: Waypoint:
 	get:
 		return _selected_waypoint
 
+var _planet_mode: PlanetMode = null
 
-#var _waypoints := []
-
+func _ready():
+	_planet_mode = get_tree().get_nodes_in_group("planet_mode_script")[0]
 
 func set_solar_system(ss : SolarSystem):
 	_solar_system = ss
@@ -25,20 +26,9 @@ func set_solar_system(ss : SolarSystem):
 func _process(_delta):
 	queue_redraw()
 
-#func add_waypoint(w: Waypoint) -> void:
-#	_waypoints.append(w)
 
 func is_on_waypoint() -> bool:
 	return _selected_waypoint != null
-
-# As we cannot guaranty the order in call_group
-# we will wait one frame after the creation of the waypoints.
-#func (value: bool) -> void:
-#	if value:
-#		await get_tree().process_frame
-#		_waypoints = get_tree().get_nodes_in_group("waypoint")
-#	else:
-#		_waypoints = []
 
 func _draw():
 	var _w = WaypointManager.get_waypoints()
@@ -61,6 +51,11 @@ func _draw():
 		var min_scale = 0.5
 		var nt : Texture = waypoint.get_focus_texture()
 		var color: Color = waypoint.get_color()
+		var _is_candidate: bool = true
+		if _planet_mode.is_enabled:
+			if waypoint.global_transform.origin.dot(camera.global_transform.origin) < 0.0:
+				color.a *= 0.5
+				_is_candidate = false
 		if radius < nt.get_width() * min_scale:
 			radius = nt.get_width() * min_scale
 		var pos_2d = center_2d - Vector2(radius, radius) * 0.5
@@ -68,7 +63,7 @@ func _draw():
 			nt, Rect2(pos_2d, Vector2(radius, radius) * 2.0), false, color)
 		
 		var dist = mouse_pos.distance_to(center_2d)
-		if dist <= radius:
+		if dist <= radius and _is_candidate:
 			w = waypoint
 			info_label.show()
 			var so = waypoint.get_selected_object()
