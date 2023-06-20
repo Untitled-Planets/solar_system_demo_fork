@@ -134,18 +134,9 @@ func client_machine_move(machine_id: int, task_id: String, p_data: MoveMachineDa
 
 
 
-func machine_collect_resource(p_solar_system_id: int, planet_id: int, location_id: int, machine_id: int, p_username: String) -> void:
-	var amount = _collect_resource(planet_id, location_id, 40)
+func machine_collect_resource(p_solar_system_id: int, planet_id: int, location_id: int, machine_id: int, p_username: String, p_amount: int) -> void:
+	var amount = _collect_resource(planet_id, location_id, p_amount)
 	planet_resource_collected.emit(machine_id, planet_id, amount)
-#	server_machine_collect_resource(machine_id, planet_id, location_id)
-#	_request.collect_resource(p_solar_system_id, planet_id, location_id, machine_id, p_username)
-
-#func server_machine_collect_resource(machine_id: NodePath, planet_id: int, location_id: int, _mine_speed: int = 10) -> void:
-#	client_machine_collect_resource(machine_id, planet_id, location_id, _mine_speed)
-
-#func client_machine_collect_resource(machine_id: NodePath, planet_id: int, location_id: int, _mine_speed: int = 10) -> void:
-#	var amount = _collect_resource(planet_id, location_id, _mine_speed)
-#	planet_resource_collected.emit(machine_id, planet_id, amount)
 
 func cancel_task(solar_system_id: int, planet_id: int, machine_id: int, task_id: int, requester_id: String) -> void:
 	_request.cancel_task(solar_system_id, planet_id, machine_id, task_id, requester_id)
@@ -157,9 +148,9 @@ func client_cancel_task(machine_path_id: NodePath, task_name: String) -> void:
 	task_cancelled.emit(machine_path_id, task_name)
 
 
-func _collect_resource(planet_id: int, location_id: int, _mine_speed: int = 10) -> int:
+func _collect_resource(planet_id: int, location_id: int, p_mine_speed: int) -> int:
 	var location = _planets[planet_id].deposits[location_id]
-	var amount: int = _mine_speed * 0.5
+	var amount: int = p_mine_speed
 	var collected_amount: int
 	if amount > location.amount:
 		collected_amount = location.amount

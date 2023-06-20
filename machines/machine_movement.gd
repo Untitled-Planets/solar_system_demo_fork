@@ -67,12 +67,12 @@ func _fix_orientation() -> void:
 	if machine.position == Vector3.ZERO:
 		return
 	var n := machine.position.normalized()
-	var up := machine.basis.y
+	var up := Vector3.UP
 	if n.is_equal_approx(up):
 		return
 	var t := machine.transform
 	var forward := up.cross(n)
-	var right := forward.cross(up)
+	var right := n.cross(forward)
 	t.basis = Basis(right.normalized(), n, forward.normalized())
 	machine.transform = t
 

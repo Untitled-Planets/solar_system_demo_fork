@@ -11,6 +11,7 @@ signal machine_instance_from_ui_selected(machine_id: int)
 @onready var _waypoint_hud: WaypointHUD = $SolarSystem/HUD/WaypointHUD
 
 @export var WaypointScene: PackedScene = null
+@export var _mouse_action_texture: Texture = null
 
 var _machine_selected: MachineCharacter = null
 var _machines := {}
@@ -32,7 +33,14 @@ func _process(delta):
 	_process_input()
 	if _info_object:
 		_update_info(_info_object)
+	if _is_about_to_request_action():
+		Input.set_custom_mouse_cursor(_mouse_action_texture, Input.CURSOR_ARROW, Vector2(24, 24))
+	else:
+		Input.set_custom_mouse_cursor(null)
 
+
+func _is_about_to_request_action() -> bool:
+	return _machine_selected != null
 
 func _on_machine_instance_from_ui_selected(p_machine_id: int):
 	_on_waypoint_hud_waypoint_selected(_machines[p_machine_id])
@@ -49,10 +57,10 @@ func _process_input() -> void:
 #			_machine_selected.set_focus(true)
 		elif _task_ui_from_node_selected and not w:
 			var to := get_click_position()
-#			_machine_selected.set_focus(false)
-			machine_move(_machine_selected.get_id(), _machine_selected.position, to)
-			_task_ui_from_node_selected = null
-			_machine_selected = null
+			if _task_ui_from_node_selected.get_task_name() == "move":
+				machine_move(_machine_selected.get_id(), _machine_selected.position, to)
+				_task_ui_from_node_selected = null
+				_machine_selected = null
 	
 	elif Input.is_action_just_pressed("select_object"):
 		if _is_move_request(w):
@@ -259,8 +267,9 @@ func get_user_id() -> String:
 	return _username
 
 
-func prepare_task(p_task_node: ITask):
+func prepare_task(p_task_node: ITask, p_machine_id: int):
 	_task_ui_from_node_selected = p_task_node
+	_machine_selected = _machines[p_machine_id]
 
 func _on_despawn_machine_requested(p_solar_system_id: int, p_planet_id: int, p_machine_id: int):
 	var m: MachineCharacter = _machines[p_machine_id]
@@ -269,7 +278,6 @@ func _on_despawn_machine_requested(p_solar_system_id: int, p_planet_id: int, p_m
 	
 	_machines.erase(p_machine_id)
 	m.destroy_machine()
-#	m.queue_free()
 
 
 func get_machine(p_machine_id: int) -> MachineCharacter:

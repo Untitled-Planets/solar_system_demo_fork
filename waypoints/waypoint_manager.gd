@@ -7,19 +7,8 @@ func _ready():
 #	add_to_group("planet_mode")
 	pass
 
-#func add_waypoints_to_group(group_id: String, p_waypoints: Array):
-#	_waypoints[group_id] = p_waypoints
-
 func add_waypoint(p_waypoint: Waypoint) -> void:
 	_waypoints.append(p_waypoint)
-
-#func get_waypoints_from_group(group_id: String):
-#	if _waypoints.has(group_id):
-#		return _waypoints[group_id]
-#	return []
-#
-#func remove_waypoints_from_group(group_id: String):
-#	_waypoints.erase(group_id)
 
 func remove_waypoint(p_waypoint: Waypoint):
 	_waypoints.erase(p_waypoint)

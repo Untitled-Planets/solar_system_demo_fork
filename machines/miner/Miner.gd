@@ -18,7 +18,7 @@ func _ready():
 	_game = get_tree().get_nodes_in_group("game")[0]
 	var action := IActionsContext.ActionContext.new()
 	action.name = "Move"
-	action.function = func(): _game.prepare_task(get_task("move"))
+	action.function = func(): _game.prepare_task(get_task("move"), get_id())
 	_actions.append(action)
 	
 	action = IActionsContext.ActionContext.new()
@@ -51,6 +51,9 @@ func _move_request() -> void:
 
 func get_actions() -> Array[IActionsContext.ActionContext]:
 	return _actions
+
+func get_mining_speed() -> int:
+	return _mining_amount
 
 func set_machine_data(p_data: Dictionary) -> void:
 	super.set_machine_data(p_data)

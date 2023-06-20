@@ -1,9 +1,10 @@
-[gd_scene load_steps=27 format=3 uid="uid://dx0qy8pg0q72b"]
+[gd_scene load_steps=28 format=3 uid="uid://dx0qy8pg0q72b"]
 
 [ext_resource type="Script" path="res://game.gd" id="1_3cmpg"]
 [ext_resource type="Script" path="res://solar_system/solar_system.gd" id="1_tcbv5"]
 [ext_resource type="Texture2D" uid="uid://b0s3fc7sjnlof" path="res://solar_system/space_background.png" id="2_06f30"]
 [ext_resource type="PackedScene" uid="uid://dc4lolnw2ugli" path="res://camera/camera.tscn" id="2_hifyg"]
+[ext_resource type="Texture2D" uid="uid://bar13k13o7sw8" path="res://gui/textures/mouse-action-icon.png" id="3_6w2nu"]
 [ext_resource type="Script" path="res://gui/hud.gd" id="3_rlxpp"]
 [ext_resource type="FontFile" path="res://gui/fonts/hack_regular_16_dynamic_font.tres" id="4_5b8os"]
 [ext_resource type="PackedScene" uid="uid://blqdy4acm4wpa" path="res://ship/ship.tscn" id="4_fmsd4"]
@@ -46,6 +47,7 @@ glow_hdr_threshold = 0.8
 [node name="Game" type="Node3D" groups=["game"]]
 script = ExtResource("1_3cmpg")
 WaypointScene = ExtResource("17_mvuvu")
+_mouse_action_texture = ExtResource("3_6w2nu")
 
 [node name="SolarSystem" type="Node3D" parent="." groups=["game_world"]]
 script = ExtResource("1_tcbv5")

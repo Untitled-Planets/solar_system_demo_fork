@@ -69,3 +69,6 @@ func get_color() -> Color:
 #		else:
 #			return Color(0.3, 1.0, 0.3)
 #	return Color(0.3, 1.0, 0.3)
+
+func _exit_tree():
+	WaypointManager.remove_waypoint(self)
