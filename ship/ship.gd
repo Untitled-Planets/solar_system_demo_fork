@@ -1,3 +1,4 @@
+class_name Ship
 extends RigidBody3D
 
 #const StellarBody = preload("../solar_system/stellar_body.gd")

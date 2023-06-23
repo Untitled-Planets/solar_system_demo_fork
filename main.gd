@@ -18,7 +18,7 @@ func _ready():
 func _on_login_requested(p_data: Dictionary) -> void:
 	assert(_game == null)
 	_main_menu.hide()
-	var game_scene : PackedScene = load("res://game.tscn")
+	var game_scene : PackedScene = load("res://demo_game.tscn")
 	_game = game_scene.instantiate()
 	_game._username = _username
 	add_child(_game)

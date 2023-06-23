@@ -112,6 +112,8 @@ func _get_target_transform() -> Transform3D:
 
 
 func _physics_process(delta: float):
+	if not _target:
+		return
 	var prev_trans = transform
 	
 	# Get ideal transform

@@ -8,8 +8,7 @@ const Settings = preload("res://settings.gd")
 const BODY_REFERENCE_ENTRY_RADIUS_FACTOR = 3.0
 const BODY_REFERENCE_EXIT_RADIUS_FACTOR = 3.1 # Must be higher for hysteresis
 
-@export var CameraScene: PackedScene
-@export var ShipScene: PackedScene
+
 
 class ReferenceChangeInfo:
 	var inverse_transform : Transform3D
@@ -28,15 +27,15 @@ signal exit_to_menu_requested
 
 @onready var _environment : Environment = $WorldEnvironment.environment
 @onready var _spawn_point = $SpawnPoint
-@onready var _mouse_capture = $MouseCapture
-@onready var _hud = $HUD
+
+
 @onready var _pause_menu = $PauseMenu
 @onready var _lens_flare = $LensFlare
 
 @onready var _planet_mode: PlanetMode = $planet_mode
 
+var target_ship: Ship = null
 
-var _ship = null
 
 var _bodies := []
 var _reference_body_id := 0
@@ -52,9 +51,9 @@ var _settings_ui : Control
 func _ready():
 	add_to_group("planet_mode") # TODO. Do this from editor
 	set_physics_process(false)
-	_hud.hide()
+#	_hud.hide()
 	Server.solar_system_requested.connect(_on_solar_system_data_requested)
-	Server.get_solar_system_data()
+	
 
 
 func _on_solar_system_data_requested(p_data: Dictionary):
@@ -92,20 +91,7 @@ func config_solar_system():
 		if sun_light != null:
 			_directional_light = sun_light
 
-	# Spawn player
-	_mouse_capture.capture()
-	# Camera must process before the ship so we have to spawn it before...
-	var camera = CameraScene.instantiate()
-	camera.auto_find_camera_anchor = true
-	if _settings.world_scale_x10:
-		camera.far *= SolarSystemSetup.LARGE_SCALE
-	add_child(camera)
-	_ship = ShipScene.instantiate()
-	_ship.global_transform = _spawn_point.global_transform
-	_ship.apply_game_settings(_settings)
-	add_child(_ship)
-	camera.set_target(_ship)
-	_hud.show()
+	
 	
 	set_physics_process(true)
 
@@ -126,8 +112,8 @@ func set_settings(s: Settings):
 func set_settings_ui(ui: Control):
 	_settings_ui = ui
 
-func pm_enabled(value: bool):
-	_hud.set_inventory_enable(value)
+#func pm_enabled(value: bool):
+#	_hud.set_inventory_enable(value)
 
 func _unhandled_input(event):
 	if event is InputEventKey:
@@ -137,7 +123,7 @@ func _unhandled_input(event):
 					_settings_ui.hide()
 				elif _pause_menu.visible:
 					_pause_menu.hide()
-					_mouse_capture.capture()
+#					_mouse_capture.capture()
 				else:
 					_pause_menu.show()
 
@@ -147,25 +133,27 @@ func _physics_process(delta: float):
 	# Check when to change referential.
 	# Only do so after a few frames elapsed from the last change, because in Godot,
 	# physics are deferred in shitty ways even if we presently are in _physics_process
+	
 	if _physics_count > 0 and _physics_count - _physics_count_on_last_reference_change > 10:
-		if _reference_body_id == 0:
-			for i in len(_bodies):
-				var body : StellarBody = _bodies[i]
-				if body.type == StellarBody.TYPE_SUN:
-					# Ignore sun, no point landing there
-					continue
-				var body_pos = body.node.global_transform.origin
-				var d = body_pos.distance_to(_ship.global_transform.origin)
-				if d < BODY_REFERENCE_ENTRY_RADIUS_FACTOR * body.radius:
-					print("Close to ", body.name, " which is at ", body_pos)
-					set_reference_body(i)
-					break
-		else:
-			var ref_body = _bodies[_reference_body_id]
-			var body_pos = ref_body.node.global_transform.origin
-			var d = body_pos.distance_to(_ship.global_transform.origin)
-			if d > BODY_REFERENCE_EXIT_RADIUS_FACTOR * ref_body.radius:
-				set_reference_body(0)
+		if target_ship:
+			if _reference_body_id == 0:
+				for i in len(_bodies):
+					var body : StellarBody = _bodies[i]
+					if body.type == StellarBody.TYPE_SUN:
+						# Ignore sun, no point landing there
+						continue
+					var body_pos = body.node.global_transform.origin
+					var d = body_pos.distance_to(target_ship.global_transform.origin)
+					if d < BODY_REFERENCE_ENTRY_RADIUS_FACTOR * body.radius:
+						print("Close to ", body.name, " which is at ", body_pos)
+						set_reference_body(i)
+						break
+			else:
+				var ref_body = _bodies[_reference_body_id]
+				var body_pos = ref_body.node.global_transform.origin
+				var d = body_pos.distance_to(target_ship.global_transform.origin)
+				if d > BODY_REFERENCE_EXIT_RADIUS_FACTOR * ref_body.radius:
+					set_reference_body(0)
 	
 	# Calculate current referential transform
 	var ref_trans_inverse = Transform3D()
@@ -432,7 +420,7 @@ func _on_PauseMenu_exit_to_os_requested():
 
 func _on_PauseMenu_resume_requested():
 	_pause_menu.hide()
-	_mouse_capture.capture()
+#	_mouse_capture.capture()
 
 
 func _on_PauseMenu_settings_requested():

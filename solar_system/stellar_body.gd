@@ -40,6 +40,9 @@ var static_bodies := []
 
 var _machine_pivot: Node3D
 var _waypoint_pivot: Node3D
+var _planet_mines: Array[PlanetMine]
+var _planet_mine_pivot: Node3D
+var _planet_mine_scene: PackedScene = load("res://solar_system/planet_mine_point.tscn")
 
 func _notification(what: int):
 	if what == NOTIFICATION_PREDELETE:
@@ -80,6 +83,15 @@ func set_focus(p_value: bool) -> void:
 
 func get_color() -> Color:
 	return Color.WHITE
+
+func add_mine_at_coordinates(p_coordinates: Vector2):
+	if _planet_mine_pivot == null:
+		_planet_mine_pivot = Node3D.new()
+		node.add_child(_planet_mine_pivot)
+	var instance = _planet_mine_scene.instantiate()
+	_planet_mine_pivot.add_child(instance)
+	var location := Util.coordinate_to_unit_vector(p_coordinates) * radius
+	instance.position = location
 
 func is_focussed() -> bool:
 	return false

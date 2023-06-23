@@ -1,4 +1,4 @@
-[gd_scene load_steps=28 format=3 uid="uid://dx0qy8pg0q72b"]
+[gd_scene load_steps=29 format=3 uid="uid://dx0qy8pg0q72b"]
 
 [ext_resource type="Script" path="res://game.gd" id="1_3cmpg"]
 [ext_resource type="Script" path="res://solar_system/solar_system.gd" id="1_tcbv5"]
@@ -9,6 +9,7 @@
 [ext_resource type="FontFile" path="res://gui/fonts/hack_regular_16_dynamic_font.tres" id="4_5b8os"]
 [ext_resource type="PackedScene" uid="uid://blqdy4acm4wpa" path="res://ship/ship.tscn" id="4_fmsd4"]
 [ext_resource type="Texture2D" uid="uid://dnkytmccfss5m" path="res://gui/select_rect.png" id="5_hq7jk"]
+[ext_resource type="PackedScene" uid="uid://kmk540coucog" path="res://character/character.tscn" id="6_l3gax"]
 [ext_resource type="Texture2D" uid="uid://31ebse57lvhs" path="res://gui/crosshair.png" id="6_rc6j7"]
 [ext_resource type="PackedScene" uid="uid://b0omhqytjn0qj" path="res://waypoints/waypoint_hud.tscn" id="7_b4x6s"]
 [ext_resource type="AudioStream" uid="uid://bpacs3ufj22ps" path="res://sounds/ui_planet_hover.wav" id="8_tvaq7"]
@@ -48,11 +49,12 @@ glow_hdr_threshold = 0.8
 script = ExtResource("1_3cmpg")
 WaypointScene = ExtResource("17_mvuvu")
 _mouse_action_texture = ExtResource("3_6w2nu")
+CameraScene = ExtResource("2_hifyg")
+ShipScene = ExtResource("4_fmsd4")
+CharacterScene = ExtResource("6_l3gax")
 
 [node name="SolarSystem" type="Node3D" parent="." groups=["game_world"]]
 script = ExtResource("1_tcbv5")
-CameraScene = ExtResource("2_hifyg")
-ShipScene = ExtResource("4_fmsd4")
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="SolarSystem"]
 environment = SubResource("2")

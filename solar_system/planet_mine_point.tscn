@@ -1,0 +1,8 @@
+[gd_scene load_steps=3 format=3 uid="uid://c0moiglejkqtc"]
+
+[ext_resource type="Script" path="res://solar_system/planet_mine_point.gd" id="1_4baxd"]
+[ext_resource type="PackedScene" uid="uid://co45bdw7qhu7i" path="res://waypoints/waypoint.tscn" id="2_uiv43"]
+
+[node name="planet_mine_point" type="Node3D"]
+script = ExtResource("1_4baxd")
+_waypoint_scene = ExtResource("2_uiv43")

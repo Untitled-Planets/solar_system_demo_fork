@@ -9,15 +9,22 @@ signal machine_instance_from_ui_selected(machine_id: int)
 @onready var _asset_inventory: AssetInventory = $SolarSystem/asset_inventory
 @onready var _inventory: InventoryHUD = $SolarSystem/HUD/Inventory
 @onready var _waypoint_hud: WaypointHUD = $SolarSystem/HUD/WaypointHUD
+@onready var _mouse_capture = $SolarSystem/MouseCapture
+@onready var _hud = $SolarSystem/HUD
 
 @export var WaypointScene: PackedScene = null
 @export var _mouse_action_texture: Texture = null
+@export var CameraScene: PackedScene
+@export var ShipScene: PackedScene
+@export var CharacterScene: PackedScene
 
 var _machine_selected: MachineCharacter = null
 var _machines := {}
 var _username := ""
 var _info_object = null
 var _task_ui_from_node_selected: ITask = null
+var _avatar
+var _ship = null
 
 func _ready():
 	Server.add_machine_requested.connect(_on_add_machine)
@@ -27,7 +34,49 @@ func _ready():
 	Server.despawn_machine_requested.connect(_on_despawn_machine_requested)
 	_solar_system.reference_body_changed.connect(_on_reference_body_changed)
 	machine_instance_from_ui_selected.connect(_on_machine_instance_from_ui_selected)
+	Server.get_solar_system_data()
+	_solar_system.loading_progressed.connect(_on_loading_progressed)
+
+
+func _on_loading_progressed(p_progress_info):
+	if p_progress_info.finished:
+		_spawn_player()
+#		_solar_system.target_ship = _ship
+		await get_tree().process_frame
+		_solar_system.set_reference_body(2)
+
+func _spawn_player() -> void:
+	# Spawn player
+	_mouse_capture.capture()
+	# Camera must process before the ship so we have to spawn it before...
+	var camera = CameraScene.instantiate()
+	camera.auto_find_camera_anchor = true
+#	if _settings.world_scale_x10:
+#		camera.far *= SolarSystemSetup.LARGE_SCALE
+	add_child(camera)
+#	_ship = ShipScene.instantiate()
+#	_ship.global_transform = _spawn_point.global_transform
+#	_ship.apply_game_settings(_settings)
+#	_solar_system.add_child(_ship)
+#	camera.set_target(_ship)
+#	_hud.show()
 	
+	# Try to spawn avatar on the planet
+	_avatar = null
+	while _avatar == null:
+		await get_tree().process_frame
+		
+		var query := PhysicsRayQueryParameters3D.new()
+		query.from = _solar_system.get_reference_stellar_body().radius * 10 * Vector3.UP
+		query.to = Vector3.ZERO
+		var state := get_world_3d().direct_space_state
+		var result := state.intersect_ray(query)
+		
+		if not result.is_empty():
+			_avatar = CharacterScene.instantiate()
+			_solar_system.add_child(_avatar)
+			camera.set_target(_avatar)
+			_avatar.position = result.position
 
 func _process(delta):
 	_process_input()
@@ -174,14 +223,15 @@ func load_waypoints():
 	var deposits = Server.planet_get_deposits(_solar_system.get_reference_stellar_body_id())
 	for index in deposits.size():
 		var mine = deposits[index]
-		var waypoint: Waypoint = WaypointScene.instantiate()
-		var planet := _solar_system.get_reference_stellar_body()
-		waypoint.location = mine.pos
-		waypoint.info = "Mine pos: {}\nAmount: {}".format([mine.pos, mine.amount], "{}")
-		waypoint.location_id = index
-		planet.node.add_child(waypoint)
-		planet.waypoints.append(waypoint)
-		waypoint.global_position = Util.coordinate_to_unit_vector(mine.pos) * planet.radius
+#		var waypoint: Waypoint = WaypointScene.instantiate()
+		var planet: StellarBody = _solar_system.get_reference_stellar_body()
+		planet.add_mine_at_coordinates(mine.pos)
+#		waypoint.location = mine.pos
+#		waypoint.info = "Mine pos: {}\nAmount: {}".format([mine.pos, mine.amount], "{}")
+#		waypoint.location_id = index
+#		planet.node.add_child(waypoint)
+#		planet.waypoints.append(waypoint)
+#		waypoint.global_position = Util.coordinate_to_unit_vector(mine.pos) * planet.radius
 
 
 ##############################

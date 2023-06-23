@@ -34,6 +34,7 @@ var _visual_state = Mannequiny.States.IDLE
 var _last_motor := Vector3()
 var _player_id: int = -1
 var _game: Game
+var _pickable: PickableObject = null
 
 
 func _ready():
@@ -67,6 +68,15 @@ func _physics_process(_delta):
 	_process_undig()
 	
 	_last_motor = motor
+	
+	if Input.is_action_pressed("pick_object"):
+		_pick()
+
+func _pick():
+	if _pickable:
+		print("object picked")
+		_pickable.queue_free()
+		_pickable = null
 
 
 func _process_undig():
@@ -279,6 +289,10 @@ func _spawn_miner() -> void:
 	sl.radius = 0.0
 #	Server.miner_spawn(0, _game.get_solar_system().get_reference_stellar_body_id(), _game._username, )
 
+
+func set_pickable_object(p_pickable: PickableObject) -> void:
+	print(p_pickable)
+	_pickable = p_pickable
 
 func _get_solar_system() -> SolarSystem:
 	# TODO That looks really bad. Probably need to use injection some day

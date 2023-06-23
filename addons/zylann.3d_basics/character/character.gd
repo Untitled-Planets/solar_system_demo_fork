@@ -18,6 +18,8 @@ signal jumped
 # but a Node3D under the character, named "Head", representing the head.
 # The camera may then use the transform of the Head to orient itself.
 @onready var _head : Node3D = $Head
+@onready var _mannequiny: Mannequiny = $Visual/mannequiny
+@onready var _controller = $Controller
 
 var _velocity := Vector3()
 var _jump_cooldown := 0.0
@@ -70,10 +72,13 @@ func _physics_process(delta : float):
 	var motor := _motor.z * back + _motor.x * right
 	_motor = Vector3()
 	_velocity += motor * MOVE_ACCELERATION * delta
+	
 
 	# Damping
 	var planar_velocity := plane.project(_velocity)
 	_velocity -= planar_velocity * MOVE_DAMP_FACTOR
+	
+	var ref_velocity := _velocity
 	
 	# To stop sliding on slopes while the player doesn't want to move, 
 	# we can stop applying gravity if on the floor.
@@ -106,9 +111,15 @@ func _physics_process(delta : float):
 	if _velocity != Vector3():
 #		var was_on_floor = is_on_floor()
 		up_direction = current_up
+		var projected := plane.project(_velocity)
+		var angle: float = (-_head.global_transform.basis.z).signed_angle_to(projected, _head.global_transform.basis.y)
+		_mannequiny.rotation.y = angle
 		velocity = _velocity
 		move_and_slide()
 		_velocity = velocity
+	
+	if _velocity == Vector3.ZERO:
+		_mannequiny.global_rotation = _head.global_rotation
 #		if is_on_floor() == false and was_on_floor:
 #			print("Stopped being on floor after applying ", _velocity)
 	
@@ -129,6 +140,10 @@ func _physics_process(delta : float):
 	# is_on_floor() is SO UNBELIEVABLY UNRELIABLE it harms jump responsivity
 	# so we spread it over several frames
 	_jump_cmd -= 1
+
+
+func get_controller():
+	return _controller
 
 
 func is_landed() -> bool:

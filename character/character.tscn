@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=3]
+[gd_scene load_steps=15 format=3 uid="uid://kmk540coucog"]
 
 [ext_resource type="Script" path="res://addons/zylann.3d_basics/character/character.gd" id="1"]
 [ext_resource type="Script" path="res://character/mouse_look.gd" id="2"]
@@ -6,7 +6,6 @@
 [ext_resource type="Script" path="res://character/character_controller.gd" id="4"]
 [ext_resource type="PackedScene" uid="uid://d082uqfojglr7" path="res://character/mannequiny.tscn" id="4_uk2od"]
 [ext_resource type="Script" path="res://character/character_audio.gd" id="5"]
-[ext_resource type="Script" path="res://addons/gdquest.mannequin/src/Player/Mannequiny.gd" id="5_g6xr8"]
 [ext_resource type="AudioStream" uid="uid://u3v6wu6o27ys" path="res://sounds/place_waypoint.wav" id="6"]
 [ext_resource type="AudioStream" uid="uid://byjc2j67p68vt" path="res://sounds/flash_on.wav" id="7"]
 [ext_resource type="AudioStream" uid="uid://cvilca41rqwpc" path="res://sounds/flash_off.wav" id="8"]
@@ -14,6 +13,8 @@
 [sub_resource type="CapsuleShape3D" id="1"]
 radius = 0.4
 height = 1.8
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_0rxtw"]
 
 [sub_resource type="BoxMesh" id="2"]
 size = Vector3(0.7, 1.2, 0.7)
@@ -47,6 +48,10 @@ height_modifier = 0.0
 target_height_modifier = 0.2
 side_offset = 1.0
 
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Head"]
+transform = Transform3D(0.2, 0, 0, 0, -8.74228e-09, -0.2, 0, 0.2, -8.74228e-09, 0, 0, 0)
+mesh = SubResource("CylinderMesh_0rxtw")
+
 [node name="Visual" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.876689, 0)
 
@@ -75,7 +80,6 @@ mesh = SubResource("4")
 
 [node name="mannequiny" parent="Visual" instance=ExtResource("4_uk2od")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.876689, 0)
-script = ExtResource("5_g6xr8")
 
 [node name="Audio" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.86435, -0.796673, 0)
