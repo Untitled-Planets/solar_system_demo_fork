@@ -1,0 +1,21 @@
+[gd_scene load_steps=4 format=3 uid="uid://b14k1eb3okfho"]
+
+[ext_resource type="Script" path="res://resources/sfxs/one_shot_particle.gd" id="1_w3grs"]
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_q4sdf"]
+spread = 180.0
+gravity = Vector3(0, 0, 0)
+initial_velocity_min = 1.0
+initial_velocity_max = 1.0
+
+[sub_resource type="SphereMesh" id="SphereMesh_16bvu"]
+radius = 0.1
+height = 0.2
+
+[node name="CollectionResourceFinishedParticles" type="GPUParticles3D"]
+amount = 40
+explosiveness = 0.94
+trail_lifetime = 0.1
+process_material = SubResource("ParticleProcessMaterial_q4sdf")
+draw_pass_1 = SubResource("SphereMesh_16bvu")
+script = ExtResource("1_w3grs")

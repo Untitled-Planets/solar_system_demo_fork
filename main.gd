@@ -23,12 +23,15 @@ func _on_login_requested(p_data: Dictionary) -> void:
 	_game._username = _username
 	add_child(_game)
 	_game.get_solar_system().set_settings(_settings)
-	_game.get_solar_system().set_settings_ui(_settings_ui)
+	_game.set_settings_ui(_settings_ui)
 	_game.get_solar_system().exit_to_menu_requested.connect(_on_game_exit_to_menu_requested)
 
 func _on_MainMenu_start_requested(p_username):
 	_username = p_username
+	
 	Server.join(p_username)
+
+
 
 func _on_MainMenu_settings_requested():
 	_settings_ui.show()

@@ -18,8 +18,9 @@ config/icon="res://icon.png"
 [autoload]
 
 DDD="*res://addons/zylann.debug_draw/debug_draw.gd"
-Server="*res://server/server.tscn"
+Server="*res://network/server.tscn"
 WaypointManager="*res://waypoints/waypoint_manager.gd"
+MultiplayerServer="*res://network/multiplayer_server.gd"
 
 [input]
 
@@ -100,3 +101,4 @@ environment/default_environment="res://default_env.tres"
 [solar_system]
 
 debug/show_machine_waypoint=true
+network/server=false

@@ -8,6 +8,9 @@ signal exit_requested
 @onready var _username: LineEdit = $VBoxContainer/PanelContainer/VBoxContainer/HBoxContainer/VBoxContainer/HBoxContainer/username
 
 
+#func _ready():
+#	ProjectSettings.set_setting("solar_system/network/server", $VBoxContainer/PanelContainer/VBoxContainer/HBoxContainer/VBoxContainer/HBoxContainer2/check.button_pressed)
+
 func _on_Start_pressed():
 	if _username.text.length() != 0:
 		start_requested.emit(_username.text)
@@ -19,3 +22,7 @@ func _on_Settings_pressed():
 
 func _on_Exit_pressed():
 	exit_requested.emit()
+
+
+func _on_check_toggled(button_pressed):
+	ProjectSettings.set_setting("solar_system/network/server", button_pressed)

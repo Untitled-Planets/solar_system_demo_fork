@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=3 uid="uid://kmk540coucog"]
+[gd_scene load_steps=16 format=3 uid="uid://kmk540coucog"]
 
 [ext_resource type="Script" path="res://addons/zylann.3d_basics/character/character.gd" id="1"]
 [ext_resource type="Script" path="res://character/mouse_look.gd" id="2"]
@@ -13,6 +13,11 @@
 [sub_resource type="CapsuleShape3D" id="1"]
 radius = 0.4
 height = 1.8
+
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_010mo"]
+properties/0/path = NodePath(".:up_direction")
+properties/0/spawn = true
+properties/0/sync = true
 
 [sub_resource type="CylinderMesh" id="CylinderMesh_0rxtw"]
 
@@ -32,7 +37,8 @@ script = ExtResource("1")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.875292, 0)
 shape = SubResource("1")
 
-[node name="Controller" type="Node" parent="."]
+[node name="Controller" type="MultiplayerSynchronizer" parent="."]
+replication_config = SubResource("SceneReplicationConfig_010mo")
 script = ExtResource("4")
 
 [node name="MouseLook" type="Node" parent="."]

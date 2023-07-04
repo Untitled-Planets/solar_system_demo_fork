@@ -1,4 +1,4 @@
-extends Node
+extends MultiplayerSynchronizer
 
 #const StellarBody = preload("../solar_system/stellar_body.gd")
 #const SolarSystem = preload("../solar_system/solar_system.gd")
@@ -35,10 +35,24 @@ var _last_motor := Vector3()
 var _player_id: int = -1
 var _game: Game
 var _pickable: PickableObject = null
+var _is_picking: bool = false
 
 
 func _ready():
 	_game = get_tree().get_nodes_in_group("game")[0]
+#	await get_tree().process_frame # wait for parent.
+	set_multiplayer_authority(get_parent().network_id)
+	var enabled := get_multiplayer_authority() == multiplayer.get_unique_id()
+	set_physics_process(enabled)
+	set_process(enabled)
+	set_process_input(enabled)
+	set_process_unhandled_input(enabled)
+	MultiplayerServer.resource_collection_finished.connect(_on_resource_collection_finished)
+
+
+func _on_resource_collection_finished(p_resource_id):
+	if _pickable:
+		_pickable.queue_free()
 
 func _physics_process(_delta):
 	var motor := Vector3()
@@ -69,14 +83,27 @@ func _physics_process(_delta):
 	
 	_last_motor = motor
 	
-	if Input.is_action_pressed("pick_object"):
-		_pick()
+	_pick(Input.is_action_pressed("pick_object"))
 
-func _pick():
-	if _pickable:
-		print("object picked")
-		_pickable.queue_free()
-		_pickable = null
+func _pick(p_value: bool):
+#	var picking := p_value
+	if _is_picking != p_value:
+		if _pickable and p_value:
+			MultiplayerServer.start_resource_collect(0, _game.get_solar_system().get_reference_stellar_body_id(), _pickable.get_id(), 1)
+#			rpc("_server_pick", _pickable.get_id())
+		else:
+			pass
+		_is_picking = p_value
+
+
+@rpc
+func _server_pick(p_resource_id: String):
+	print("_server_pick")
+	if multiplayer.is_server():
+		print("Calling from server")
+
+func finish_collect_resource():
+	_is_picking = false
 
 
 func _process_undig():
@@ -288,6 +315,7 @@ func _spawn_miner() -> void:
 	sl.location = Vector2()
 	sl.radius = 0.0
 #	Server.miner_spawn(0, _game.get_solar_system().get_reference_stellar_body_id(), _game._username, )
+
 
 
 func set_pickable_object(p_pickable: PickableObject) -> void:

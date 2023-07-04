@@ -27,11 +27,7 @@ signal exit_to_menu_requested
 
 @onready var _environment : Environment = $WorldEnvironment.environment
 @onready var _spawn_point = $SpawnPoint
-
-
-@onready var _pause_menu = $PauseMenu
 @onready var _lens_flare = $LensFlare
-
 @onready var _planet_mode: PlanetMode = $planet_mode
 
 var target_ship: Ship = null
@@ -109,23 +105,13 @@ func set_settings(s: Settings):
 	_settings = s
 
 
-func set_settings_ui(ui: Control):
-	_settings_ui = ui
+#func set_settings_ui(ui: Control):
+#	_settings_ui = ui
 
 #func pm_enabled(value: bool):
 #	_hud.set_inventory_enable(value)
 
-func _unhandled_input(event):
-	if event is InputEventKey:
-		if event.pressed and not event.is_echo():
-			if event.keycode == KEY_ESCAPE:
-				if _settings_ui.visible:
-					_settings_ui.hide()
-				elif _pause_menu.visible:
-					_pause_menu.hide()
-#					_mouse_capture.capture()
-				else:
-					_pause_menu.show()
+
 
 
 
@@ -419,8 +405,9 @@ func _on_PauseMenu_exit_to_os_requested():
 
 
 func _on_PauseMenu_resume_requested():
-	_pause_menu.hide()
+#	_pause_menu.hide()
 #	_mouse_capture.capture()
+	pass
 
 
 func _on_PauseMenu_settings_requested():
@@ -430,5 +417,8 @@ func _on_PauseMenu_settings_requested():
 	_settings_ui.move_to_front()
 
 
-
+func save_system():
+	for body in _bodies:
+		if body.volume != null:
+			body.volume.save_modified_blocks()
 

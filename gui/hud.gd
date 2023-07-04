@@ -4,18 +4,20 @@ extends Control
 #const StellarBody = preload("../solar_system/stellar_body.gd")
 #const Util = preload("../util/util.gd")
 
-@onready var _solar_system = get_parent()
 @onready var _target_planet_label = $TargetPlanetLabel
 @onready var _target_label_rect = $TargetPlanetRect
 @onready var _waypoint_hud = $WaypointHUD
 @onready var _planet_hover_audio_player = $PlanetHoverSound
 @onready var _inventory = $Inventory
 
+var _solar_system: SolarSystem = null
 #var _target_planet_screen_pos := Vector2()
 var _pointed_body = null
 
 
 func _ready():
+	await get_tree().process_frame
+	_solar_system = get_parent().get_solar_system()
 	_waypoint_hud.set_solar_system(_solar_system)
 
 

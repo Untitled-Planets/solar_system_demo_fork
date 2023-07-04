@@ -28,6 +28,9 @@ var _motor := Vector3()
 var _planet_up := Vector3(0, 1, 0)
 var _landed := false
 
+var network_id: int = -1
+
+
 
 func jump():
 	_jump_cmd = 5
@@ -109,29 +112,23 @@ func _physics_process(delta : float):
 			_velocity -= planet_up * 0.01
 	
 	if _velocity != Vector3():
-#		var was_on_floor = is_on_floor()
 		up_direction = current_up
-		var projected := plane.project(_velocity)
-		var angle: float = (-_head.global_transform.basis.z).signed_angle_to(projected, _head.global_transform.basis.y)
-		_mannequiny.rotation.y = angle
+		if abs(_velocity.normalized().dot(up_direction)) < 0.9:
+			var camera: Camera3D = get_viewport().get_camera_3d()
+			var projected := plane.project(_velocity)
+			var camera_projected := plane.project(camera.global_transform.basis.z)
+			var angle: float = (-camera_projected).signed_angle_to(projected, planet_up)
+			_mannequiny.rotation.y = angle
 		velocity = _velocity
 		move_and_slide()
 		_velocity = velocity
-	
-	if _velocity == Vector3.ZERO:
-		_mannequiny.global_rotation = _head.global_rotation
-#		if is_on_floor() == false and was_on_floor:
-#			print("Stopped being on floor after applying ", _velocity)
 	
 	# Jumping
 	if _jump_cooldown > 0.0:
 		_jump_cooldown -= delta
 	elif _jump_cmd > 0:
-#		var space_state = get_world_3d().direct_space_state
-#		var ray_origin := global_transform.origin + 0.1 * planet_up
-#		var hit = space_state.intersect_ray(ray_origin, ray_origin - planet_up * 1.1, [self])
 		# Is there ground to jump from?
-		if is_on_floor():#not hit.is_empty():
+		if is_on_floor(): # not hit.is_empty():
 			_velocity += planet_up * JUMP_SPEED
 			_jump_cooldown = JUMP_COOLDOWN_TIME
 			_jump_cmd = 0
