@@ -2,13 +2,14 @@ class_name PickableObject
 extends Node3D
 
 @export var _collect_sfx_scene: PackedScene = null
+@export var uuid: String = ""
 
 func _ready():
 	pass
 
 
 func get_id() -> String:
-	return "abc"
+	return uuid
 
 func _physics_process(delta):
 	pass

@@ -13,6 +13,7 @@ var _mine_acc: float = 0.0
 func _ready():
 	_game = get_tree().get_nodes_in_group("game")[0]
 	Server.planet_resource_collected.connect(_on_resource_collected)
+	_miner.resource_collected.connect(_game.on_resource_colleted)
 
 func start() -> void:
 	super.start()
@@ -59,6 +60,8 @@ func _on_resource_collected(machine_id: int, planet_id, amount: int) -> void:
 			_status = ITask.Finished.SUCCESS
 #			var t: ITask = _miner.get_current_task()
 #			Server.finish_task(0, _data.planet_id, _miner.get_id(), _miner.get_current_task().get_id(), _game._username)
+		else:
+			_miner.resource_collected.emit(0, amount)
 
 
 func resume_task(p_task_data: Dictionary) -> void:

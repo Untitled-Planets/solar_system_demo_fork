@@ -97,7 +97,7 @@ func _process(delta):
 	var air_factor = clamp(speed / get_parent().speed_cap_on_planet, 0.0, 1.0)
 	var planet_factor = _ambient_sounds.get_planet_factor()
 	_air_friction_player.volume_db = linear_to_db((air_factor * 0.9 + 0.1) * planet_factor)
-	DDD.set_text("SFX air factor", air_factor)
+#	DDD.set_text("SFX air factor", air_factor)
 	
 	var contacts = get_parent().get_last_contacts_count()
 	if contacts > 0 and not get_parent().freeze:

@@ -21,6 +21,7 @@ DDD="*res://addons/zylann.debug_draw/debug_draw.gd"
 Server="*res://network/server.tscn"
 WaypointManager="*res://waypoints/waypoint_manager.gd"
 MultiplayerServer="*res://network/multiplayer_server.gd"
+PlanetMaterialManager="*res://solar_system/planet_materials/planet_material_manager.tscn"
 
 [input]
 
@@ -90,6 +91,11 @@ no_context_select_object={
 pick_object={
 "deadzone": 0.5,
 "events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":0,"physical_keycode":80,"key_label":0,"unicode":112,"echo":false,"script":null)
+]
+}
+toggle_mouse={
+"deadzone": 0.5,
+"events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":0,"physical_keycode":77,"key_label":0,"unicode":109,"echo":false,"script":null)
 ]
 }
 

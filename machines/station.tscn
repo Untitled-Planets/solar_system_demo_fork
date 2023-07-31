@@ -1,0 +1,36 @@
+[gd_scene load_steps=6 format=3 uid="uid://c28gpsbc77378"]
+
+[ext_resource type="PackedScene" uid="uid://8ttejgoay0g4" path="res://models/portal.tscn" id="1_a8qlt"]
+[ext_resource type="Script" path="res://machines/station.gd" id="1_ud876"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_llwbg"]
+albedo_color = Color(0.247059, 0.180392, 0.113725, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_xdu58"]
+material = SubResource("StandardMaterial3D_llwbg")
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_lwgnl"]
+size = Vector3(150, 1, 150)
+
+[node name="station" type="Node3D" groups=["portal_station"]]
+script = ExtResource("1_ud876")
+
+[node name="portal" parent="." instance=ExtResource("1_a8qlt")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.190027, 0)
+
+[node name="platform" type="Node3D" parent="."]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="platform"]
+transform = Transform3D(150, 0, 0, 0, 1, 0, 0, 0, 150, 0, 0, 0)
+mesh = SubResource("BoxMesh_xdu58")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="platform"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="platform/StaticBody3D"]
+shape = SubResource("BoxShape3D_lwgnl")
+
+[node name="spacehsip_pivot" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -40.5547, 3, 50.617)
+
+[node name="char_pivot" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -58.4752, 0, 54.0141)

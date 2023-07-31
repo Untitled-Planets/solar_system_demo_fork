@@ -12,7 +12,7 @@ var _bg_camera : Camera3D
 func _ready():
 	while _get_fg_camera() == null:
 		# TODO Need to be able to send no value
-		DDD.set_text("Waiting for FG camera...", "")
+#		DDD.set_text("Waiting for FG camera...", "")
 		await get_tree().process_frame
 	
 	var fg_camera := _get_fg_camera()

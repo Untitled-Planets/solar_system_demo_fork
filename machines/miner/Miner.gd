@@ -1,6 +1,8 @@
 class_name Miner
 extends MachineCharacter
 
+signal resource_collected(resource_type, resource_amount)
+
 class MineTaskData:
 #	var location: Vector2
 	var planet_id:  int
@@ -8,6 +10,8 @@ class MineTaskData:
 	var machine_id: int = -1
 
 signal mineral_extracted(id, amount)
+
+#@onready var _resource_producer : ResourceProducer = $resource_producer
 
 var _actions: Array[IActionsContext.ActionContext] = []
 var _mining_amount: int = 0
@@ -40,7 +44,14 @@ func _ready():
 	action.name = "CMine"
 	action.function = func(): _game.cancel_task(get_id(), get_current_task().get_id())
 	_actions.append(action)
-	
+
+
+func _process(delta: float):
+	super._process(delta)
+
+
+#func grab(p_amount: float):
+#	return _resource_producer.grab(p_amount)
 
 func set_mining(value: bool) -> void:
 	pass

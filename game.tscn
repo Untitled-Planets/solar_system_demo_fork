@@ -1,9 +1,10 @@
-[gd_scene load_steps=29 format=3 uid="uid://dx0qy8pg0q72b"]
+[gd_scene load_steps=33 format=3 uid="uid://dx0qy8pg0q72b"]
 
 [ext_resource type="Script" path="res://game.gd" id="1_3cmpg"]
 [ext_resource type="Script" path="res://solar_system/solar_system.gd" id="1_tcbv5"]
 [ext_resource type="Texture2D" uid="uid://b0s3fc7sjnlof" path="res://solar_system/space_background.png" id="2_06f30"]
 [ext_resource type="PackedScene" uid="uid://dc4lolnw2ugli" path="res://camera/camera.tscn" id="2_hifyg"]
+[ext_resource type="PackedScene" uid="uid://bt4iegdy4r0m3" path="res://character/ship_controller.tscn" id="2_r8dnv"]
 [ext_resource type="Texture2D" uid="uid://bar13k13o7sw8" path="res://gui/textures/mouse-action-icon.png" id="3_6w2nu"]
 [ext_resource type="Script" path="res://gui/hud.gd" id="3_rlxpp"]
 [ext_resource type="FontFile" path="res://gui/fonts/hack_regular_16_dynamic_font.tres" id="4_5b8os"]
@@ -12,8 +13,11 @@
 [ext_resource type="PackedScene" uid="uid://kmk540coucog" path="res://character/character.tscn" id="6_l3gax"]
 [ext_resource type="Texture2D" uid="uid://31ebse57lvhs" path="res://gui/crosshair.png" id="6_rc6j7"]
 [ext_resource type="PackedScene" uid="uid://b0omhqytjn0qj" path="res://waypoints/waypoint_hud.tscn" id="7_b4x6s"]
+[ext_resource type="PackedScene" uid="uid://bt3edpby8c65s" path="res://addons/gdquest.mannequin/src/Player/controller.tscn" id="7_s7ow6"]
+[ext_resource type="PackedScene" uid="uid://dmiuco3ut42e8" path="res://character/remote_controller.tscn" id="8_fysay"]
 [ext_resource type="AudioStream" uid="uid://bpacs3ufj22ps" path="res://sounds/ui_planet_hover.wav" id="8_tvaq7"]
 [ext_resource type="PackedScene" uid="uid://c37n15l6adtfq" path="res://gui/inventory/inventory.tscn" id="9_4oxrc"]
+[ext_resource type="PackedScene" uid="uid://c28gpsbc77378" path="res://machines/station.tscn" id="9_fge0m"]
 [ext_resource type="Script" path="res://addons/SIsilicon.vfx.lens flare/lens-flare.gd" id="9_w721i"]
 [ext_resource type="PackedScene" uid="uid://bu1ftqx735ygp" path="res://gui/mouse_capture.tscn" id="10_4n27f"]
 [ext_resource type="Script" path="res://gui/loading_screen.gd" id="11_vsdyb"]
@@ -47,11 +51,15 @@ glow_hdr_threshold = 0.8
 
 [node name="Game" type="Node3D" groups=["game"]]
 script = ExtResource("1_3cmpg")
+ShipController = ExtResource("2_r8dnv")
 WaypointScene = ExtResource("17_mvuvu")
 _mouse_action_texture = ExtResource("3_6w2nu")
 CameraScene = ExtResource("2_hifyg")
 ShipScene = ExtResource("4_fmsd4")
 CharacterScene = ExtResource("6_l3gax")
+LocalControllerScene = ExtResource("7_s7ow6")
+RemoteControllerScene = ExtResource("8_fysay")
+StationScene = ExtResource("9_fge0m")
 
 [node name="SolarSystem" type="Node3D" parent="." groups=["game_world"]]
 script = ExtResource("1_tcbv5")

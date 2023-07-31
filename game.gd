@@ -13,14 +13,19 @@ signal exit_to_menu_requested
 @onready var _mouse_capture = $MouseCapture
 @onready var _hud = $HUD
 @onready var _pause_menu = $PauseMenu
-#@onready var _network: Network = $Network
 @onready var _progress_bar: ProgressBar = $ProgressBar
 
+
+@export var ShipController: PackedScene = null
 @export var WaypointScene: PackedScene = null
 @export var _mouse_action_texture: Texture = null
 @export var CameraScene: PackedScene
 @export var ShipScene: PackedScene
 @export var CharacterScene: PackedScene
+@export var LocalControllerScene: PackedScene
+@export var RemoteControllerScene: PackedScene
+@export var StationScene: PackedScene
+
 
 var _machine_selected: MachineCharacter = null
 var _machines := {}
@@ -30,23 +35,50 @@ var _task_ui_from_node_selected: ITask = null
 var _settings_ui : Control
 var _avatar
 var _ship = null
-
+var _local_player: AController = null
 var _players: Dictionary = {}
 
 func _ready():
 	Server.add_machine_requested.connect(_on_add_machine)
 	Server.task_cancelled.connect(_on_task_cancelled)
-	Server.planet_status_requested.connect(_on_planet_status_requested)
 	Server.execute_task_requested.connect(_on_task_requested)
 	Server.despawn_machine_requested.connect(_on_despawn_machine_requested)
 	_solar_system.reference_body_changed.connect(_on_reference_body_changed)
 	machine_instance_from_ui_selected.connect(_on_machine_instance_from_ui_selected)
 	Server.get_solar_system_data()
 	_solar_system.loading_progressed.connect(_on_loading_progressed)
+	MultiplayerServer.planet_status_requested.connect(_on_planet_status_requested)
 	MultiplayerServer.resource_collection_started.connect(_on_resource_collection_started)
 	MultiplayerServer.resource_collection_finished.connect(_on_resource_collection_finished)
 	MultiplayerServer.resource_collection_progressed.connect(_on_resource_collection_progressed)
+	MultiplayerServer.users_updated.connect(_on_users_updated)
+	MultiplayerServer.user_position_updated.connect(_on_user_position_updated)
+	MultiplayerServer.resources_generated.connect(_on_resources_generated)
+	MultiplayerServer.floating_resources_updated.connect(_on_floating_resources_updated)
+	MultiplayerServer.init()
 
+
+func _on_resources_generated(p_solar_system_id, p_planet_id, p_resources):
+	pass
+
+func _on_user_position_updated(p_user_id: String, p_position):
+	var c: RemoteController = _players.get(p_user_id, null)
+	if c:
+		c.set_remote_position(p_position)
+
+func _on_users_updated(p_joinigin_users, p_leaving_users):
+	for joining in p_joinigin_users:
+		if _players.has(joining):
+			continue
+		
+		var c: RemoteController = RemoteControllerScene.instantiate()
+		var char: Character = await _spawn_player()
+		char.set_controller(c)
+		_players[joining] = c
+		c.possess(char)
+		add_child(c)
+		_solar_system.add_child(char)
+		c.set_uuid(joining)
 
 func _on_resource_collection_started(p_resource_id):
 	_progress_bar.visible = true
@@ -59,23 +91,29 @@ func _on_resource_collection_progressed(p_resource_id, p_unit_procent: float):
 
 func _on_loading_progressed(p_progress_info):
 	if p_progress_info.finished:
-		spawn_player_with_id(1)
-#		_solar_system.target_ship = _ship
-#		await get_tree().process_frame
 		_solar_system.set_reference_body(2)
-#		var s: bool = ProjectSettings.get_setting("solar_system/network/server")
-	#	print("server: ", s)
-#		_network.start(s)
+		var controller: CharacterController = LocalControllerScene.instantiate()
+		var avatar: Character = await _spawn_player()
+		avatar.set_controller(controller)
+		controller.possess(avatar)
+		add_child(controller)
+		_solar_system.add_child(avatar)
+	#	avatar.network_id = p_player_id
+#		var controller: CharacterController = avatar.get_controller()
+		controller.set_uuid("")
+		_local_player = controller as AController
+		_mouse_capture.capture()
+		# Camera must process before the ship so we have to spawn it before...
+		var camera = CameraScene.instantiate()
+		camera.auto_find_camera_anchor = true
+		camera.set_target(avatar)
+	#	if _settings.world_scale_x10:
+	#		camera.far *= SolarSystemSetup.LARGE_SCALE
+		add_child(camera)
 
 func _spawn_player() -> Character:
 	# Spawn player
-	
-#	_ship = ShipScene.instantiate()
-#	_ship.global_transform = _spawn_point.global_transform
-#	_ship.apply_game_settings(_settings)
-#	_solar_system.add_child(_ship)
-#	camera.set_target(_ship)
-#	_hud.show()
+	_hud.show()
 	
 	# Try to spawn avatar on the planet
 	var avatar = null
@@ -95,20 +133,6 @@ func _spawn_player() -> Character:
 	
 	return avatar
 
-func spawn_player_with_id(p_player_id: int):
-	var avatar: Character = await _spawn_player()
-	avatar.network_id = p_player_id
-	_players[p_player_id] = avatar
-	_solar_system.add_child(avatar)
-#	if _network.get_multiplayer_authority() == p_player_id:
-	_mouse_capture.capture()
-	# Camera must process before the ship so we have to spawn it before...
-	var camera = CameraScene.instantiate()
-	camera.auto_find_camera_anchor = true
-	camera.set_target(avatar)
-#	if _settings.world_scale_x10:
-#		camera.far *= SolarSystemSetup.LARGE_SCALE
-	add_child(camera)
 
 func _process(delta):
 	_process_input()
@@ -118,6 +142,9 @@ func _process(delta):
 		Input.set_custom_mouse_cursor(_mouse_action_texture, Input.CURSOR_ARROW, Vector2(24, 24))
 	else:
 		Input.set_custom_mouse_cursor(null)
+	
+	if _local_player:
+		MultiplayerServer.send_last_position("dummy-id", _local_player.get_character().global_position)
 
 
 func _is_about_to_request_action() -> bool:
@@ -198,8 +225,9 @@ func _on_mineral_extracted(id, amount) -> void:
 func _on_reference_body_changed(body_info):
 	var previous_body := _solar_system.get_reference_stellar_body_by_id(body_info.old_id)
 	previous_body.remove_machines()
-	get_planet_status()
-	MultiplayerServer.arrives_on_planet(0, _solar_system.get_reference_stellar_body_id(), 1)
+	MultiplayerServer.arrives_on_planet(0, _solar_system.get_reference_stellar_body_id(), _username)
+	
+	
 
 func _on_planet_status_requested(solar_system_id, planet_id, data):
 #	await get_tree().create_timer(1.5).timeout
@@ -243,7 +271,6 @@ func _on_task_cancelled(solar_system_id: int, planet_id: int, machine_id: int, t
 		w.cancel_task(task_id)
 
 func _on_task_requested(solar_system_id: int, planet_id: int, machine_id: int, requester_id: String, p_task_data: Dictionary) -> void:
-#	print("Requesting task: ", task_id)
 	if not _machines.has(machine_id):
 		return
 	
@@ -275,7 +302,7 @@ func _unhandled_input(event):
 					_settings_ui.hide()
 				elif _pause_menu.visible:
 					_pause_menu.hide()
-#					_mouse_capture.capture()
+					_mouse_capture.capture()
 				else:
 					_pause_menu.show()
 
@@ -342,13 +369,30 @@ func finish_task(machine_id: int, task_id: int) -> void:
 	Server.finish_task(0, get_solar_system().get_reference_stellar_body_id(), machine_id, task_id, _username)
 
 
-func get_planet_status() -> void:
-	Server.get_planet_status(0, _solar_system.get_reference_stellar_body_id(), _username)
+#func get_planet_status() -> void:
+#	Server.get_planet_status(0, _solar_system.get_reference_stellar_body_id(), _username)
 
 func despawn_machine(p_machine_id: int) -> void:
 	Server.despawn_machine(0, _solar_system.get_reference_stellar_body_id(), p_machine_id, _username)
 
+func buy_ship() -> void:
+	
+	pass
 
+
+func enter_ship():
+	var camera: Camera3D = get_viewport().get_camera_3d()
+	var c: Node = _local_player.get_character()
+	c.queue_free()
+	_local_player.set_physics_process(false)
+	_local_player.unpossess()
+	_local_player.queue_free()
+	var ship: Ship = get_tree().get_nodes_in_group("ship")[0]
+	_local_player = ShipController.instantiate() as AController
+	_local_player.possess(ship)
+	add_child(_local_player)
+	ship.enable_controller()
+	camera.set_target(ship)
 ##############################
 # End Helper functions
 ##############################
@@ -374,6 +418,32 @@ func _on_despawn_machine_requested(p_solar_system_id: int, p_planet_id: int, p_m
 	_machines.erase(p_machine_id)
 	m.destroy_machine()
 
+func _on_floating_resources_updated(p_solar_system_id, p_planet_id, p_resources):
+	_load_floating_resource(p_solar_system_id, p_planet_id, p_resources)
+
+func _load_floating_resource(p_solar_system_id, p_planet_id, p_resources):
+	var floating_resources = p_resources
+	for fr in floating_resources:
+		var instance = PlanetMaterialManager.spawn_material(fr.type, fr.uuid)
+		var sb: StellarBody = _solar_system.get_reference_stellar_body()
+		sb.node.add_child(instance)
+		var coord = fr.unit_coordinates
+		var dir = Util.unit_coordinates_to_unit_vector(Vector2(coord.x, coord.y))
+		
+		var found: bool = false
+		
+		while not found:
+			await get_tree().process_frame
+			var query := PhysicsRayQueryParameters3D.new()
+			query.from = sb.radius * 10 * dir
+			query.to = Vector3.ZERO
+			var state := get_world_3d().direct_space_state
+			var result := state.intersect_ray(query)
+			
+			if not result.is_empty():
+				instance.position = result.position
+				found = true
+	print("Spawned all resources")
 
 func get_machine(p_machine_id: int) -> MachineCharacter:
 	return _machines.get(p_machine_id, null)
@@ -416,3 +486,8 @@ func remove_player(p_player_id: int):
 	if c:
 		c.queue_free()
 		_players.erase(p_player_id)
+
+
+func on_resource_colleted(p_machine_id, p_amount_type, p_amount) -> void:
+	print("resource collected")
+	pass

@@ -1,0 +1,10 @@
+[gd_scene load_steps=3 format=3 uid="uid://bt3edpby8c65s"]
+
+[ext_resource type="Script" path="res://character/character_controller.gd" id="1_5mmkt"]
+[ext_resource type="Script" path="res://character/mouse_look.gd" id="2_qaeia"]
+
+[node name="Controller" type="Node"]
+script = ExtResource("1_5mmkt")
+
+[node name="MouseLook" type="Node" parent="."]
+script = ExtResource("2_qaeia")

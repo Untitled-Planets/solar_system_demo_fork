@@ -13,6 +13,8 @@ signal solar_system_requested(p_data: Dictionary)
 signal planet_status_requested(solar_system_id, planet_id, data)
 signal execute_task_requested(solar_system_id, planet_id, machine_id, requester_id, task_data)
 signal despawn_machine_requested(solar_system_id: int, planet_id: int, machine_id: int)
+signal resource_collected(user_id, resource_id)
+signal planet_listed(solar_system_id, planet_ids)
 
 @onready var _request = $request
 
@@ -207,3 +209,9 @@ func get_machine_assets(p_requester: String) -> void:
 
 func despawn_machine(p_solar_system_id: int, p_planet_id: int, p_machine_id: int, p_requester_id: String) -> void:
 	_request.despawn_machine(p_solar_system_id, p_planet_id, p_machine_id, p_requester_id)
+
+func collect_item(p_user_id: String, p_item_id: String, p_item_type: int, p_item_amount: int):
+	_request.collect_item(p_user_id, p_item_id, p_item_type, p_item_amount)
+
+func get_planet_list(p_solar_system_id):
+	_request.get_planet_list(p_solar_system_id)

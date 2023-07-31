@@ -227,19 +227,19 @@ func _physics_process(delta: float):
 		else:
 			volume.debug_set_draw_enabled(false)
 	
-	if len(_bodies) > 0:
-		DDD.set_text("Reference body", _bodies[_reference_body_id].name)
-
-	for i in len(_bodies):
-		var body : StellarBody = _bodies[i]
-		if body.volume == null:
-			continue
-		var s = str(
-			"D: ", body.volume.debug_get_data_block_count(), ", ", 
-			"M: ", body.volume.debug_get_mesh_block_count())
-		if body.instancer != null:
-			s += str("| I: ", body.instancer.debug_get_block_count())
-		DDD.set_text(str("Blocks in ", body.name), s)
+#	if len(_bodies) > 0:
+#		DDD.set_text("Reference body", _bodies[_reference_body_id].name)
+#
+#	for i in len(_bodies):
+#		var body : StellarBody = _bodies[i]
+#		if body.volume == null:
+#			continue
+#		var s = str(
+#			"D: ", body.volume.debug_get_data_block_count(), ", ", 
+#			"M: ", body.volume.debug_get_mesh_block_count())
+#		if body.instancer != null:
+#			s += str("| I: ", body.instancer.debug_get_block_count())
+#		DDD.set_text(str("Blocks in ", body.name), s)
 		#var stats = body.volume.get_statistics()
 		#for k in stats:
 		#	if k.begins_with("time_"):
@@ -279,7 +279,7 @@ func _process_directional_shadow_distance():
 	light.directional_shadow_max_distance = shadow_distance
 	# if not Input.is_key_pressed(KEY_KP_0):
 	# 	light.directional_shadow_max_distance = 500.0
-	DDD.set_text("Shadow distance", shadow_distance)
+#	DDD.set_text("Shadow distance", shadow_distance)
 
 
 # This helps with planet flickering in the distance.

@@ -14,7 +14,6 @@ enum State {
 @export var _waypoint_scene: PackedScene
 @export var _machine_view: Texture
 
-#var _info: PickableInfo
 var _planet : StellarBody
 var _waypoint: Waypoint
 var _movement_target_waypoint: Waypoint
@@ -23,9 +22,7 @@ var _id: int = -1
 var _game: Game
 var _owner: String
 var _is_focussed: bool = false
-
 var _task_data_queue: Array = []
-
 var _planet_mine_location_id: int = -1
 
 func _ready():
@@ -81,6 +78,8 @@ func _process(delta):
 			_game.finish_task(get_id(), _current_task.get_id())
 			_current_task = null
 			
+
+
 
 
 func set_planet_mine_location(p_value: int) -> void:

@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://dmiuco3ut42e8"]
+
+[ext_resource type="Script" path="res://character/remote_controller.gd" id="1_74xbd"]
+
+[node name="RemoteController" type="Node"]
+script = ExtResource("1_74xbd")

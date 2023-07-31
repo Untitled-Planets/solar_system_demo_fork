@@ -6,10 +6,10 @@
 script = ExtResource("2")
 planet_radius = 1.0
 atmosphere_height = 0.1
-shader_params/u_day_color0 = null
-shader_params/u_day_color1 = null
-shader_params/u_night_color0 = Color(0.15, 0.1, 0.33, 1)
+shader_params/u_day_color0 = Color(0.290196, 0.388235, 0.921569, 1)
+shader_params/u_day_color1 = Color(0.760784, 0.901961, 1, 1)
+shader_params/u_night_color0 = Color(0.14902, 0.101961, 0.329412, 1)
 shader_params/u_night_color1 = Color(0, 0, 0, 1)
-shader_params/u_density = null
+shader_params/u_density = 0.2
 shader_params/u_attenuation_distance = null
 shader_params/u_sphere_depth_factor = null

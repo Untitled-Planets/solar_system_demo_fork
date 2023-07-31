@@ -1,0 +1,28 @@
+[gd_scene load_steps=3 format=3 uid="uid://dce143t6mi4ba"]
+
+[ext_resource type="PackedScene" uid="uid://cetsk5akyouej" path="res://gui/inventory/action_button.tscn" id="1_vldhv"]
+[ext_resource type="Script" path="res://gui/inventory/player_station_ui.gd" id="1_yj2vx"]
+
+[node name="player_station_ui" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_yj2vx")
+
+[node name="actions" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="action_button" parent="actions" instance=ExtResource("1_vldhv")]
+layout_mode = 0
+offset_right = 75.0
+display_action = "buy-ship"
+_action_id = "buy-ship"

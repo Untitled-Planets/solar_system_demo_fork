@@ -1,0 +1,8 @@
+[gd_scene load_steps=3 format=3 uid="uid://dpe6xkc30cj2o"]
+
+[ext_resource type="Script" path="res://solar_system/planet_materials/planet_material_manager.gd" id="1_1t73b"]
+[ext_resource type="PackedScene" uid="uid://bwa4tmi1yanqs" path="res://solar_system/planet_materials/pickable_object.tscn" id="2_pbd5l"]
+
+[node name="planet_material_manager" type="Node"]
+script = ExtResource("1_1t73b")
+_demo_material = ExtResource("2_pbd5l")

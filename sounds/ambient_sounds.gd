@@ -40,8 +40,8 @@ func _process(_delta):
 	_planet_day_player.volume_db = linear_to_db(planet_factor * day_factor)
 	_planet_night_player.volume_db = linear_to_db(planet_factor * (1.0 - day_factor))
 	_deep_space_player.volume_db = linear_to_db(1.0 - planet_factor) - 5.0
-	DDD.set_text("SFX planet_factor", planet_factor)
-	DDD.set_text("SFX day_factor", day_factor)
+#	DDD.set_text("SFX planet_factor", planet_factor)
+#	DDD.set_text("SFX day_factor", day_factor)
 	
 	_planet_factor = planet_factor
 

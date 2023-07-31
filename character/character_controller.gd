@@ -1,4 +1,5 @@
-extends MultiplayerSynchronizer
+class_name CharacterController
+extends AController
 
 #const StellarBody = preload("../solar_system/stellar_body.gd")
 #const SolarSystem = preload("../solar_system/solar_system.gd")
@@ -7,10 +8,10 @@ const Ship = preload("../ship/ship.gd")
 const CollisionLayers = preload("../collision_layers.gd")
 # TODO This is very close to Godot's CharacterBody3D. Introduce prefixes?
 # It could be confusing to not realize this is actually from the project and not Godot
-const CharacterBody = preload("res://addons/zylann.3d_basics/character/character.gd")
+#const CharacterBody = preload("res://addons/zylann.3d_basics/character/character.gd")
 const SplitChunkRigidBodyComponent = preload("../solar_system/split_chunk_rigidbody_component.gd")
 
-const WaypointScene = preload("../waypoints/waypoint.tscn")
+#const WaypointScene = preload("../waypoints/waypoint.tscn")
 
 const VERTICAL_CORRECTION_SPEED = PI
 const MOVE_ACCELERATION = 40.0
@@ -18,51 +19,62 @@ const MOVE_DAMP_FACTOR = 0.1
 const JUMP_COOLDOWN_TIME = 0.3
 const JUMP_SPEED = 8.0
 
-@onready var _head : Node3D = get_node("../Head")
-@onready var _visual_root : Node3D = get_node("../Visual")
-@onready var _visual_animated : Mannequiny = get_node("../Visual/mannequiny")
-@onready var _visual_head : Node3D = get_node("../Visual/Head")
-@onready var _flashlight : SpotLight3D = get_node("../Visual/FlashLight")
-@onready var _audio = get_node("../Audio")
 
-#var _velocity := Vector3()
+@export var _mouse_turn_sensitivity: float = 0.1
+@export var _max_angle: float = 89.0
+@export var _min_angle: float = -89.0
+
 var _dig_cmd := false
 var _interact_cmd := false
 var _build_cmd := false
 var _waypoint_cmd := false
 var _visual_state = Mannequiny.States.IDLE
 var _last_motor := Vector3()
-var _player_id: int = -1
-var _game: Game
+
 var _pickable: PickableObject = null
 var _is_picking: bool = false
+var _uuid: String = ""
+
+var _flashlight : SpotLight3D
+var _audio
+
+var _solar_system: SolarSystem = null
+
+var _pitch := 0.0
+var _yaw := 0.0
 
 
 func _ready():
-	_game = get_tree().get_nodes_in_group("game")[0]
-#	await get_tree().process_frame # wait for parent.
-	set_multiplayer_authority(get_parent().network_id)
-	var enabled := get_multiplayer_authority() == multiplayer.get_unique_id()
+	super._ready()
+	MultiplayerServer.resource_collection_finished.connect(_on_resource_collection_finished)
+
+func set_enable_local_controller(p_value: bool):
+	var enabled := p_value
 	set_physics_process(enabled)
-	set_process(enabled)
+#	set_process(enabled)
 	set_process_input(enabled)
 	set_process_unhandled_input(enabled)
-	MultiplayerServer.resource_collection_finished.connect(_on_resource_collection_finished)
+#	_remote_movement.set_process(not enabled)
+	pass
+
+# If uuid is empty. It is local player.
+func set_uuid(p_uuid: String):
+	_uuid = p_uuid
 
 
 func _on_resource_collection_finished(p_resource_id):
 	if _pickable:
 		_pickable.queue_free()
 
-func _physics_process(_delta):
+func _process(_delta):
 	var motor := Vector3()
 	
 #	if Input.is_key_pressed(KEY_W):
 	if Input.is_action_pressed("forward"):
-		motor += Vector3(0, 0, -1)
+		motor += Vector3(0, 0, 1)
 #	if Input.is_key_pressed(KEY_S):
 	if Input.is_action_pressed("back"):
-		motor += Vector3(0, 0, 1)
+		motor += Vector3(0, 0, -1)
 #	if Input.is_key_pressed(KEY_A):
 	if Input.is_action_pressed("left"):
 		motor += Vector3(-1, 0, 0)
@@ -71,12 +83,12 @@ func _physics_process(_delta):
 		motor += Vector3(1, 0, 0)
 	
 	var character_body := _get_body()
+	var camera: Camera3D = get_viewport().get_camera_3d()
+	
 	character_body.set_motor(motor)
-
-	var planet_center := Vector3()
-	var gtrans := character_body.global_transform
-	var planet_up := (gtrans.origin - planet_center).normalized()
-	character_body.set_planet_up(planet_up)
+	
+	if Input.is_action_just_pressed("jump"):
+		character_body.jump()
 	
 	_process_actions()
 	_process_undig()
@@ -86,21 +98,10 @@ func _physics_process(_delta):
 	_pick(Input.is_action_pressed("pick_object"))
 
 func _pick(p_value: bool):
-#	var picking := p_value
 	if _is_picking != p_value:
 		if _pickable and p_value:
-			MultiplayerServer.start_resource_collect(0, _game.get_solar_system().get_reference_stellar_body_id(), _pickable.get_id(), 1)
-#			rpc("_server_pick", _pickable.get_id())
-		else:
-			pass
+			MultiplayerServer.start_resource_collect(0, _game.get_solar_system().get_reference_stellar_body_id(), _pickable.get_id(), _game._username)
 		_is_picking = p_value
-
-
-@rpc
-func _server_pick(p_resource_id: String):
-	print("_server_pick")
-	if multiplayer.is_server():
-		print("Calling from server")
 
 func finish_collect_resource():
 	_is_picking = false
@@ -118,7 +119,7 @@ func _process_undig():
 	var local_pos = to_local * character_body.global_transform.origin
 	vt.channel = VoxelBuffer.CHANNEL_SDF
 	var sdf = vt.get_voxel_f_interpolated(local_pos)
-	DDD.set_text("SDF at feet", sdf)
+#	DDD.set_text("SDF at feet", sdf)
 	if sdf < -0.001:
 		# We got buried, teleport at nearest safe location
 		print("Character is buried, teleporting back to air")
@@ -141,6 +142,9 @@ func _process_actions():
 		_interact()
 
 	var character_body := _get_body()
+	
+	if character_body == null:
+		return
 	
 	var camera := get_viewport().get_camera_3d()
 	var front := -camera.global_transform.basis.z
@@ -171,7 +175,7 @@ func _process_actions():
 				vt.channel = VoxelBuffer.CHANNEL_SDF
 				vt.mode = VoxelTool.MODE_REMOVE
 				vt.do_sphere(pos, sphere_size)
-				_audio.play_dig(pos)
+#				_audio.play_dig(pos)
 
 				var splitter_aabb = AABB(pos, Vector3()).grow(16.0)
 				var bodies = vt.separate_floating_chunks(splitter_aabb, camera.get_parent())
@@ -190,15 +194,43 @@ func _process_actions():
 				vt.do_sphere(pos, 3.5)
 				_audio.play_dig(pos)
 			
-			if _waypoint_cmd:
-				_waypoint_cmd = false
-				var planet = _get_solar_system().get_reference_stellar_body()
-				var waypoint = WaypointScene.instantiate()
-				waypoint.transform = Transform3D(character_body.transform.basis, hit.position)
-				planet.node.add_child(waypoint)
-				planet.waypoints.append(waypoint)
-				_audio.play_waypoint()
+#			if _waypoint_cmd:
+#				_waypoint_cmd = false
+#				var planet = _get_solar_system().get_reference_stellar_body()
+#				var waypoint = WaypointScene.instantiate()
+#				waypoint.transform = Transform3D(character_body.transform.basis, hit.position)
+#				planet.node.add_child(waypoint)
+#				planet.waypoints.append(waypoint)
+#				_audio.play_waypoint()
 
+
+func _input(event):
+	if Input.is_action_just_pressed("toggle_mouse"):
+		if Input.get_mouse_mode() != Input.MOUSE_MODE_CAPTURED:
+#			release_mosue()
+			capture_mouse()
+		else:
+			release_mouse()
+	
+	if Input.get_mouse_mode() != Input.MOUSE_MODE_CAPTURED:
+		return
+	
+	if event is InputEventMouseMotion:
+		# Get mouse delta
+		var motion = event.relative
+		
+		# Add to rotations
+		_yaw -= motion.x * _mouse_turn_sensitivity
+		_pitch += motion.y * _mouse_turn_sensitivity
+		
+		# Clamp pitch
+		var e = 0.001
+		if _pitch > _max_angle - e:
+			_pitch = _max_angle - e
+		elif _pitch < _min_angle + e:
+			_pitch = _min_angle + e
+		
+	update_rotations()
 
 func _unhandled_input(event):
 	if event is InputEventKey:
@@ -244,10 +276,16 @@ func _interact():
 
 	if not hit.is_empty():
 		if hit.collider.name == "CommandPanel":
-			var ship = Util.find_parent_by_type(hit.collider, Ship)
-			if ship != null:
-				_enter_ship(ship)
+			_game.enter_ship()
+#			var ship = Util.find_parent_by_type(hit.collider, Ship)
+#			if ship != null:
+#				_enter_ship(ship)
 
+
+func update_rotations():
+	var head: Node3D = get_character().get_head()
+	head.rotation = Vector3(0, deg_to_rad(_yaw), 0)
+	head.rotate(head.transform.basis.x.normalized(), -deg_to_rad(_pitch))
 
 func _enter_ship(ship: Ship):
 	var camera = get_viewport().get_camera_3d()
@@ -256,59 +294,8 @@ func _enter_ship(ship: Ship):
 	_get_body().queue_free()
 
 
-func _set_visual_state(state: Mannequiny.States):
-	# TODO Temporarily removed Mannequinny, it did not port well to Godot4
-#	pass
-	if _visual_state != state:
-		_visual_state = state
-		_visual_animated.transition_to(_visual_state)
 
 
-func _process(delta: float):
-	var character_body := _get_body()
-	var gtrans := character_body.global_transform
-
-	# We want to rotate only along local Y
-	var plane := Plane(_visual_root.global_transform.basis.y, 0)
-	var head_basis := _head.global_transform.basis
-	var forward := plane.project(-head_basis.z)
-	if forward == Vector3():
-		forward = Vector3(0, 1, 0)
-	var up := gtrans.basis.y
-	
-	# Visual can be offset.
-	# We need global transfotm tho cuz look_at wants a global position
-	gtrans.origin = _visual_root.global_transform.origin
-	
-	var old_root_basis = _visual_root.transform.basis.orthonormalized()
-	_visual_root.look_at(gtrans.origin + forward, up)
-	_visual_root.transform.basis = old_root_basis.slerp(_visual_root.transform.basis, delta * 8.0)
-	
-	# TODO Temporarily removed Mannequinny, it did not port well to Godot4
-	_process_visual_animated(forward, character_body)
-	
-	_visual_head.global_transform.basis = head_basis
-	
-	if Input.is_action_just_pressed("spawn_miner_test"):
-		_spawn_miner()
-
-
-func _process_visual_animated(forward: Vector3, character_body: CharacterBody3D):
-	_visual_animated.set_move_direction(forward)
-
-	var state = Mannequiny.States.RUN
-	if _last_motor.length_squared() > 0.0:
-		_visual_animated.set_is_moving(true)
-		state = Mannequiny.States.RUN
-	else:
-		_visual_animated.set_is_moving(false)
-		state = Mannequiny.States.IDLE
-	if not character_body.is_landed():
-		state = Mannequiny.States.AIR
-	_set_visual_state(state)
-
-func get_player_id() -> int:
-	return _player_id
 
 func _spawn_miner() -> void:
 	var sl := SpawnLocation.new()
@@ -324,8 +311,22 @@ func set_pickable_object(p_pickable: PickableObject) -> void:
 
 func _get_solar_system() -> SolarSystem:
 	# TODO That looks really bad. Probably need to use injection some day
-	return get_parent().get_parent() as SolarSystem
+	return _solar_system
+
+func set_solar_system(p_solar_system: SolarSystem) -> void:
+	_solar_system = p_solar_system
+
+func _get_body() -> Character:
+	return get_character() as Character
 
 
-func _get_body() -> CharacterBody:
-	return get_parent() as CharacterBody
+func get_last_motor() -> Vector3:
+	return _last_motor
+
+
+func possess(p_char: Character) -> void:
+	super.possess(p_char)
+	_flashlight = _character.get_flashlight()
+	_audio = _character.get_audio()
+
+

@@ -99,6 +99,14 @@ func get_planet_status(p_solar_system_id: int, p_planet_id: int, user_id: String
 	data.data = ""
 	_make_request(data)
 
+func get_planet_list(p_solar_system_id):
+	var data := Data.new()
+	data.url = "http://127.0.0.1:5000/planet_list/{0}".format([p_solar_system_id])
+	data.headers = ["Content-Type: application/json"]
+	data.method_type = HTTPClient.METHOD_GET
+	data.data = ""
+	_make_request(data)
+
 func execute_task(p_solar_system_id: int, p_planet_id: int, p_machine_id: int, p_requester_id: String, p_task_data: Dictionary):
 	var d := {
 		solar_system_id = p_solar_system_id,
@@ -194,6 +202,21 @@ func despawn_machine(p_solar_system_id: int, p_planet_id: int, p_machine_id: int
 	data.data = JSON.stringify(d)
 	_make_request(data)
 
+func collect_item(p_user_id: String, p_item_id: String, p_item_type: int, p_item_amount: int):
+	var d := {
+		user_id = p_user_id,
+		item_id = p_item_id,
+		item_type = p_item_type,
+		item_amount = p_item_amount
+	}
+	
+	var data := Data.new()
+	data.url = "http://127.0.0.1:5000/collect_item"
+	data.headers = ["Content-Type: application/json"]
+	data.method_type = HTTPClient.METHOD_POST
+	data.data = JSON.stringify(d)
+	_make_request(data)
+
 func _make_request(p_data: Data):
 	_queue.push_back(p_data)
 
@@ -235,6 +258,12 @@ func _on_http_request_request_completed(result, response_code, headers, body: Pa
 		elif data.has("despawn_machine"):
 			data = data.despawn_machine
 			Server.despawn_machine_requested.emit(data.solar_system_id, data.planet_id, data.machine_id)
+		elif data.has("collect_item"):
+			data = data.collect_item
+			Server.resource_collected.emit(data.item_id, data.item_amount)
+		elif data.has("planet_list"):
+			data = data.planet_list
+			Server.planet_listed.emit(data.solar_system_id, data.planet_ids)
 	
 	_is_requesting = false
 

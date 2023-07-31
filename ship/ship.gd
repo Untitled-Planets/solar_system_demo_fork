@@ -15,7 +15,7 @@ const STATE_FLYING = 1
 @export var speed_cap_in_space := 400.0
 
 @onready var _visual_root = $Visual/VisualRoot
-@onready var _controller = $Controller
+#@onready var _controller = $Controller
 # Nodes that should be enabled only when landed
 @onready var _landed_nodes = [
 	# TODO Godot4 now imports some nodes with unpredictable names if they collide instead of
@@ -68,13 +68,23 @@ func _ready():
 		var node = visual_model_root.get_child(i)
 		if node is StaticBody3D:
 			_landed_nodes.append(node)
-
+#
 	for n in _landed_nodes:
 		_landed_node_parents.append(n.get_parent())
 	
 	_visual_root.global_transform = global_transform
-	enable_controller()
-	
+#	enable_controller()
+#	disable_controller()
+#	freeze = true
+#	_open_hatch()
+#	_state = STATE_FLYING
+#	for i in len(_landed_nodes):
+#		_landed_node_parents[i].add_child(_landed_nodes[i])
+	for cs in _flight_collision_shapes:
+		cs.disabled = true
+	freeze = true
+	_visual_root.global_position = global_position
+	_open_hatch()
 	get_solar_system().reference_body_changed.connect(_on_solar_system_reference_body_changed)
 
 
@@ -88,7 +98,6 @@ func apply_game_settings(s: Settings):
 
 
 func enable_controller():
-	_controller.set_enabled(true)
 	for n in _landed_nodes:
 		n.get_parent().remove_child(n)
 	for cs in _flight_collision_shapes:
@@ -100,7 +109,7 @@ func enable_controller():
 
 
 func disable_controller():
-	_controller.set_enabled(false)
+#	_controller.set_enabled(false)
 	for i in len(_landed_nodes):
 		_landed_node_parents[i].add_child(_landed_nodes[i])
 	for cs in _flight_collision_shapes:
@@ -111,11 +120,11 @@ func disable_controller():
 	_audio.play_disabled()
 
 
-func _notification(what: int):
-	if what == NOTIFICATION_PREDELETE:
-		if _state != STATE_LANDED:
-			for n in _landed_nodes:
-				n.free()
+#func _notification(what: int):
+#	if what == NOTIFICATION_PREDELETE:
+#		if _state != STATE_LANDED:
+#			for n in _landed_nodes:
+#				n.free()
 
 
 func _open_hatch():
@@ -217,7 +226,7 @@ func _integrate_forces(state: PhysicsDirectBodyState3D):
 		var distance_to_surface := distance_to_core - stellar_body.radius
 		_planet_damping_amount = \
 			1.0 - clamp((distance_to_surface - 50.0) / stellar_body.radius, 0.0, 1.0)
-		DDD.set_text("Atmosphere damping amount", _planet_damping_amount)
+#		DDD.set_text("Atmosphere damping amount", _planet_damping_amount)
 		speed_cap = lerp(speed_cap_in_space_mod, speed_cap_on_planet, _planet_damping_amount)
 	
 	var speed := state.linear_velocity.length()
@@ -237,10 +246,10 @@ func _integrate_forces(state: PhysicsDirectBodyState3D):
 	_audio.set_main_jet_power(abs(_move_cmd.z))
 	_audio.set_secondary_jet_power(clamp(left_roll_jet_power + right_roll_jet_power, 0.0, 1.0))
 
-	DDD.set_text("Speed", state.linear_velocity.length())
-	DDD.set_text("X", gtrans.origin.x)
-	DDD.set_text("Y", gtrans.origin.y)
-	DDD.set_text("Z", gtrans.origin.z)
+#	DDD.set_text("Speed", state.linear_velocity.length())
+#	DDD.set_text("X", gtrans.origin.x)
+#	DDD.set_text("Y", gtrans.origin.y)
+#	DDD.set_text("Z", gtrans.origin.z)
 	
 	_visual_root.global_transform = gtrans
 	

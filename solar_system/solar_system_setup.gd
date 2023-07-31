@@ -256,9 +256,9 @@ static func _setup_rocky_planet(body: StellarBody, root: Node3D, settings: Setti
 	var volume := VoxelLodTerrain.new()
 	volume.lod_count = 7 + extra_lods
 #	volume.full_load_mode_enabled = true
-#	volume.lod_count = 0
+#	volume.lod_count = 1
 	volume.lod_distance = 60.0
-	volume.collision_lod_count = 6
+	volume.collision_lod_count = 8
 	volume.generator = generator
 	volume.stream = stream
 	var view_distance = 100000

@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://bt4iegdy4r0m3"]
+
+[ext_resource type="Script" path="res://ship/ship_controller.gd" id="1_dv0pr"]
+
+[node name="ship_controller" type="Node"]
+script = ExtResource("1_dv0pr")

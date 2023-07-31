@@ -1,9 +1,7 @@
-[gd_scene load_steps=33 format=3 uid="uid://blqdy4acm4wpa"]
+[gd_scene load_steps=31 format=3 uid="uid://blqdy4acm4wpa"]
 
 [ext_resource type="Script" path="res://ship/ship.gd" id="1"]
 [ext_resource type="Script" path="res://camera/camera_hints.gd" id="2"]
-[ext_resource type="Script" path="res://ship/ship_controller.gd" id="3"]
-[ext_resource type="PackedScene" path="res://character/character.tscn" id="3_yl1y4"]
 [ext_resource type="Shader" path="res://ship/speed_particles.gdshader" id="4"]
 [ext_resource type="Script" path="res://ship/motion_particles.gd" id="5"]
 [ext_resource type="Texture2D" uid="uid://cb4femk463wd7" path="res://ship/speed_particle.png" id="6"]
@@ -116,11 +114,12 @@ particles_anim_loop = false
 material = SubResource("StandardMaterial3D_1r4g6")
 size = Vector2(0.3, 0.3)
 
-[node name="Ship" type="RigidBody3D" groups=["planet_mode"]]
+[node name="Ship" type="RigidBody3D" groups=["planet_mode", "ship"]]
 gravity_scale = 0.0
 max_contacts_reported = 3
 contact_monitor = true
 can_sleep = false
+freeze_mode = 1
 linear_damp = 0.5
 angular_damp = 1.0
 script = ExtResource("1")
@@ -145,11 +144,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.881683, -2.34405)
 
 [node name="GroundCheckPosition" type="Marker3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -2.71605, 0.65127)
-
-[node name="Controller" type="Node" parent="." groups=["planet_mode"]]
-script = ExtResource("3")
-CharacterScene = ExtResource("3_yl1y4")
-keyboard_turn_sensitivity = 1.0
 
 [node name="CommandPanel" type="Area3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.74615, -2.57037)

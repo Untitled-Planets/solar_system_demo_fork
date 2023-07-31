@@ -1,12 +1,12 @@
-extends Node
+extends AController
 
 #const StellarBody = preload("../solar_system/stellar_body.gd")
 #var CharacterScene = load("res://character/character.tscn")
 @export var CharacterScene: PackedScene
 
-@onready var _ship = get_parent()
-@onready var _character_spawn_position_node : Node3D = get_node("../CharacterSpawnPosition")
-@onready var _ground_check_position_node : Node3D = get_node("../GroundCheckPosition")
+#var _ship: Ship = null
+#@onready var _character_spawn_position_node : Node3D = get_node("../CharacterSpawnPosition")
+#@onready var _ground_check_position_node : Node3D = get_node("../GroundCheckPosition")
 
 @export var keyboard_turn_sensitivity := 0.1
 @export var mouse_turn_sensitivity := 0.1
@@ -21,6 +21,7 @@ func set_enabled(enabled: bool):
 
 
 func _process(_delta: float):
+#	return
 	if Input.get_mouse_mode() != Input.MOUSE_MODE_CAPTURED:
 		# The UI probably has focus
 		return
@@ -45,7 +46,9 @@ func _process(_delta: float):
 	if Input.is_action_pressed("right"):
 		_turn_cmd.z += keyboard_turn_sensitivity
 	
-	_ship.set_superspeed_cmd(Input.is_key_pressed(KEY_SPACE))
+	
+	var ship: Ship = get_character() as Ship
+	ship.set_superspeed_cmd(Input.is_key_pressed(KEY_SPACE))
 	
 	_turn_cmd.x = clamp(_turn_cmd.x, -1.0, 1.0)
 	_turn_cmd.y = clamp(_turn_cmd.y, -1.0, 1.0)
@@ -54,8 +57,8 @@ func _process(_delta: float):
 	motor.y = clamp(motor.y, -1.0, 1.0)
 	motor.z = clamp(motor.z, -1.0, 1.0)
 	
-	_ship.set_move_cmd(motor)
-	_ship.set_turn_cmd(_turn_cmd)
+	ship.set_move_cmd(motor)
+	ship.set_turn_cmd(_turn_cmd)
 	_turn_cmd = Vector3()
 	#ship.set_antiroll(not Input.is_key_pressed(KEY_CONTROL))
 #	flyer.set_turn_cmd(turn)
@@ -92,37 +95,37 @@ func _try_exit_ship():
 		# The ship isn't right
 		print("Ship not straight")
 		return
-	var ground_check_pos := _ground_check_position_node.global_transform.origin
+#	var ground_check_pos := _ground_check_position_node.global_transform.origin
 
-	var ray_query := PhysicsRayQueryParameters3D.new()
-	ray_query.from = ground_check_pos
-	ray_query.to = ground_check_pos + down * 2.0
-	ray_query.exclude = [ship.get_rid()]
-	var hit := space_state.intersect_ray(ray_query)
+#	var ray_query := PhysicsRayQueryParameters3D.new()
+#	ray_query.from = ground_check_pos
+#	ray_query.to = ground_check_pos + down * 2.0
+#	ray_query.exclude = [ship.get_rid()]
+#	var hit := space_state.intersect_ray(ray_query)
 
-	if hit.is_empty():
-		# No ground under the ship
-		print("No ground under ship")
-		return
-	var spawn_pos := _character_spawn_position_node.global_transform.origin
-
-	#var ray_query := PhysicsRayQueryParameters3D.new()
-	ray_query.from = spawn_pos
-	ray_query.to = spawn_pos + down * 5.0
-	ray_query.exclude = []
-	hit = space_state.intersect_ray(ray_query)
-
-	if hit.is_empty():
-		# No ground under spawn position
-		print("No ground under spawn position")
-		return
+#	if hit.is_empty():
+#		# No ground under the ship
+#		print("No ground under ship")
+#		return
+#	var spawn_pos := _character_spawn_position_node.global_transform.origin
+#
+#	#var ray_query := PhysicsRayQueryParameters3D.new()
+#	ray_query.from = spawn_pos
+#	ray_query.to = spawn_pos + down * 5.0
+#	ray_query.exclude = []
+#	hit = space_state.intersect_ray(ray_query)
+#
+#	if hit.is_empty():
+#		# No ground under spawn position
+#		print("No ground under spawn position")
+#		return
 	# Let's do this
-	var character = CharacterScene.instantiate()
-	character.position = spawn_pos
-	ship.get_parent().add_child(character)
-	var camera = get_viewport().get_camera_3d()
-	camera.set_target(character)
-	ship.disable_controller()
+#	var character = CharacterScene.instantiate()
+#	character.position = spawn_pos
+#	ship.get_parent().add_child(character)
+#	var camera = get_viewport().get_camera_3d()
+#	camera.set_target(character)
+#	ship.disable_controller()
 
 
 func pm_enabled(p_enabled):
@@ -174,10 +177,11 @@ func _process_dig_actions():
 	var cam_pos = camera.global_transform.origin
 	var space_state := camera.get_world_3d().direct_space_state
 
+	var ship: Ship = get_character() as Ship
 	var ray_query := PhysicsRayQueryParameters3D.new()
 	ray_query.from = cam_pos
 	ray_query.to = cam_pos + front * 50.0
-	ray_query.exclude = [_ship.get_rid()]
+	ray_query.exclude = [ship.get_rid()]
 	var hit = space_state.intersect_ray(ray_query)
 	
 	var dig_cmd = Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT)

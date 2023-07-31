@@ -1,23 +1,17 @@
-[gd_scene load_steps=16 format=3 uid="uid://kmk540coucog"]
+[gd_scene load_steps=14 format=3 uid="uid://kmk540coucog"]
 
 [ext_resource type="Script" path="res://addons/zylann.3d_basics/character/character.gd" id="1"]
-[ext_resource type="Script" path="res://character/mouse_look.gd" id="2"]
 [ext_resource type="Script" path="res://camera/camera_hints.gd" id="3"]
-[ext_resource type="Script" path="res://character/character_controller.gd" id="4"]
 [ext_resource type="PackedScene" uid="uid://d082uqfojglr7" path="res://character/mannequiny.tscn" id="4_uk2od"]
 [ext_resource type="Script" path="res://character/character_audio.gd" id="5"]
 [ext_resource type="AudioStream" uid="uid://u3v6wu6o27ys" path="res://sounds/place_waypoint.wav" id="6"]
 [ext_resource type="AudioStream" uid="uid://byjc2j67p68vt" path="res://sounds/flash_on.wav" id="7"]
 [ext_resource type="AudioStream" uid="uid://cvilca41rqwpc" path="res://sounds/flash_off.wav" id="8"]
+[ext_resource type="Script" path="res://character/remote_movement.gd" id="10_kvh01"]
 
 [sub_resource type="CapsuleShape3D" id="1"]
 radius = 0.4
 height = 1.8
-
-[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_010mo"]
-properties/0/path = NodePath(".:up_direction")
-properties/0/spawn = true
-properties/0/sync = true
 
 [sub_resource type="CylinderMesh" id="CylinderMesh_0rxtw"]
 
@@ -31,18 +25,12 @@ size = Vector3(0.5, 0.5, 0.5)
 size = Vector3(8, 0.5, 0.5)
 
 [node name="Character" type="CharacterBody3D"]
+collision_layer = 2
 script = ExtResource("1")
 
 [node name="CollisionShape" type="CollisionShape3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.875292, 0)
 shape = SubResource("1")
-
-[node name="Controller" type="MultiplayerSynchronizer" parent="."]
-replication_config = SubResource("SceneReplicationConfig_010mo")
-script = ExtResource("4")
-
-[node name="MouseLook" type="Node" parent="."]
-script = ExtResource("2")
 
 [node name="Head" type="Node3D" parent="."]
 transform = Transform3D(0.999725, 0.0234551, 0, -0.0234551, 0.999725, 0, 0, 0, 1, 0, 1.5976, 0)
@@ -119,5 +107,8 @@ stream = ExtResource("7")
 
 [node name="FlashLightOff" type="AudioStreamPlayer" parent="Audio"]
 stream = ExtResource("8")
+
+[node name="remote_movement" type="Node" parent="."]
+script = ExtResource("10_kvh01")
 
 [connection signal="jumped" from="." to="Audio" method="_on_Character_jumped"]
