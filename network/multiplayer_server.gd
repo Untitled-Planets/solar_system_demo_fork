@@ -47,18 +47,19 @@ func init():
 
 func _on_planet_status_requested(p_solar_system_id, p_planet_id, data):
 	planet_status_requested.emit(p_solar_system_id, p_planet_id, data)
-	_generate_resources_for_planets([int(p_planet_id)])
-#	floating_resources_updated.emit(p_solar_system_id, p_planet_id, _resources[int(p_planet_id)])
+#	_generate_floating_resources_for_solar_system(p_solar_system_id, [int(p_planet_id)])
+	_resources[int(p_solar_system_id)] = {int(p_planet_id): _generate_resources(100)} # temp
+	floating_resources_updated.emit(p_solar_system_id, p_planet_id, _resources[int(p_solar_system_id)][int(p_planet_id)])
 	
 
 func get_planet_status(p_solar_system_id, p_planet_id, p_requester):
 	Server.get_planet_status(p_solar_system_id, p_planet_id, p_requester)
 
 func _on_planet_listed(p_solar_system_id, p_planet_ids) -> void:
-	_generate_floating_items_for_solar_system(p_solar_system_id, p_planet_ids)
+	_generate_floating_resources_for_solar_system(p_solar_system_id, p_planet_ids)
 	pass
 
-func _generate_floating_items_for_solar_system(p_solar_system_id, p_planet_ids) -> void:
+func _generate_floating_resources_for_solar_system(p_solar_system_id, p_planet_ids) -> void:
 	if _resources.has(p_solar_system_id):
 		# clean
 		pass

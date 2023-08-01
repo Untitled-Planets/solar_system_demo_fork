@@ -135,7 +135,8 @@ func pm_enabled(p_enabled):
 
 #	if current_character:
 #		return
-	var ship = get_parent()
+	var ship = get_character()
+	
 
 	set_enabled(!p_enabled)
 #	print("pm_enabled ship controller")
