@@ -61,6 +61,7 @@ func _ready():
 func _on_resources_generated(p_solar_system_id, p_planet_id, p_resources):
 	pass
 
+
 func _on_user_position_updated(p_user_id: String, p_position):
 	var c: RemoteController = _players.get(p_user_id, null)
 	if c:
@@ -109,7 +110,7 @@ func _on_loading_progressed(p_progress_info):
 		camera.set_target(avatar)
 	#	if _settings.world_scale_x10:
 	#		camera.far *= SolarSystemSetup.LARGE_SCALE
-		add_child(camera)
+		_solar_system.add_child(camera)
 
 func _spawn_player() -> Character:
 	# Spawn player
@@ -388,11 +389,31 @@ func enter_ship():
 	_local_player.unpossess()
 	_local_player.queue_free()
 	var ship: Ship = get_tree().get_nodes_in_group("ship")[0]
+	_solar_system.target_ship = ship
 	_local_player = ShipController.instantiate() as AController
 	_local_player.possess(ship)
 	add_child(_local_player)
 	ship.enable_controller()
 	camera.set_target(ship)
+
+
+func exit_ship():
+	var camera: Camera3D = get_viewport().get_camera_3d()
+	var ship: Ship = _local_player.get_character()
+	ship.disable_controller()
+#	c.queue_free()
+	_local_player.set_physics_process(false)
+	_local_player.unpossess()
+	_local_player.queue_free()
+	var char: Character = CharacterScene.instantiate()
+	_solar_system.add_child(char)
+	char.global_position = ship.get_character_spawn_position()
+	_solar_system.target_ship = null
+	_local_player = LocalControllerScene.instantiate() as AController
+	_local_player.possess(char)
+	add_child(_local_player)
+	camera.set_target(char)
+
 ##############################
 # End Helper functions
 ##############################

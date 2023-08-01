@@ -47,6 +47,8 @@ const STATE_FLYING = 1
 ]
 @onready var _audio = $ShipAudio
 
+@onready var _character_spawn_position: Marker3D = $CharacterSpawnPosition
+
 var _move_cmd := Vector3()
 var _turn_cmd := Vector3()
 var _superspeed_cmd := false
@@ -80,11 +82,12 @@ func _ready():
 #	_state = STATE_FLYING
 #	for i in len(_landed_nodes):
 #		_landed_node_parents[i].add_child(_landed_nodes[i])
-	for cs in _flight_collision_shapes:
-		cs.disabled = true
-	freeze = true
+#	for cs in _flight_collision_shapes:
+#		cs.disabled = true
+#	freeze = true
+	disable_controller()
 	_visual_root.global_position = global_position
-	_open_hatch()
+#	_open_hatch()
 	get_solar_system().reference_body_changed.connect(_on_solar_system_reference_body_changed)
 
 
@@ -255,6 +258,9 @@ func _integrate_forces(state: PhysicsDirectBodyState3D):
 	
 	_last_contacts_count = state.get_contact_count()
 
+
+func get_character_spawn_position() -> Vector3:
+	return _character_spawn_position.global_position
 
 func get_last_contacts_count() -> int:
 	return _last_contacts_count

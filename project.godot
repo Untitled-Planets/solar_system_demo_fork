@@ -108,3 +108,4 @@ environment/default_environment="res://default_env.tres"
 
 debug/show_machine_waypoint=true
 network/server=false
+debug/ghost=true

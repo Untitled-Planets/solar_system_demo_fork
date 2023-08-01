@@ -66,6 +66,8 @@ func _process(_delta: float):
 
 
 func _physics_process(_delta: float):
+#	if get_character() == null:
+#		return
 	if _exit_ship_cmd:
 		_exit_ship_cmd = false
 		_try_exit_ship()
@@ -75,7 +77,7 @@ func _physics_process(_delta: float):
 		
 
 func _try_exit_ship():
-	var ship = get_parent()
+	var ship = get_character()
 	if ship.linear_velocity.length() > 1.0:
 		# Still moving
 		print("Still moving")
@@ -120,6 +122,7 @@ func _try_exit_ship():
 #		print("No ground under spawn position")
 #		return
 	# Let's do this
+	_game.exit_ship()
 #	var character = CharacterScene.instantiate()
 #	character.position = spawn_pos
 #	ship.get_parent().add_child(character)
@@ -172,12 +175,14 @@ func _input(event):
 
 # TODO Temporary, need to replace this with a rocket launcher
 func _process_dig_actions():
+	var ship: Ship = get_character() as Ship
+	if ship == null:
+		return
 	var camera := get_viewport().get_camera_3d()
 	var front := -camera.global_transform.basis.z
 	var cam_pos = camera.global_transform.origin
 	var space_state := camera.get_world_3d().direct_space_state
 
-	var ship: Ship = get_character() as Ship
 	var ray_query := PhysicsRayQueryParameters3D.new()
 	ray_query.from = cam_pos
 	ray_query.to = cam_pos + front * 50.0
