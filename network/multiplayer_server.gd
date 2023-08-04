@@ -19,6 +19,7 @@ var _planet_system: Dictionary
 
 var _ws: WebSocketPeer = WebSocketPeer.new()
 
+
 class SolarSystemData:
 	var id: int = -1
 	var planets: Array[PlanetData] = []
@@ -35,7 +36,6 @@ class ResourceCollectionData:
 	var user_id: String = ""
 
 var _resource_selected: ResourceCollectionData = null
-
 
 
 func init():

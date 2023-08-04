@@ -72,7 +72,8 @@ func _on_loading_progressed(p_progress_info):
 #		ship.look_at(_local_player.get_character().global_position)
 		
 		await get_tree().create_timer(1.0).timeout
-		MultiplayerServer.join()
+		#MultiplayerServer.join()
+		MultiplayerServer.setup_server()
 
 
 func buy_ship() -> void:
