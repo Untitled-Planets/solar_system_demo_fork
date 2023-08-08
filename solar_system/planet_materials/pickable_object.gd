@@ -24,9 +24,12 @@ func _on_area_3d_body_exited(body):
 		body.get_controller().set_pickable_object(null)
 
 
-func _exit_tree():
+func spawn_vfx():
 	if _collect_sfx_scene:
 		var instance: GPUParticles3D = _collect_sfx_scene.instantiate()
 		get_tree().root.add_child(instance)
 		instance.global_position = global_position
 		instance.emitting = true
+
+#func _exit_tree():
+	

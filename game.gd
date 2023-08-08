@@ -39,6 +39,7 @@ var _local_player: AController = null
 var _players: Dictionary = {}
 
 func _ready():
+	
 	Server.add_machine_requested.connect(_on_add_machine)
 	Server.task_cancelled.connect(_on_task_cancelled)
 	Server.execute_task_requested.connect(_on_task_requested)
@@ -60,7 +61,6 @@ func _ready():
 
 func _on_resources_generated(p_solar_system_id, p_planet_id, p_resources):
 	pass
-
 
 func _on_user_position_updated(p_user_id: String, p_position):
 	var c: RemoteController = _players.get(p_user_id, null)
@@ -484,8 +484,8 @@ func _on_PauseMenu_exit_to_os_requested():
 
 
 func _on_PauseMenu_resume_requested():
-#	_pause_menu.hide()
-#	_mouse_capture.capture()
+	_pause_menu.hide()
+	_mouse_capture.capture()
 	pass
 
 
@@ -512,3 +512,13 @@ func remove_player(p_player_id: int):
 func on_resource_colleted(p_machine_id, p_amount_type, p_amount) -> void:
 	print("resource collected")
 	pass
+
+func pm_enabled(value: bool):
+	_hud.set_inventory_enable(value)
+
+
+func show_interactive_menu(p_objects: Array):
+	pass
+
+func add_mines_to_miner():
+	print("Adding mines...")

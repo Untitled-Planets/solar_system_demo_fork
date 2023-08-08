@@ -410,11 +410,11 @@ func _on_PauseMenu_resume_requested():
 	pass
 
 
-func _on_PauseMenu_settings_requested():
-	_settings_ui.show()
-	# The settings UI exists before the game is instanced so it might be behind.
-	# This makes sure it shows in front.
-	_settings_ui.move_to_front()
+#func _on_PauseMenu_settings_requested():
+#	_settings_ui.show()
+#	# The settings UI exists before the game is instanced so it might be behind.
+#	# This makes sure it shows in front.
+#	_settings_ui.move_to_front()
 
 
 func save_system():

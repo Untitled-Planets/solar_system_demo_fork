@@ -1,7 +1,7 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene load_steps=3 format=3 uid="uid://bmeom61qnlny2"]
 
 [ext_resource type="Script" path="res://assets/asset_inventory.gd" id="1_evusl"]
-[ext_resource type="PackedScene" uid="uid://3plw8drn1tul" path="res://machines/miner/miner.tscn" id="2_dcle1"]
+[ext_resource type="PackedScene" uid="uid://dy68vys8biwod" path="res://machines/miner/miner.tscn" id="2_dcle1"]
 
 [node name="asset_inventory" type="Node"]
 script = ExtResource("1_evusl")

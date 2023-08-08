@@ -2,8 +2,10 @@ extends Game
 
 @export var _pickable_object_scene: PackedScene
 
+
 func _ready():
 	super._ready()
+#	_player_station_ui.visible = true
 
 func _spawn_player() -> Character:
 	var a = await super._spawn_player()
@@ -13,7 +15,6 @@ func _spawn_player() -> Character:
 		await get_tree().process_frame
 		points = Server.planet_get_deposits(2)
 	
-#	Server.get_planet_list(0)
 	var query := PhysicsRayQueryParameters3D.new()
 	query.from = Util.coordinate_to_unit_vector(points[0].pos) * _solar_system.get_reference_stellar_body().radius * 10
 	query.to = Vector3.ZERO
@@ -25,7 +26,6 @@ func _spawn_player() -> Character:
 	
 	var station: Station = get_tree().get_nodes_in_group("portal_station")[0]
 	a.position = station.character_spawn_position
-#	a.position = result.position + result.position.normalized() * 2.0
 	return a
 
 func _on_planet_status_requested(solar_system_id, planet_id, data):
@@ -62,14 +62,6 @@ func _on_loading_progressed(p_progress_info):
 		while result.is_empty():
 			await get_tree().process_frame
 			result = state.intersect_ray(query)
-			
-#		var ship: Ship = ShipScene.instantiate()
-#		_solar_system.add_child(ship)
-#		var pos: Vector3 = result.position
-#		pos = pos.rotated(Vector3.UP, (PI * 0.1) * 0.1)
-#		ship.position = pos
-		
-#		ship.look_at(_local_player.get_character().global_position)
 		
 		await get_tree().create_timer(1.0).timeout
 		#MultiplayerServer.join()
@@ -77,8 +69,28 @@ func _on_loading_progressed(p_progress_info):
 
 
 func buy_ship() -> void:
+	if get_tree().get_nodes_in_group("ship").size() > 0:
+		print("You already has a ship!")
+		return
 	super.buy_ship()
 	var station: Station = get_tree().get_nodes_in_group("portal_station")[0]
 	var ship: Ship = ShipScene.instantiate()
 	_solar_system.add_child(ship)
 	ship.position = station.spaceship_spawn_position
+
+
+func enter_ship():
+	super.enter_ship()
+#	_player_station_ui.visible = false
+
+func exit_ship():
+	super.exit_ship()
+#	_player_station_ui.visible = true
+
+func pm_enabled(value: bool):
+	super.pm_enabled(value)
+#	_player_station_ui.visible = not value
+
+func show_interactive_menu(p_objects: Array):
+	super.show_interactive_menu(p_objects)
+	_hud.config_menu(p_objects)

@@ -1,4 +1,4 @@
-[gd_scene load_steps=3 format=3 uid="uid://boenf2xgbsu6b"]
+[gd_scene load_steps=3 format=3 uid="uid://demfx5c170url"]
 
 [ext_resource type="Script" path="res://network/server.gd" id="1_17jlm"]
 [ext_resource type="Script" path="res://network/request.gd" id="2_k6hmx"]

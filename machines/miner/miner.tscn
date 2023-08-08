@@ -7,8 +7,9 @@
 [ext_resource type="Script" path="res://machines/miner/tasks/MinerMineTask.gd" id="5_ar27r"]
 [ext_resource type="Script" path="res://machines/miner/tasks/MinerMoveTask.gd" id="7_aq5ft"]
 
-[node name="Miner" instance=ExtResource("1_v8j52")]
+[node name="Miner" groups=["miner"] instance=ExtResource("1_v8j52")]
 script = ExtResource("2_0ykg2")
+tag = "miner"
 
 [node name="movement" parent="." index="0"]
 _speed = 100.0

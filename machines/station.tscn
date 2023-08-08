@@ -12,7 +12,7 @@ material = SubResource("StandardMaterial3D_llwbg")
 [sub_resource type="BoxShape3D" id="BoxShape3D_lwgnl"]
 size = Vector3(150, 1, 150)
 
-[node name="station" type="Node3D" groups=["portal_station"]]
+[node name="station" type="Node3D" groups=["portal_station", "station"]]
 script = ExtResource("1_ud876")
 
 [node name="portal" parent="." instance=ExtResource("1_a8qlt")]
