@@ -13,6 +13,7 @@ enum State {
 
 @export var _waypoint_scene: PackedScene
 @export var _machine_view: Texture
+@export var tag: String = ""
 
 var _planet : StellarBody
 var _waypoint: Waypoint

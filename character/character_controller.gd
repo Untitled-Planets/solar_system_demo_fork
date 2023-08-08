@@ -23,6 +23,7 @@ const JUMP_SPEED = 8.0
 @export var _mouse_turn_sensitivity: float = 0.1
 @export var _max_angle: float = 89.0
 @export var _min_angle: float = -89.0
+@export var _interactive_distance: float = 10
 
 var _dig_cmd := false
 var _interact_cmd := false
@@ -51,11 +52,8 @@ func _ready():
 func set_enable_local_controller(p_value: bool):
 	var enabled := p_value
 	set_physics_process(enabled)
-#	set_process(enabled)
 	set_process_input(enabled)
 	set_process_unhandled_input(enabled)
-#	_remote_movement.set_process(not enabled)
-	pass
 
 # If uuid is empty. It is local player.
 func set_uuid(p_uuid: String):
@@ -64,6 +62,7 @@ func set_uuid(p_uuid: String):
 
 func _on_resource_collection_finished(p_resource_id):
 	if _pickable:
+		_pickable.spawn_vfx()
 		_pickable.queue_free()
 
 func _process(_delta):
@@ -96,6 +95,29 @@ func _process(_delta):
 	_last_motor = motor
 	
 	_pick(Input.is_action_pressed("pick_object"))
+	var objects_tag: Array = []
+	var m = _find_interactive_machine()
+	if m:
+		objects_tag.append(m)
+	var s = _find_interactive_station()
+	if s:
+		objects_tag.append(s)
+	
+	_game.show_interactive_menu(objects_tag)
+
+
+func _find_interactive_machine():
+	return _find_interactive_object_from_group("miner")
+
+func _find_interactive_station():
+	return _find_interactive_object_from_group("station")
+
+func _find_interactive_object_from_group(p_group_name: String):
+	var nodes:= get_tree().get_nodes_in_group(p_group_name)
+	for n in nodes:
+		if get_character().global_position.distance_squared_to(n.global_position) < _interactive_distance * _interactive_distance:
+			return  n
+	return null
 
 func _pick(p_value: bool):
 	if _is_picking != p_value:

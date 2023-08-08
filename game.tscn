@@ -1,4 +1,4 @@
-[gd_scene load_steps=33 format=3 uid="uid://dx0qy8pg0q72b"]
+[gd_scene load_steps=34 format=3 uid="uid://wp1csgvle6i4"]
 
 [ext_resource type="Script" path="res://game.gd" id="1_3cmpg"]
 [ext_resource type="Script" path="res://solar_system/solar_system.gd" id="1_tcbv5"]
@@ -27,8 +27,9 @@
 [ext_resource type="AudioStream" uid="uid://pdsd7xlt73p1" path="res://sounds/deep_space.ogg" id="14_krriv"]
 [ext_resource type="PackedScene" uid="uid://c0s0vh504ph30" path="res://planet_mode.tscn" id="16_fuknr"]
 [ext_resource type="PackedScene" uid="uid://co45bdw7qhu7i" path="res://waypoints/waypoint.tscn" id="17_mvuvu"]
-[ext_resource type="PackedScene" path="res://assets/asset_inventory.tscn" id="19_vd2ea"]
+[ext_resource type="PackedScene" uid="uid://bmeom61qnlny2" path="res://assets/asset_inventory.tscn" id="19_vd2ea"]
 [ext_resource type="PackedScene" uid="uid://c6ts5uteg6kpo" path="res://warehouse/warehouse.tscn" id="23_pk8da"]
+[ext_resource type="PackedScene" uid="uid://dvb1owwg5brgk" path="res://gui/inventory/interactive_menu.tscn" id="26_3r2ac"]
 
 [sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_cmlyd"]
 panorama = ExtResource("2_06f30")
@@ -49,7 +50,7 @@ glow_intensity = 1.0
 glow_blend_mode = 0
 glow_hdr_threshold = 0.8
 
-[node name="Game" type="Node3D" groups=["game"]]
+[node name="Game" type="Node3D" groups=["game", "planet_mode"]]
 script = ExtResource("1_3cmpg")
 ShipController = ExtResource("2_r8dnv")
 WaypointScene = ExtResource("17_mvuvu")
@@ -150,6 +151,9 @@ stream = ExtResource("8_tvaq7")
 visible = false
 layout_mode = 1
 
+[node name="interactive_menu" parent="HUD" instance=ExtResource("26_3r2ac")]
+layout_mode = 1
+
 [node name="MouseCapture" parent="." instance=ExtResource("10_4n27f")]
 capture_mouse_in_ready = false
 
@@ -212,5 +216,5 @@ show_percentage = false
 [connection signal="exit_to_menu_requested" from="PauseMenu" to="." method="_on_pause_menu_exit_to_menu_requested"]
 [connection signal="exit_to_menu_requested" from="PauseMenu" to="SolarSystem" method="_on_PauseMenu_exit_to_menu_requested"]
 [connection signal="exit_to_os_requested" from="PauseMenu" to="SolarSystem" method="_on_PauseMenu_exit_to_os_requested"]
-[connection signal="resume_requested" from="PauseMenu" to="SolarSystem" method="_on_PauseMenu_resume_requested"]
-[connection signal="settings_requested" from="PauseMenu" to="SolarSystem" method="_on_PauseMenu_settings_requested"]
+[connection signal="resume_requested" from="PauseMenu" to="." method="_on_PauseMenu_resume_requested"]
+[connection signal="settings_requested" from="PauseMenu" to="." method="_on_PauseMenu_settings_requested"]

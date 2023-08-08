@@ -32,10 +32,6 @@ func _process(_delta: float):
 		motor.z -= 1
 	if Input.is_action_pressed("forward") or Input.is_key_pressed(KEY_Z):
 		motor.z += 1
-#	if Input.is_key_pressed(KEY_A):
-#		motor.x -= 1
-#	if Input.is_key_pressed(KEY_D):
-#		motor.x += 1
 	if Input.is_action_pressed("forward"):
 		motor.y += 1
 	if Input.is_key_pressed(KEY_SHIFT):

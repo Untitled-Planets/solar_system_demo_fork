@@ -9,6 +9,7 @@ extends Control
 @onready var _waypoint_hud = $WaypointHUD
 @onready var _planet_hover_audio_player = $PlanetHoverSound
 @onready var _inventory = $Inventory
+@onready var _interactive_menu = $interactive_menu
 
 var _solar_system: SolarSystem = null
 #var _target_planet_screen_pos := Vector2()
@@ -113,3 +114,7 @@ func add_machine_instance(instance: MachineCharacter) -> void:
 #	if dir.dot(forward) <= 0.0:
 #		return null
 #	return camera.unproject_position(pos)
+
+
+func config_menu(p_objects: Array):
+	_interactive_menu.customize_menu(p_objects)

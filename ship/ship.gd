@@ -86,6 +86,8 @@ func _ready():
 #		cs.disabled = true
 #	freeze = true
 	disable_controller()
+	await get_tree().process_frame
+	freeze_mode = RigidBody3D.FREEZE_MODE_STATIC
 	_visual_root.global_position = global_position
 #	_open_hatch()
 	get_solar_system().reference_body_changed.connect(_on_solar_system_reference_body_changed)

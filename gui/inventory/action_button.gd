@@ -16,5 +16,8 @@ signal action_requested(action_id)
 @export var _action_id: String
 
 
+func _ready():
+	_button.text = display_action
+
 func _on_button_pressed():
 	action_requested.emit(_action_id)

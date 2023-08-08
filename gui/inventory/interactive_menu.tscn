@@ -1,0 +1,35 @@
+[gd_scene load_steps=3 format=3 uid="uid://dvb1owwg5brgk"]
+
+[ext_resource type="Script" path="res://gui/inventory/interactive_menu.gd" id="1_ocm80"]
+[ext_resource type="PackedScene" uid="uid://cetsk5akyouej" path="res://gui/inventory/action_button.tscn" id="2_m4g7a"]
+
+[node name="interactive_menu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("1_ocm80")
+
+[node name="actions" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = -994.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+alignment = 1
+
+[node name="buy_ship" parent="actions" instance=ExtResource("2_m4g7a")]
+layout_mode = 2
+display_action = "buy-ship"
+_action_id = "buy-ship"
+
+[node name="add_mine_to_miner" parent="actions" instance=ExtResource("2_m4g7a")]
+layout_mode = 2
+display_action = "add mines"
+_action_id = "mines-to-miner"
