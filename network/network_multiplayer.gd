@@ -32,6 +32,7 @@ class ResourceCollectionData extends RefCounted:
 	var progress: float
 	var user_id: String
 
+
 signal resource_collection_progressed(resource_id, p_procent)
 signal resource_collection_finished(resource_id)
 signal resource_collection_started(resource_id)
@@ -40,6 +41,9 @@ signal user_position_updated(p_user_id, player_position)
 signal resources_generated(solar_system_id, planet_id ,resources)
 signal planet_status_requested(solar_system_id, planet_id, data)
 signal floating_resources_updated(solar_system_id, planet_id, resources)
+
+signal on_update_client_buffer_data(buffer: Dictionary)
+signal update_client_network_frame(delta: float)
 
 const DEFAULT_PORT: int = 4422
 const MULTIPLAYER_FPS: int = 20
@@ -55,7 +59,6 @@ var _resources: Dictionary = {}
 var _solar_systems: Array[SolarSystemData] = []
 var _planet_system: Dictionary = {}
 var _resource_selected: ResourceCollectionData = null
-
 var _peer: ENetMultiplayerPeer = null
 
 var update_mode: UpdateMode = UpdateMode.IDLE
@@ -262,8 +265,28 @@ func _update(delta: float) -> void:
 	_delta_acc += delta
 	
 	if _delta_acc > _sync_delta:
+		if multiplayer.is_server():
+			_update_server_multiplayer(delta)
+		else:
+			update_client_network_frame.emit(delta)
 		user_position_updated.emit("dummy-id", _debug_player_pos)
 		_delta_acc = 0.0
 
 
+
+
+
+func _update_server_multiplayer(delta: float) -> void:
+	var timestamp: int = Time.get_ticks_msec()
+	var buffer: Dictionary = {
+		"timestamp": timestamp
+	}
+	
+	
+	
+
+
+@rpc("authority", "unreliable")
+func _on_server_data_recived(buffer: Dictionary) -> void:
+	on_update_client_buffer_data.emit(buffer)
 

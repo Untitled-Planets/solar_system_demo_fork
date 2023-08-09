@@ -38,7 +38,28 @@ var _ship = null
 var _local_player: AController = null
 var _players: Dictionary = {}
 
-func _ready():
+var bufferNetworkClientData: Array[Dictionary]
+
+func _on_update_buffer_data(buffer: Dictionary) -> void:
+	bufferNetworkClientData = [buffer]
+	
+	
+
+
+func _update_client_multiplayer(delta: float) -> void:
+	var size: int = bufferNetworkClientData.size()
+	
+	if size == 0:
+		return
+	
+	
+
+
+
+func _ready() -> void:
+	if MultiplayerServer.has_signal(&"update_client_network_frame") and MultiplayerServer.has_signal(&"on_update_client_buffer_data"):
+		MultiplayerServer.update_client_network_frame.connect(_update_client_multiplayer)
+		MultiplayerServer.on_update_client_buffer_data.connect(_on_update_buffer_data)
 	
 	Server.add_machine_requested.connect(_on_add_machine)
 	Server.task_cancelled.connect(_on_task_cancelled)
