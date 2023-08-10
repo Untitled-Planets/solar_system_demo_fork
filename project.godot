@@ -20,9 +20,9 @@ config/icon="res://icon.png"
 DDD="*res://addons/zylann.debug_draw/debug_draw.gd"
 Server="*res://network/server.tscn"
 WaypointManager="*res://waypoints/waypoint_manager.gd"
-MultiplayerServerr="res://network/multiplayer_server.gd"
-PlanetMaterialManager="*res://solar_system/planet_materials/planet_material_manager.tscn"
 MultiplayerServer="*res://network/network_multiplayer.gd"
+PlanetMaterialManager="*res://solar_system/planet_materials/planet_material_manager.tscn"
+MultiplayerServerr="res://network/multiplayer_server.gd"
 
 [debug]
 

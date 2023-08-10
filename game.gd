@@ -56,8 +56,13 @@ func _ready():
 	MultiplayerServer.user_position_updated.connect(_on_user_position_updated)
 	MultiplayerServer.resources_generated.connect(_on_resources_generated)
 	MultiplayerServer.floating_resources_updated.connect(_on_floating_resources_updated)
+	MultiplayerServer.data_updated.connect(_on_data_updated)
 	MultiplayerServer.init()
 
+
+func _on_data_updated(p_data: Dictionary) -> void:
+	print("receiving update from server")
+	pass
 
 func _on_resources_generated(p_solar_system_id, p_planet_id, p_resources):
 	pass

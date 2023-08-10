@@ -40,6 +40,7 @@ signal user_position_updated(p_user_id, player_position)
 signal resources_generated(solar_system_id, planet_id ,resources)
 signal planet_status_requested(solar_system_id, planet_id, data)
 signal floating_resources_updated(solar_system_id, planet_id, resources)
+signal data_updated(data: Dictionary)
 
 const DEFAULT_PORT: int = 4422
 const MULTIPLAYER_FPS: int = 20
@@ -246,9 +247,24 @@ func _process(delta: float) -> void:
 		_update(delta)
 
 
+
 func _physics_process(delta: float) -> void:
 	if update_mode == UpdateMode.PHYSICS:
 		_update(delta)
+
+func pack_data() -> Dictionary:
+	var data := {
+		"timestamp": 0,
+		"entities": pack_data_from_group("network")
+	}
+	return data
+
+func pack_data_from_group(p_group: String) -> Array[Dictionary]:
+	var ns: Array = get_tree().get_nodes_in_group(p_group)
+	var data: Array[Dictionary] = []
+	for n in ns:
+		data.append(n.serialize())
+	return data
 
 
 func _update(delta: float) -> void:
@@ -264,6 +280,9 @@ func _update(delta: float) -> void:
 	if _delta_acc > _sync_delta:
 		user_position_updated.emit("dummy-id", _debug_player_pos)
 		_delta_acc = 0.0
+		
+		var data := pack_data()
+		data_updated.emit(data)
 
 
 
