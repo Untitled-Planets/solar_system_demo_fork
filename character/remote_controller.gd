@@ -80,6 +80,7 @@ func _physics_process(delta):
 func _follow_original(delta: float) -> void:
 	if _last_known_position != Vector3.ZERO:
 		var delta_movement := _last_known_position - _character.global_position
+	
 		if delta_movement.length_squared() > 0.1:
 			_character.set_direction(delta_movement.normalized())
 		else:

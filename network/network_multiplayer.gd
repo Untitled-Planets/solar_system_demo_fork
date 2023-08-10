@@ -41,6 +41,7 @@ signal user_position_updated(p_user_id, player_position)
 signal resources_generated(solar_system_id, planet_id ,resources)
 signal planet_status_requested(solar_system_id, planet_id, data)
 signal floating_resources_updated(solar_system_id, planet_id, resources)
+signal data_updated(data: Dictionary)
 
 signal on_update_client_buffer_data(buffer: Dictionary)
 signal update_client_network_frame(delta: float)
@@ -60,6 +61,7 @@ var _solar_systems: Array[SolarSystemData] = []
 var _planet_system: Dictionary = {}
 var _resource_selected: ResourceCollectionData = null
 var _peer: ENetMultiplayerPeer = null
+var network_objects: Dictionary = {}
 
 var update_mode: UpdateMode = UpdateMode.IDLE
 
@@ -110,6 +112,17 @@ func setup_server(port: int = DEFAULT_PORT) -> Error:
 	join()
 	return OK
 
+
+func register_network_object(n: PackedNetwork) -> void:
+	pass
+
+
+func get_timestamp() -> int:
+	return Time.get_ticks_msec()
+
+
+func get_local_time() -> int:
+	return roundi(Time.get_unix_time_from_system())
 
 
 func _on_peer_connected(peer: int) -> void:
@@ -249,9 +262,27 @@ func _process(delta: float) -> void:
 		_update(delta)
 
 
+
 func _physics_process(delta: float) -> void:
 	if update_mode == UpdateMode.PHYSICS:
 		_update(delta)
+
+func pack_data() -> Dictionary:
+	var data: Dictionary = {
+		"timestamp": get_timestamp(),
+		"entities": pack_data_from_group(&"network")
+	}
+	return data
+
+func pack_data_from_group(p_group: String) -> Array[Dictionary]:
+	var ns: Array = get_tree().get_nodes_in_group(p_group)
+	var data: Array[Dictionary] = []
+	for n in ns:
+		if n.has_method(&"serialize"):
+			var serialize_data: Dictionary = n.serialize()
+			if not serialize_data.is_empty():
+				data.append(serialize_data)
+	return data
 
 
 func _update(delta: float) -> void:
@@ -271,6 +302,9 @@ func _update(delta: float) -> void:
 			update_client_network_frame.emit(delta)
 		user_position_updated.emit("dummy-id", _debug_player_pos)
 		_delta_acc = 0.0
+		
+		var data := pack_data()
+		data_updated.emit(data)
 
 
 

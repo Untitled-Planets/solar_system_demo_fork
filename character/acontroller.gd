@@ -8,11 +8,37 @@ var _game: Game
 var _character = null
 
 func _ready():
-	_game = get_tree().get_nodes_in_group("game")[0]
+	add_to_group("network")
+	var ns: Array = get_tree().get_nodes_in_group("game")
+	if ns.size() != 0:
+		_game = ns[0]
+		return
+	push_warning("No game class exists in the scene")
 
 func get_player_id() -> int:
 	return _player_id
 
+#####################################
+# Network interface
+#####################################
+
+func serialize() -> Dictionary:
+	var char: Character = get_character()
+	return {
+		"id": 0,
+		"position": {
+			"x": char.global_position.x,
+			"y": char.global_position.z,
+			"z": char.global_position.y
+		}
+	}
+
+func deserialize(p_data: Dictionary) -> void:
+	pass
+
+#####################################
+# End Network interface
+#####################################
 
 func possess(p_char) -> void:
 	if _character:

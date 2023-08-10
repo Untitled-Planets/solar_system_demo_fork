@@ -1,7 +1,8 @@
-[gd_scene load_steps=6 format=3 uid="uid://c28gpsbc77378"]
+[gd_scene load_steps=8 format=3 uid="uid://c28gpsbc77378"]
 
 [ext_resource type="PackedScene" uid="uid://8ttejgoay0g4" path="res://models/portal.tscn" id="1_a8qlt"]
 [ext_resource type="Script" path="res://machines/station.gd" id="1_ud876"]
+[ext_resource type="Script" path="res://machines/interactive_point_panel.gd" id="3_r3ap2"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_llwbg"]
 albedo_color = Color(0.247059, 0.180392, 0.113725, 1)
@@ -11,6 +12,8 @@ material = SubResource("StandardMaterial3D_llwbg")
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_lwgnl"]
 size = Vector3(150, 1, 150)
+
+[sub_resource type="BoxMesh" id="BoxMesh_x236v"]
 
 [node name="station" type="Node3D" groups=["portal_station", "station"]]
 script = ExtResource("1_ud876")
@@ -34,3 +37,11 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -40.5547, 3, 50.617)
 
 [node name="char_pivot" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -58.4752, 0, 54.0141)
+
+[node name="interactive_point" type="Marker3D" parent="." groups=["station_interactive_panel"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -31.302, 0, 47.921)
+script = ExtResource("3_r3ap2")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="interactive_point"]
+transform = Transform3D(1, 0, 0, 0, 4, 0, 0, 0, 1, 0, 0, 0)
+mesh = SubResource("BoxMesh_x236v")

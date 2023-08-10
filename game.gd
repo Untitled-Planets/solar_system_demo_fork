@@ -77,8 +77,13 @@ func _ready() -> void:
 	MultiplayerServer.user_position_updated.connect(_on_user_position_updated)
 	MultiplayerServer.resources_generated.connect(_on_resources_generated)
 	MultiplayerServer.floating_resources_updated.connect(_on_floating_resources_updated)
+	MultiplayerServer.data_updated.connect(_on_data_updated)
 	MultiplayerServer.init()
 
+
+func _on_data_updated(p_data: Dictionary) -> void:
+	print("receiving update from server")
+	pass
 
 func _on_resources_generated(p_solar_system_id, p_planet_id, p_resources):
 	pass
@@ -519,7 +524,7 @@ func _on_PauseMenu_settings_requested():
 func _save_world():
 	print("Saving world")
 	_solar_system.save_system()
-	
+
 func set_settings_ui(p_settings_ui):
 	_settings_ui = p_settings_ui
 

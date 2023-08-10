@@ -20,7 +20,6 @@ func customize_menu(p_objects: Array):
 		tags.append(ot.tag)
 	_buy_ship_button.visible = "station" in tags
 	_add_mines_to_miner.visible = "miner" in tags
-	pass
 
 
 func _show_menu_for_tag(p_tag) -> void:

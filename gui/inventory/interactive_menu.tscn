@@ -13,7 +13,7 @@ grow_vertical = 2
 mouse_filter = 2
 script = ExtResource("1_ocm80")
 
-[node name="actions" type="VBoxContainer" parent="."]
+[node name="actions" type="Control" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -21,15 +21,19 @@ anchor_bottom = 1.0
 offset_right = -994.0
 grow_horizontal = 2
 grow_vertical = 2
-mouse_filter = 2
-alignment = 1
 
 [node name="buy_ship" parent="actions" instance=ExtResource("2_m4g7a")]
 layout_mode = 2
+offset_top = 291.0
+offset_right = 158.0
+offset_bottom = 322.0
 display_action = "buy-ship"
 _action_id = "buy-ship"
 
 [node name="add_mine_to_miner" parent="actions" instance=ExtResource("2_m4g7a")]
 layout_mode = 2
+offset_top = 326.0
+offset_right = 158.0
+offset_bottom = 357.0
 display_action = "add mines"
 _action_id = "mines-to-miner"

@@ -36,6 +36,9 @@ var _visual_state = Mannequiny.States.IDLE
 var _controller
 var _direction: Vector3 = Vector3.ZERO
 
+
+
+
 func jump():
 	_jump_cmd = 5
 

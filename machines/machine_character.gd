@@ -27,8 +27,34 @@ var _task_data_queue: Array = []
 var _planet_mine_location_id: int = -1
 
 func _ready():
-	_game = get_tree().get_nodes_in_group("game")[0]
-	
+	add_to_group("network")
+	var ns: Array = get_tree().get_nodes_in_group("game")
+	if ns.size() != 0:
+		_game = ns[0]
+		return
+	push_warning("No game class exists in the scene")
+
+#####################################
+# Network interface
+#####################################
+
+func serialize() -> Dictionary:
+	return {
+		"id": 0,
+		"position": {
+			"x": global_position.x,
+			"y": global_position.z,
+			"z": global_position.y
+		}
+	}
+
+func deserialize(p_data: Dictionary) -> void:
+	pass
+
+#####################################
+# End Network interface
+#####################################
+
 
 func go_to(location: Vector3) -> void:
 	_movement.go_to(location)

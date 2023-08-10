@@ -110,7 +110,7 @@ func _find_interactive_machine():
 	return _find_interactive_object_from_group("miner")
 
 func _find_interactive_station():
-	return _find_interactive_object_from_group("station")
+	return _find_interactive_object_from_group("station_interactive_panel")
 
 func _find_interactive_object_from_group(p_group_name: String):
 	var nodes:= get_tree().get_nodes_in_group(p_group_name)
@@ -214,7 +214,7 @@ func _process_actions():
 				vt.channel = VoxelBuffer.CHANNEL_SDF
 				vt.mode = VoxelTool.MODE_ADD
 				vt.do_sphere(pos, 3.5)
-				_audio.play_dig(pos)
+#				_audio.play_dig(pos)
 			
 #			if _waypoint_cmd:
 #				_waypoint_cmd = false
