@@ -58,6 +58,7 @@ var _planet_system: Dictionary = {}
 var _resource_selected: ResourceCollectionData = null
 
 var _peer: ENetMultiplayerPeer = null
+var network_objects: Dictionary = {}
 
 var update_mode: UpdateMode = UpdateMode.IDLE
 
@@ -108,6 +109,17 @@ func setup_server(port: int = DEFAULT_PORT) -> Error:
 	join()
 	return OK
 
+
+func register_network_object(n: PackedNetwork) -> void:
+	pass
+
+
+func get_timestamp() -> int:
+	return Time.get_ticks_msec()
+
+
+func get_local_time() -> int:
+	return roundi(Time.get_unix_time_from_system())
 
 
 func _on_peer_connected(peer: int) -> void:
@@ -253,9 +265,9 @@ func _physics_process(delta: float) -> void:
 		_update(delta)
 
 func pack_data() -> Dictionary:
-	var data := {
-		"timestamp": 0,
-		"entities": pack_data_from_group("network")
+	var data: Dictionary = {
+		"timestamp": get_timestamp(),
+		"entities": pack_data_from_group(&"network")
 	}
 	return data
 
@@ -263,7 +275,10 @@ func pack_data_from_group(p_group: String) -> Array[Dictionary]:
 	var ns: Array = get_tree().get_nodes_in_group(p_group)
 	var data: Array[Dictionary] = []
 	for n in ns:
-		data.append(n.serialize())
+		if n.has_method(&"serialize"):
+			var serialize_data: Dictionary = n.serialize()
+			if not serialize_data.is_empty():
+				data.append(serialize_data)
 	return data
 
 
