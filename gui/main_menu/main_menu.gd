@@ -2,6 +2,7 @@ extends Control
 
 
 signal start_requested(username: String)
+signal start_client(username: String)
 signal settings_requested
 signal exit_requested
 
@@ -15,6 +16,13 @@ func _on_Start_pressed():
 	if _username.text.length() != 0:
 		start_requested.emit(_username.text)
 
+func _on_start_client_pressed() -> void:
+	OS.alert("No use")
+	return
+	if _username.text.length() != 0:
+		start_client.emit(_username.text)
+
+
 
 func _on_Settings_pressed():
 	settings_requested.emit()
@@ -26,3 +34,4 @@ func _on_Exit_pressed():
 
 func _on_check_toggled(button_pressed):
 	ProjectSettings.set_setting("solar_system/network/server", button_pressed)
+

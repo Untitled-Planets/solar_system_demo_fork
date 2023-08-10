@@ -20,8 +20,13 @@ config/icon="res://icon.png"
 DDD="*res://addons/zylann.debug_draw/debug_draw.gd"
 Server="*res://network/server.tscn"
 WaypointManager="*res://waypoints/waypoint_manager.gd"
-MultiplayerServer="*res://network/multiplayer_server.gd"
+MultiplayerServerr="res://network/multiplayer_server.gd"
 PlanetMaterialManager="*res://solar_system/planet_materials/planet_material_manager.tscn"
+MultiplayerServer="*res://network/network_multiplayer.gd"
+
+[debug]
+
+settings/stdout/verbose_stdout=true
 
 [input]
 
@@ -101,6 +106,7 @@ toggle_mouse={
 
 [rendering]
 
+renderer/rendering_method="gl_compatibility"
 environment/default_clear_color=Color(0, 0, 0, 1)
 environment/default_environment="res://default_env.tres"
 
