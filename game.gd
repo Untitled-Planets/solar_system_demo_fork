@@ -498,7 +498,7 @@ func _on_PauseMenu_settings_requested():
 func _save_world():
 	print("Saving world")
 	_solar_system.save_system()
-	
+
 func set_settings_ui(p_settings_ui):
 	_settings_ui = p_settings_ui
 

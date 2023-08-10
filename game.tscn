@@ -1,4 +1,4 @@
-[gd_scene load_steps=34 format=3 uid="uid://wp1csgvle6i4"]
+[gd_scene load_steps=27 format=3 uid="uid://wp1csgvle6i4"]
 
 [ext_resource type="Script" path="res://game.gd" id="1_3cmpg"]
 [ext_resource type="Script" path="res://solar_system/solar_system.gd" id="1_tcbv5"]
@@ -6,17 +6,10 @@
 [ext_resource type="PackedScene" uid="uid://dc4lolnw2ugli" path="res://camera/camera.tscn" id="2_hifyg"]
 [ext_resource type="PackedScene" uid="uid://bt4iegdy4r0m3" path="res://character/ship_controller.tscn" id="2_r8dnv"]
 [ext_resource type="Texture2D" uid="uid://bar13k13o7sw8" path="res://gui/textures/mouse-action-icon.png" id="3_6w2nu"]
-[ext_resource type="Script" path="res://gui/hud.gd" id="3_rlxpp"]
-[ext_resource type="FontFile" path="res://gui/fonts/hack_regular_16_dynamic_font.tres" id="4_5b8os"]
 [ext_resource type="PackedScene" uid="uid://blqdy4acm4wpa" path="res://ship/ship.tscn" id="4_fmsd4"]
-[ext_resource type="Texture2D" uid="uid://dnkytmccfss5m" path="res://gui/select_rect.png" id="5_hq7jk"]
 [ext_resource type="PackedScene" uid="uid://kmk540coucog" path="res://character/character.tscn" id="6_l3gax"]
-[ext_resource type="Texture2D" uid="uid://31ebse57lvhs" path="res://gui/crosshair.png" id="6_rc6j7"]
-[ext_resource type="PackedScene" uid="uid://b0omhqytjn0qj" path="res://waypoints/waypoint_hud.tscn" id="7_b4x6s"]
 [ext_resource type="PackedScene" uid="uid://bt3edpby8c65s" path="res://addons/gdquest.mannequin/src/Player/controller.tscn" id="7_s7ow6"]
 [ext_resource type="PackedScene" uid="uid://dmiuco3ut42e8" path="res://character/remote_controller.tscn" id="8_fysay"]
-[ext_resource type="AudioStream" uid="uid://bpacs3ufj22ps" path="res://sounds/ui_planet_hover.wav" id="8_tvaq7"]
-[ext_resource type="PackedScene" uid="uid://c37n15l6adtfq" path="res://gui/inventory/inventory.tscn" id="9_4oxrc"]
 [ext_resource type="PackedScene" uid="uid://c28gpsbc77378" path="res://machines/station.tscn" id="9_fge0m"]
 [ext_resource type="Script" path="res://addons/SIsilicon.vfx.lens flare/lens-flare.gd" id="9_w721i"]
 [ext_resource type="PackedScene" uid="uid://bu1ftqx735ygp" path="res://gui/mouse_capture.tscn" id="10_4n27f"]
@@ -27,9 +20,9 @@
 [ext_resource type="AudioStream" uid="uid://pdsd7xlt73p1" path="res://sounds/deep_space.ogg" id="14_krriv"]
 [ext_resource type="PackedScene" uid="uid://c0s0vh504ph30" path="res://planet_mode.tscn" id="16_fuknr"]
 [ext_resource type="PackedScene" uid="uid://co45bdw7qhu7i" path="res://waypoints/waypoint.tscn" id="17_mvuvu"]
+[ext_resource type="PackedScene" uid="uid://dig3qsvc3wh4c" path="res://game/gui/hud.tscn" id="19_e42xy"]
 [ext_resource type="PackedScene" uid="uid://bmeom61qnlny2" path="res://assets/asset_inventory.tscn" id="19_vd2ea"]
 [ext_resource type="PackedScene" uid="uid://c6ts5uteg6kpo" path="res://warehouse/warehouse.tscn" id="23_pk8da"]
-[ext_resource type="PackedScene" uid="uid://dvb1owwg5brgk" path="res://gui/inventory/interactive_menu.tscn" id="26_3r2ac"]
 
 [sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_cmlyd"]
 panorama = ExtResource("2_06f30")
@@ -103,56 +96,7 @@ WaypointScene = ExtResource("17_mvuvu")
 
 [node name="warehouse" parent="." instance=ExtResource("23_pk8da")]
 
-[node name="HUD" type="Control" parent="."]
-layout_mode = 3
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2
-script = ExtResource("3_rlxpp")
-
-[node name="TargetPlanetLabel" type="Label" parent="HUD"]
-layout_mode = 0
-theme_override_fonts/font = ExtResource("4_5b8os")
-text = "Hello world"
-
-[node name="TargetPlanetRect" type="NinePatchRect" parent="HUD"]
-modulate = Color(1, 1, 1, 0.784314)
-layout_mode = 0
-texture = ExtResource("5_hq7jk")
-patch_margin_left = 15
-patch_margin_top = 15
-patch_margin_right = 16
-patch_margin_bottom = 16
-
-[node name="Crosshair" type="CenterContainer" parent="HUD"]
-layout_mode = 0
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2
-
-[node name="TextureRect" type="TextureRect" parent="HUD/Crosshair"]
-layout_mode = 2
-mouse_filter = 2
-texture = ExtResource("6_rc6j7")
-stretch_mode = 4
-
-[node name="WaypointHUD" parent="HUD" instance=ExtResource("7_b4x6s")]
-layout_mode = 1
-
-[node name="PlanetHoverSound" type="AudioStreamPlayer" parent="HUD"]
-stream = ExtResource("8_tvaq7")
-
-[node name="Inventory" parent="HUD" instance=ExtResource("9_4oxrc")]
-visible = false
-layout_mode = 1
-
-[node name="interactive_menu" parent="HUD" instance=ExtResource("26_3r2ac")]
-layout_mode = 1
+[node name="HUD" parent="." instance=ExtResource("19_e42xy")]
 
 [node name="MouseCapture" parent="." instance=ExtResource("10_4n27f")]
 capture_mouse_in_ready = false

@@ -18,6 +18,7 @@ var _planet_mode: PlanetMode = null
 
 func _ready():
 	_planet_mode = get_tree().get_nodes_in_group("planet_mode_script")[0]
+	pass
 
 func set_solar_system(ss : SolarSystem):
 	_solar_system = ss

@@ -1,0 +1,61 @@
+[gd_scene load_steps=9 format=3 uid="uid://dig3qsvc3wh4c"]
+
+[ext_resource type="Script" path="res://gui/hud.gd" id="1_kwnpe"]
+[ext_resource type="FontFile" path="res://gui/fonts/hack_regular_16_dynamic_font.tres" id="2_kjkfq"]
+[ext_resource type="Texture2D" uid="uid://dnkytmccfss5m" path="res://gui/select_rect.png" id="3_2wrxg"]
+[ext_resource type="Texture2D" uid="uid://31ebse57lvhs" path="res://gui/crosshair.png" id="4_w3nyn"]
+[ext_resource type="PackedScene" uid="uid://b0omhqytjn0qj" path="res://waypoints/waypoint_hud.tscn" id="5_1886x"]
+[ext_resource type="AudioStream" uid="uid://bpacs3ufj22ps" path="res://sounds/ui_planet_hover.wav" id="6_uejyy"]
+[ext_resource type="PackedScene" uid="uid://c37n15l6adtfq" path="res://gui/inventory/inventory.tscn" id="7_5ijpp"]
+[ext_resource type="PackedScene" uid="uid://dvb1owwg5brgk" path="res://gui/inventory/interactive_menu.tscn" id="8_67liv"]
+
+[node name="HUD" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("1_kwnpe")
+
+[node name="TargetPlanetLabel" type="Label" parent="."]
+layout_mode = 0
+theme_override_fonts/font = ExtResource("2_kjkfq")
+text = "Hello world"
+
+[node name="TargetPlanetRect" type="NinePatchRect" parent="."]
+modulate = Color(1, 1, 1, 0.784314)
+layout_mode = 0
+texture = ExtResource("3_2wrxg")
+patch_margin_left = 15
+patch_margin_top = 15
+patch_margin_right = 16
+patch_margin_bottom = 16
+
+[node name="Crosshair" type="CenterContainer" parent="."]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="TextureRect" type="TextureRect" parent="Crosshair"]
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("4_w3nyn")
+stretch_mode = 4
+
+[node name="WaypointHUD" parent="." instance=ExtResource("5_1886x")]
+layout_mode = 1
+
+[node name="PlanetHoverSound" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("6_uejyy")
+
+[node name="Inventory" parent="." instance=ExtResource("7_5ijpp")]
+visible = false
+layout_mode = 1
+
+[node name="interactive_menu" parent="." instance=ExtResource("8_67liv")]
+layout_mode = 1
