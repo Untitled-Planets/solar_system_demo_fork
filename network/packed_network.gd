@@ -4,7 +4,7 @@
 ## NetworkSerializer should automatically add to a group called "network"
 ## and implement the methods below.
 
-class_name PackedNetwork
+class_name NetworkEntity
 extends Node
 
 
@@ -21,15 +21,27 @@ enum OriginControl {
 @export var origin_control: OriginControl = OriginControl.SERVER
 
 var _peer_id: int = -1
-var _network_control: int = ServerPeerId
+
+## 
+var _network_control: int = ServerPeerId : set = _set_network_control
+
+func _set_network_control(id: int) -> void:
+	set_multiplayer_authority(id)
 
 
 func _ready() -> void:
 	add_to_group(NetworkGroup)
 
+
 func serialize() -> Dictionary:
 	assert(false, "Implement this")
 	return {}
 
+
 func deserialize(p_data: Dictionary) -> void:
 	assert(false, "Implement this")
+
+
+func is_origin_control_server() -> bool:
+	return origin_control == OriginControl.SERVER
+

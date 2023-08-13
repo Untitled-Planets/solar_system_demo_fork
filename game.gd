@@ -38,12 +38,10 @@ var _ship = null
 var _local_player: AController = null
 var _players: Dictionary = {}
 
-var bufferNetworkClientData: Array[Dictionary]
+var bufferNetworkClientData: Array[SyncBufferData]
 
-func _on_update_buffer_data(buffer: Dictionary) -> void:
+func _on_update_buffer_data(buffer: SyncBufferData) -> void:
 	bufferNetworkClientData = [buffer]
-	
-	
 
 
 func _update_client_multiplayer(delta: float) -> void:
@@ -52,7 +50,16 @@ func _update_client_multiplayer(delta: float) -> void:
 	if size == 0:
 		return
 	
+	var buffer: SyncBufferData = bufferNetworkClientData[0]
 	
+	var timestamp: int = buffer.timestamp
+	
+	for network_id in buffer.get_networks_ids():
+		var network_object: NetworkObjectData = MultiplayerServer.get_network_object(network_id) as NetworkObjectData
+		assert(network_object != null)
+		var network_entity: NetworkEntity = network_object.get_network_entity()
+		var data_to_sync: Dictionary = buffer.get_object_data(network_id)
+		network_entity.deserialize(data_to_sync)
 
 
 

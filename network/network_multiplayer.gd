@@ -43,8 +43,9 @@ signal planet_status_requested(solar_system_id, planet_id, data)
 signal floating_resources_updated(solar_system_id, planet_id, resources)
 signal data_updated(data: Dictionary)
 
-signal on_update_client_buffer_data(buffer: Dictionary)
+signal on_update_client_buffer_data(buffer: SyncBufferData)
 signal update_client_network_frame(delta: float)
+signal request_instance_network_object(origin_peer: int, network_object_data: NetworkObjectData, sync_data: Dictionary)
 
 const DEFAULT_PORT: int = 4422
 const MULTIPLAYER_FPS: int = 20
@@ -62,8 +63,13 @@ var _planet_system: Dictionary = {}
 var _resource_selected: ResourceCollectionData = null
 var _peer: ENetMultiplayerPeer = null
 var network_objects: Dictionary = {}
+var waiting_network_objects_pairing: Array[NetworkObjectData] = []
 
 var update_mode: UpdateMode = UpdateMode.IDLE
+
+
+
+
 
 func setup_client(address: String, port: int = DEFAULT_PORT) -> Error:
 	close()
@@ -113,8 +119,97 @@ func setup_server(port: int = DEFAULT_PORT) -> Error:
 	return OK
 
 
-func register_network_object(n: PackedNetwork) -> void:
+func close() -> void:
+	if not multiplayer.has_multiplayer_peer():
+		return
+	
+	if multiplayer.multiplayer_peer == null:
+		return
+	
+	if multiplayer.multiplayer_peer.get_connection_status() != MultiplayerPeer.CONNECTION_DISCONNECTED:
+		waiting_network_objects_pairing.clear()
+		network_objects.clear()
+		multiplayer.multiplayer_peer.close()
+
+
+func get_network_object(network_id: int) -> NetworkObjectData:
+	return network_objects.get(network_id, null)
+
+
+func register_network_object(n: NetworkEntity) -> void:
+	assert(n != null, "")
+	
+	if connection_status() != MultiplayerPeer.CONNECTION_CONNECTED:
+		waiting_network_objects_pairing.append(null)
+	
+	var data: NetworkObjectData = NetworkObjectData.new(n)
+	var n_name: StringName = n.get_name()
+	var origin: NetworkEntity.OriginControl = n.origin_control
+	
+	if multiplayer.is_server():
+		randomize()
+		var network_id: int = randi()
+		n._peer_id = network_id
+		
+		if origin != NetworkEntity.OriginControl.SERVER:
+			pass
+			
+		
+		network_objects[network_id] = data
+	else:
+		waiting_network_objects_pairing.append(data)
+		remote_register_network_object.rpc_id(1, data.get_instance_id(), n_name, origin)
+
+
+
+@rpc("any_peer")
+func remote_register_network_object(object_id: int, node_name: StringName, origin_control: NetworkEntity.OriginControl) -> void:
+	assert(not multiplayer.is_server())
+	if not multiplayer.is_server():
+		return
+	
+	var sender: int = multiplayer.get_remote_sender_id()
+	
+	# find in current register network nodes
+	var target_object: NetworkObjectData = null
+	
+	for k in network_objects.keys():
+		var object_data: NetworkObjectData = network_objects[k]
+		if object_data.is_name(node_name):
+			target_object = object_data
+			break
+	
+	var node_network_id: int = target_object.get_network_id()
+	
+	remote_confirm_register_network_object.rpc_id(sender, object_id, node_network_id)
+
+
+
+func replicate_object_network(origin_peer: int, network_id: int, config: Dictionary) -> void:
 	pass
+
+
+@rpc("authority")
+func remote_confirm_register_network_object(object_id: int, network_id: int) -> void:
+	var object_origin: NetworkObjectData = null
+	var del_idx: int = -1
+	
+	for i in range(waiting_network_objects_pairing.size()):
+		var object: NetworkObjectData = waiting_network_objects_pairing[i]
+		var id: int = object.get_instance_id()
+		
+		if object_id == id:
+			object_origin = object
+			break
+	
+	
+	assert(object_origin != null or del_idx > -1, "")
+	
+	waiting_network_objects_pairing.remove_at(del_idx)
+	
+	object_origin.set_network_id(network_id)
+	network_objects[network_id] = object_origin
+
 
 
 func get_timestamp() -> int:
@@ -151,17 +246,6 @@ func connection_status() -> MultiplayerPeer.ConnectionStatus:
 	if multiplayer.has_multiplayer_peer():
 		return MultiplayerPeer.CONNECTION_DISCONNECTED
 	return multiplayer.multiplayer_peer.get_connection_status()
-
-
-func close() -> void:
-	if not multiplayer.has_multiplayer_peer():
-		return
-	
-	if multiplayer.multiplayer_peer == null:
-		return
-	
-	if multiplayer.multiplayer_peer.get_connection_status() != MultiplayerPeer.CONNECTION_DISCONNECTED:
-		multiplayer.multiplayer_peer.close()
 
 
 func init() -> void:
@@ -267,6 +351,7 @@ func _physics_process(delta: float) -> void:
 	if update_mode == UpdateMode.PHYSICS:
 		_update(delta)
 
+
 func pack_data() -> Dictionary:
 	var data: Dictionary = {
 		"timestamp": get_timestamp(),
@@ -274,14 +359,23 @@ func pack_data() -> Dictionary:
 	}
 	return data
 
-func pack_data_from_group(p_group: String) -> Array[Dictionary]:
+
+func pack_data_from_group(p_group: String) -> Dictionary:
 	var ns: Array = get_tree().get_nodes_in_group(p_group)
-	var data: Array[Dictionary] = []
+	var data: Dictionary = {}
+	var is_server: bool = multiplayer.is_server()
+	var peer_id: int = multiplayer.get_unique_id()
+	
 	for n in ns:
-		if n.has_method(&"serialize"):
-			var serialize_data: Dictionary = n.serialize()
-			if not serialize_data.is_empty():
-				data.append(serialize_data)
+		if n is NetworkEntity:
+			if n.has_method(&"serialize"):
+				# It will only make sure to pack the data if the source control is
+				# equal to the instance where this function is called.
+				if peer_id == n._network_control:
+					var serialize_data: Dictionary = n.serialize()
+					if not serialize_data.is_empty():
+						data[n._peer_id] = serialize_data
+	
 	return data
 
 
@@ -307,20 +401,16 @@ func _update(delta: float) -> void:
 		data_updated.emit(data)
 
 
-
-
-
 func _update_server_multiplayer(delta: float) -> void:
-	var timestamp: int = Time.get_ticks_msec()
-	var buffer: Dictionary = {
-		"timestamp": timestamp
-	}
-	
-	
-	
+	var buffer: Dictionary = pack_data()
+	_on_server_data_recived.rpc(buffer)
 
 
 @rpc("authority", "unreliable")
 func _on_server_data_recived(buffer: Dictionary) -> void:
+	if not buffer.has("timestamp") or not buffer.has("entities"):
+		return
+	
+	var buffer_data: SyncBufferData = SyncBufferData.new(buffer["timestamp"], buffer["entities"])
 	on_update_client_buffer_data.emit(buffer)
 
