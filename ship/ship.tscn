@@ -266,6 +266,10 @@ autoplay = true
 [node name="Scrape" type="AudioStreamPlayer3D" parent="ShipAudio"]
 stream = ExtResource("18")
 
+[node name="VoxelViewer" type="VoxelViewer" parent="."]
+view_distance = 64
+requires_visuals = false
+
 [connection signal="body_entered" from="." to="ShipAudio" method="_on_Ship_body_entered"]
 
 [editable path="Visual/VisualRoot/ship"]

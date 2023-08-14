@@ -17,8 +17,6 @@ func _on_Start_pressed():
 		start_requested.emit(_username.text)
 
 func _on_start_client_pressed() -> void:
-	OS.alert("No use")
-	return
 	if _username.text.length() != 0:
 		start_client.emit(_username.text)
 

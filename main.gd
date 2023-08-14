@@ -1,5 +1,6 @@
 extends Node
 
+
 const Settings = preload("res://settings.gd")
 
 @onready var _main_menu = $MainMenu
@@ -30,6 +31,12 @@ func _on_MainMenu_start_requested(p_username):
 	_username = p_username
 	
 	Server.join(p_username)
+
+
+func _on_main_menu_start_client(p_username) -> void:
+	_username = p_username
+	
+	MultiplayerServer.setup_client("127.0.0.1")
 
 
 
@@ -67,4 +74,6 @@ func _unhandled_input(event):
 		if event.pressed and not event.is_echo():
 			if event.keycode == KEY_ESCAPE:
 				_settings_ui.hide()
+
+
 

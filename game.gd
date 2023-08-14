@@ -67,6 +67,8 @@ func _ready() -> void:
 	if MultiplayerServer.has_signal(&"update_client_network_frame") and MultiplayerServer.has_signal(&"on_update_client_buffer_data"):
 		MultiplayerServer.update_client_network_frame.connect(_update_client_multiplayer)
 		MultiplayerServer.on_update_client_buffer_data.connect(_on_update_buffer_data)
+		
+		multiplayer.peer_connected.connect()
 	
 	Server.add_machine_requested.connect(_on_add_machine)
 	Server.task_cancelled.connect(_on_task_cancelled)
@@ -88,8 +90,16 @@ func _ready() -> void:
 	MultiplayerServer.init()
 
 
+func _on_peer_connected(peer: int) -> void:
+	pass
+
+
+func _on_peer_disconnected(peer: int) -> void:
+	pass
+
+
 func _on_data_updated(p_data: Dictionary) -> void:
-	print("receiving update from server")
+	#print("receiving update from server")
 	pass
 
 func _on_resources_generated(p_solar_system_id, p_planet_id, p_resources):

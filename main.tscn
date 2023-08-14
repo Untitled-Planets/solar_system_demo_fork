@@ -14,4 +14,5 @@ visible = false
 
 [connection signal="exit_requested" from="MainMenu" to="." method="_on_MainMenu_exit_requested"]
 [connection signal="settings_requested" from="MainMenu" to="." method="_on_MainMenu_settings_requested"]
+[connection signal="start_client" from="MainMenu" to="." method="_on_main_menu_start_client"]
 [connection signal="start_requested" from="MainMenu" to="." method="_on_MainMenu_start_requested"]

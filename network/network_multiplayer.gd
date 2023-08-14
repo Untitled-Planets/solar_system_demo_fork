@@ -10,12 +10,14 @@ class CustomMultiplayerAPI extends SceneMultiplayer:
 class ObjectData extends RefCounted:
 	var id: int
 	
+	@warning_ignore("shadowed_variable")
 	func _init(id: int) -> void:
 		self.id = id
 
 class PlanetData extends ObjectData:
 	var resources: Dictionary = {}
 	
+	@warning_ignore("shadowed_variable")
 	func _init(id: int = -1, resources: Dictionary = {}) -> void:
 		super._init(id)
 		self.resources = resources
@@ -23,6 +25,7 @@ class PlanetData extends ObjectData:
 class SolarSystemData extends ObjectData:
 	var playents: Array[PlanetData]
 	
+	@warning_ignore("shadowed_variable")
 	func _init(id: int = -1, planets: Array[PlanetData] = []) -> void:
 		super._init(id)
 		self.planets = planets
@@ -43,7 +46,10 @@ signal planet_status_requested(solar_system_id, planet_id, data)
 signal floating_resources_updated(solar_system_id, planet_id, resources)
 signal data_updated(data: Dictionary)
 
+signal server_started
+signal client_started
 signal on_update_client_buffer_data(buffer: SyncBufferData)
+signal on_update_server_buffer_data(buffer: SyncBufferData)
 signal update_client_network_frame(delta: float)
 signal request_instance_network_object(origin_peer: int, network_object_data: NetworkObjectData, sync_data: Dictionary)
 
@@ -59,6 +65,7 @@ var _sync_delta: float = 1.0 / MULTIPLAYER_FPS
 var _delta_acc: float = 0.0
 var _resources: Dictionary = {}
 var _solar_systems: Array[SolarSystemData] = []
+@warning_ignore("unused_private_class_variable")
 var _planet_system: Dictionary = {}
 var _resource_selected: ResourceCollectionData = null
 var _peer: ENetMultiplayerPeer = null
@@ -93,6 +100,8 @@ func setup_client(address: String, port: int = DEFAULT_PORT) -> Error:
 	if not multiplayer.connection_failed.is_connected(_on_connection_fail):
 		multiplayer.connection_failed.connect(_on_connection_fail)
 	
+	client_started.emit()
+	
 	return OK
 
 
@@ -114,6 +123,8 @@ func setup_server(port: int = DEFAULT_PORT) -> Error:
 	
 	if  not multiplayer.peer_disconnected.is_connected(_on_peer_disconnected):
 		multiplayer.peer_disconnected.connect(_on_peer_connected)
+	
+	server_started.emit()
 	
 	join()
 	return OK
@@ -183,10 +194,6 @@ func remote_register_network_object(object_id: int, node_name: StringName, origi
 	
 	remote_confirm_register_network_object.rpc_id(sender, object_id, node_network_id)
 
-
-
-func replicate_object_network(origin_peer: int, network_id: int, config: Dictionary) -> void:
-	pass
 
 
 @rpc("authority")
@@ -283,6 +290,7 @@ func _generate_resources_for_planets(p_planet_ids) -> Dictionary:
 	return resources
 
 
+@warning_ignore("unused_parameter")
 func get_resource_for_planet(p_solar_system_id, p_planet_id, p_resource) -> Array:
 	return _resources[p_solar_system_id][p_planet_id]
 
@@ -313,17 +321,21 @@ func _initialize()  -> void:
 	_solar_systems.append(ssd)
 
 
+@warning_ignore("unused_parameter")
 func _on_resource_collected(resource_id: String, resource_amount: int)  -> void:
 	resource_collection_finished.emit(resource_id)
 
+@warning_ignore("unused_parameter")
 func _generate_resources_for_planet(p_planet_id) -> PlanetData:
 	return null
 
 var _debug_player_pos: Vector3
 
+@warning_ignore("unused_parameter")
 func send_last_position(p_user_id: String, p_position: Vector3)  -> void:
 	_debug_player_pos = p_position
 
+@warning_ignore("unused_parameter")
 func start_resource_collect(p_solar_system_id: int, p_planet_id: int, p_resource_id: String, p_player_id: String) -> void:
 	_resource_selected = ResourceCollectionData.new()
 	_resource_selected.progress = 0
@@ -337,8 +349,10 @@ func arrives_on_planet(p_solar_system_id: int, p_planet_id: int, p_player_id):
 	print("Arrving planet {0}".format([p_planet_id]))
 
 # This should be called from server
+@warning_ignore("unused_parameter")
 func finish_resource_collect(p_resource_id: int):
 	pass
+
 
 
 func _process(delta: float) -> void:
@@ -352,6 +366,7 @@ func _physics_process(delta: float) -> void:
 		_update(delta)
 
 
+
 func pack_data() -> Dictionary:
 	var data: Dictionary = {
 		"timestamp": get_timestamp(),
@@ -360,10 +375,10 @@ func pack_data() -> Dictionary:
 	return data
 
 
+
 func pack_data_from_group(p_group: String) -> Dictionary:
 	var ns: Array = get_tree().get_nodes_in_group(p_group)
 	var data: Dictionary = {}
-	var is_server: bool = multiplayer.is_server()
 	var peer_id: int = multiplayer.get_unique_id()
 	
 	for n in ns:
@@ -397,13 +412,18 @@ func _update(delta: float) -> void:
 		user_position_updated.emit("dummy-id", _debug_player_pos)
 		_delta_acc = 0.0
 		
-		var data := pack_data()
+		var data: Dictionary = pack_data()
 		data_updated.emit(data)
 
 
-func _update_server_multiplayer(delta: float) -> void:
+func _update_server_multiplayer(_delta: float) -> void:
 	var buffer: Dictionary = pack_data()
 	_on_server_data_recived.rpc(buffer)
+
+func _update_client_multiplayer(delta: float) -> void:
+	var send_buffer: Dictionary = pack_data()
+	
+
 
 
 @rpc("authority", "unreliable")
@@ -412,5 +432,14 @@ func _on_server_data_recived(buffer: Dictionary) -> void:
 		return
 	
 	var buffer_data: SyncBufferData = SyncBufferData.new(buffer["timestamp"], buffer["entities"])
-	on_update_client_buffer_data.emit(buffer)
+	on_update_client_buffer_data.emit(buffer_data)
 
+
+@rpc("any_peer", "unreliable")
+func _on_client_data_recived(buffer: Dictionary) -> void:
+	if not buffer.has("timestamp") or not buffer.has("entities"):
+		return
+	
+	var buffer_data: SyncBufferData = SyncBufferData.new(buffer["timestamp"], buffer["entities"])
+	
+	
