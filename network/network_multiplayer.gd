@@ -54,7 +54,7 @@ signal update_client_network_frame(delta: float)
 signal request_instance_network_object(origin_peer: int, network_object_data: NetworkObjectData, sync_data: Dictionary)
 
 const DEFAULT_PORT: int = 4422
-const MULTIPLAYER_FPS: int = 20
+const MULTIPLAYER_FPS: int = 10
 
 enum UpdateMode {
 	IDLE = 0,
@@ -164,7 +164,6 @@ func register_network_object(n: NetworkEntity) -> void:
 		
 		if origin != NetworkEntity.OriginControl.SERVER:
 			pass
-			
 		
 		network_objects[network_id] = data
 	else:
@@ -419,6 +418,7 @@ func _update(delta: float) -> void:
 func _update_server_multiplayer(_delta: float) -> void:
 	var buffer: Dictionary = pack_data()
 	_on_server_data_recived.rpc(buffer)
+
 
 func _update_client_multiplayer(delta: float) -> void:
 	var send_buffer: Dictionary = pack_data()

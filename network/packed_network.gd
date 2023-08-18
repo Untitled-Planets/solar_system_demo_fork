@@ -20,10 +20,15 @@ enum OriginControl {
 
 @export var origin_control: OriginControl = OriginControl.SERVER
 
-var _peer_id: int = -1
+var _network_object_id: int = -1
 
 ## 
 var _network_control: int = ServerPeerId : set = _set_network_control
+
+
+var curre_planet
+
+
 
 func _set_network_control(id: int) -> void:
 	set_multiplayer_authority(id)

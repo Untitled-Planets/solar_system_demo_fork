@@ -52,11 +52,11 @@ func _update_client_multiplayer(delta: float) -> void:
 	
 	var buffer: SyncBufferData = bufferNetworkClientData[0]
 	
-	var timestamp: int = buffer.timestamp
+	#var timestamp: int = buffer.timestamp
 	
 	for network_id in buffer.get_networks_ids():
 		var network_object: NetworkObjectData = MultiplayerServer.get_network_object(network_id) as NetworkObjectData
-		assert(network_object != null)
+		assert(network_object != null, "")
 		var network_entity: NetworkEntity = network_object.get_network_entity()
 		var data_to_sync: Dictionary = buffer.get_object_data(network_id)
 		network_entity.deserialize(data_to_sync)
@@ -68,7 +68,7 @@ func _ready() -> void:
 		MultiplayerServer.update_client_network_frame.connect(_update_client_multiplayer)
 		MultiplayerServer.on_update_client_buffer_data.connect(_on_update_buffer_data)
 		
-		multiplayer.peer_connected.connect()
+		multiplayer.peer_connected.connect(_on_peer_connected)
 	
 	Server.add_machine_requested.connect(_on_add_machine)
 	Server.task_cancelled.connect(_on_task_cancelled)
@@ -124,6 +124,7 @@ func _on_users_updated(p_joinigin_users, p_leaving_users):
 		_solar_system.add_child(char)
 		c.set_uuid(joining)
 
+
 func _on_resource_collection_started(p_resource_id):
 	_progress_bar.visible = true
 
@@ -154,6 +155,11 @@ func _on_loading_progressed(p_progress_info):
 	#	if _settings.world_scale_x10:
 	#		camera.far *= SolarSystemSetup.LARGE_SCALE
 		_solar_system.add_child(camera)
+		
+		
+
+
+
 
 func _spawn_player() -> Character:
 	# Spawn player
