@@ -52,6 +52,7 @@ signal on_update_client_buffer_data(buffer: SyncBufferData)
 signal on_update_server_buffer_data(buffer: SyncBufferData)
 signal update_client_network_frame(delta: float)
 signal request_instance_network_object(origin_peer: int, network_object_data: NetworkObjectData, sync_data: Dictionary)
+signal network_entity_propety_changed(entity: NetworkEntity, property: StringName, value: Variant)
 
 const DEFAULT_PORT: int = 4422
 const MULTIPLAYER_FPS: int = 10
@@ -65,7 +66,7 @@ var _sync_delta: float = 1.0 / MULTIPLAYER_FPS
 var _delta_acc: float = 0.0
 var _resources: Dictionary = {}
 var _solar_systems: Array[SolarSystemData] = []
-@warning_ignore("unused_private_class_variable")
+
 var _planet_system: Dictionary = {}
 var _resource_selected: ResourceCollectionData = null
 var _peer: ENetMultiplayerPeer = null
@@ -74,7 +75,7 @@ var waiting_network_objects_pairing: Array[NetworkObjectData] = []
 
 var update_mode: UpdateMode = UpdateMode.IDLE
 
-
+var _debug_player_pos: Vector3
 
 
 
@@ -164,6 +165,9 @@ func register_network_object(n: NetworkEntity) -> void:
 		
 		if origin != NetworkEntity.OriginControl.SERVER:
 			pass
+		else:
+			n._is_registered_network = true
+			n.set_multiplayer_authority(origin)
 		
 		network_objects[network_id] = data
 	else:
@@ -173,7 +177,7 @@ func register_network_object(n: NetworkEntity) -> void:
 
 
 @rpc("any_peer")
-func remote_register_network_object(object_id: int, node_name: StringName, origin_control: NetworkEntity.OriginControl) -> void:
+func remote_register_network_object(object_id: int, node_name: StringName, _origin_control: NetworkEntity.OriginControl) -> void:
 	assert(not multiplayer.is_server())
 	if not multiplayer.is_server():
 		return
@@ -208,11 +212,9 @@ func remote_confirm_register_network_object(object_id: int, network_id: int) -> 
 			object_origin = object
 			break
 	
-	
 	assert(object_origin != null or del_idx > -1, "")
 	
 	waiting_network_objects_pairing.remove_at(del_idx)
-	
 	object_origin.set_network_id(network_id)
 	network_objects[network_id] = object_origin
 
@@ -289,8 +291,7 @@ func _generate_resources_for_planets(p_planet_ids) -> Dictionary:
 	return resources
 
 
-@warning_ignore("unused_parameter")
-func get_resource_for_planet(p_solar_system_id, p_planet_id, p_resource) -> Array:
+func get_resource_for_planet(p_solar_system_id, p_planet_id, _p_resource) -> Array:
 	return _resources[p_solar_system_id][p_planet_id]
 
 func _generate_resources(p_amount: int) -> Array[Dictionary]:
@@ -320,22 +321,18 @@ func _initialize()  -> void:
 	_solar_systems.append(ssd)
 
 
-@warning_ignore("unused_parameter")
-func _on_resource_collected(resource_id: String, resource_amount: int)  -> void:
+func _on_resource_collected(resource_id: String, _resource_amount: int)  -> void:
 	resource_collection_finished.emit(resource_id)
 
-@warning_ignore("unused_parameter")
-func _generate_resources_for_planet(p_planet_id) -> PlanetData:
+
+func _generate_resources_for_planet(_p_planet_id) -> PlanetData:
 	return null
 
-var _debug_player_pos: Vector3
 
-@warning_ignore("unused_parameter")
-func send_last_position(p_user_id: String, p_position: Vector3)  -> void:
+func send_last_position(_p_user_id: String, p_position: Vector3)  -> void:
 	_debug_player_pos = p_position
 
-@warning_ignore("unused_parameter")
-func start_resource_collect(p_solar_system_id: int, p_planet_id: int, p_resource_id: String, p_player_id: String) -> void:
+func start_resource_collect(_p_solar_system_id: int, _p_planet_id: int, p_resource_id: String, p_player_id: String) -> void:
 	_resource_selected = ResourceCollectionData.new()
 	_resource_selected.progress = 0
 	_resource_selected.resource_id = p_resource_id
@@ -415,14 +412,18 @@ func _update(delta: float) -> void:
 		data_updated.emit(data)
 
 
+func _on_network_property_changed() -> void:
+	pass
+
+
 func _update_server_multiplayer(_delta: float) -> void:
 	var buffer: Dictionary = pack_data()
 	_on_server_data_recived.rpc(buffer)
 
 
-func _update_client_multiplayer(delta: float) -> void:
+func _update_client_multiplayer(_delta: float) -> void:
 	var send_buffer: Dictionary = pack_data()
-	
+	_on_client_data_recived.rpc_id(1, send_buffer)
 
 
 
@@ -441,5 +442,5 @@ func _on_client_data_recived(buffer: Dictionary) -> void:
 		return
 	
 	var buffer_data: SyncBufferData = SyncBufferData.new(buffer["timestamp"], buffer["entities"])
-	
+	on_update_client_buffer_data.emit(buffer_data)
 	

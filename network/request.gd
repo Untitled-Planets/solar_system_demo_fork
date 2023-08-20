@@ -1,14 +1,27 @@
 extends Node
 
-@onready var _http: HTTPRequest = get_parent().get_node("HTTPRequest")
+const API_URL: String = "http://127.0.0.1:5000"
+
 var _queue: Array = []
 var _is_requesting: bool = false
+var _request_processor: Dictionary = {}
 
-class Data:
+@onready var _http: HTTPRequest = get_parent().get_node("HTTPRequest")
+
+class Data extends RefCounted:
 	var url : String
-	var headers: Array[String]
+	var headers: PackedStringArray
 	var method_type
 	var data: String
+	
+	func make_request(u: String, m: int, d: Dictionary = {}, h: PackedStringArray = ["Content-Type: application/json"]) -> void:
+		url = u
+		headers = h
+		method_type = m
+		data = JSON.stringify(d) if not d.is_empty() else ""
+
+func _ready() -> void:
+	_register_processor_request()
 
 func join(p_username: String):
 	var d := {
@@ -22,32 +35,26 @@ func join(p_username: String):
 	_make_request(data)
 
 func get_solar_system():
-	var data := Data.new()
-	data.url = "http://127.0.0.1:5000/global_settings"
-	data.headers = ["Content-Type: application/json"]
-	data.method_type = HTTPClient.METHOD_GET
-	data.data = ""
+	var data: Data = Data.new()
+	data.make_request(API_URL + "/global_settings", HTTPClient.METHOD_GET)
 	_make_request(data)
 
 func spawn_machine(solar_system_id, planet_id, requester_id: String, machine_asset_id: int):
-	var d := {
+	var d: Dictionary = {
 		solar_system_id = solar_system_id,
 		owner_id = requester_id,
 		machine_id = machine_asset_id,
 		planet_id = planet_id
 	}
 	
-	var data := Data.new()
-	data.url = "http://127.0.0.1:5000/spawn_machine"
-	data.headers = ["Content-Type: application/json"]
-	data.method_type = HTTPClient.METHOD_POST
-	data.data = JSON.stringify(d)
+	var data: Data = Data.new()
+	data.make_request(API_URL + "/spawn_machine", HTTPClient.METHOD_POST, d)
 	_make_request(data)
 
 func move_machine(p_solar_system_id, p_planet_id, p_requester_id, p_machine_id: int, task_id: String, task_data: MoveMachineData):
-	var from := task_data.from
-	var to := task_data.to
-	var d := {
+	var from: = task_data.from
+	var to: = task_data.to
+	var d: Dictionary = {
 		requester_id = p_requester_id,
 		task_id = task_id,
 		solar_system_id = p_solar_system_id,
@@ -67,15 +74,12 @@ func move_machine(p_solar_system_id, p_planet_id, p_requester_id, p_machine_id: 
 		}
 	}
 	
-	var data := Data.new()
-	data.url = "http://127.0.0.1:5000/move_machine"
-	data.headers = ["Content-Type: application/json"]
-	data.method_type = HTTPClient.METHOD_POST
-	data.data = JSON.stringify(d)
+	var data: Data = Data.new()
+	data.make_request(API_URL + "/move_machine", HTTPClient.METHOD_POST, d)
 	_make_request(data)
 
 func cancel_task(p_solar_system_id: int, p_planet_id: int, p_machine_id: int, p_task_id: int, p_username: String) -> void:
-	var d := {
+	var d: Dictionary = {
 		solar_system_id = p_solar_system_id,
 		planet_id = p_planet_id,
 		machine_id = p_machine_id,
@@ -83,32 +87,24 @@ func cancel_task(p_solar_system_id: int, p_planet_id: int, p_machine_id: int, p_
 		requester_id = p_username
 	}
 	
-	var data := Data.new()
-	data.url = "http://127.0.0.1:5000/cancel_task"
-	data.headers = ["Content-Type: application/json"]
-	data.method_type = HTTPClient.METHOD_POST
-	data.data = JSON.stringify(d)
+	var data: Data = Data.new()
+	data.make_request(API_URL + "/cancel_task", HTTPClient.METHOD_POST, d)
 	_make_request(data)
 
 
 func get_planet_status(p_solar_system_id: int, p_planet_id: int, user_id: String):
 	var data := Data.new()
-	data.url = "http://127.0.0.1:5000/get_planet_status/{0}/{1}/{2}".format([p_solar_system_id, p_planet_id, user_id])
-	data.headers = ["Content-Type: application/json"]
-	data.method_type = HTTPClient.METHOD_GET
-	data.data = ""
+	data.make_request(API_URL + "/get_planet_status/%s/%s/%s" % [p_solar_system_id, p_planet_id, user_id], HTTPClient.METHOD_GET)
 	_make_request(data)
+
 
 func get_planet_list(p_solar_system_id):
 	var data := Data.new()
-	data.url = "http://127.0.0.1:5000/planet_list/{0}".format([p_solar_system_id])
-	data.headers = ["Content-Type: application/json"]
-	data.method_type = HTTPClient.METHOD_GET
-	data.data = ""
+	data.make_request(API_URL + "/planet_list/%s" % [p_solar_system_id], HTTPClient.METHOD_GET)
 	_make_request(data)
 
 func execute_task(p_solar_system_id: int, p_planet_id: int, p_machine_id: int, p_requester_id: String, p_task_data: Dictionary):
-	var d := {
+	var d: Dictionary = {
 		solar_system_id = p_solar_system_id,
 		planet_id = p_planet_id,
 		machine_id = p_machine_id,
@@ -116,15 +112,12 @@ func execute_task(p_solar_system_id: int, p_planet_id: int, p_machine_id: int, p
 		task_data = p_task_data
 	}
 	
-	var data := Data.new()
-	data.url = "http://127.0.0.1:5000/execute_task"
-	data.headers = ["Content-Type: application/json"]
-	data.method_type = HTTPClient.METHOD_POST
-	data.data = JSON.stringify(d)
+	var data: Data = Data.new()
+	data.make_request(API_URL + "/execute_task", HTTPClient.METHOD_POST, d)
 	_make_request(data)
 
 func machine_mine(p_machine_id: NodePath, task_id: String, p_data) -> void:
-	var d := {
+	var d: Dictionary = {
 		machine_id = p_machine_id.get_concatenated_names(),
 		task_id = task_id,
 		mine_data = {
@@ -137,11 +130,8 @@ func machine_mine(p_machine_id: NodePath, task_id: String, p_data) -> void:
 		}
 	}
 	
-	var data := Data.new()
-	data.url = "http://127.0.0.1:5000/mine_task"
-	data.headers = ["Content-Type: application/json"]
-	data.method_type = HTTPClient.METHOD_POST
-	data.data = JSON.stringify(d)
+	var data: Data = Data.new()
+	data.make_request(API_URL + "/mine_task", HTTPClient.METHOD_POST, d)
 	_make_request(data)
 
 func collect_resource(p_solar_system_id: int, p_planet_id: int, p_location_id: int, p_machine_id: int, p_requester_id: String) -> void:
@@ -154,11 +144,8 @@ func collect_resource(p_solar_system_id: int, p_planet_id: int, p_location_id: i
 #		task_data = p_task_data
 	}
 	
-	var data := Data.new()
-	data.url = "http://127.0.0.1:5000/mine_planet"
-	data.headers = ["Content-Type: application/json"]
-	data.method_type = HTTPClient.METHOD_POST
-	data.data = JSON.stringify(d)
+	var data: Data = Data.new()
+	data.make_request(API_URL + "/mine_planet", HTTPClient.METHOD_POST, d)
 	_make_request(data)
 
 func finish_task(p_solar_system_id: int, p_planet_id: int, p_machine_id: int, p_task_id: int, p_username: String) -> void:
@@ -171,23 +158,17 @@ func finish_task(p_solar_system_id: int, p_planet_id: int, p_machine_id: int, p_
 	}
 	
 	var data := Data.new()
-	data.url = "http://127.0.0.1:5000/finish_task"
-	data.headers = ["Content-Type: application/json"]
-	data.method_type = HTTPClient.METHOD_POST
-	data.data = JSON.stringify(d)
+	data.make_request(API_URL + "/finish_task", HTTPClient.METHOD_POST, d)
 	_make_request(data)
 
 func get_machine_assets(p_requester: String):
-	var data := Data.new()
-	data.url = "http://127.0.0.1:5000/get_inventory/{0}".format([p_requester])
-	data.headers = ["Content-Type: application/json"]
-	data.method_type = HTTPClient.METHOD_GET
-	data.data = ""
+	var data: Data = Data.new()
+	data.make_request(API_URL + "/get_inventory/%s" % [p_requester], HTTPClient.METHOD_GET)
 	_make_request(data)
 
 
 func despawn_machine(p_solar_system_id: int, p_planet_id: int, p_machine_id: int, p_requester_id: String) -> void:
-	var d := {
+	var d: Dictionary = {
 		solar_system_id = p_solar_system_id,
 		planet_id = p_planet_id,
 		machine_id = p_machine_id,
@@ -195,11 +176,8 @@ func despawn_machine(p_solar_system_id: int, p_planet_id: int, p_machine_id: int
 		requester_id = p_requester_id
 	}
 	
-	var data := Data.new()
-	data.url = "http://127.0.0.1:5000/despawn_machine"
-	data.headers = ["Content-Type: application/json"]
-	data.method_type = HTTPClient.METHOD_POST
-	data.data = JSON.stringify(d)
+	var data: Data = Data.new()
+	data.make_request(API_URL + "/despawn_machine", HTTPClient.METHOD_POST, d)
 	_make_request(data)
 
 func collect_item(p_user_id: String, p_item_id: String, p_item_type: int, p_item_amount: int):
@@ -211,10 +189,7 @@ func collect_item(p_user_id: String, p_item_id: String, p_item_type: int, p_item
 	}
 	
 	var data := Data.new()
-	data.url = "http://127.0.0.1:5000/collect_item"
-	data.headers = ["Content-Type: application/json"]
-	data.method_type = HTTPClient.METHOD_POST
-	data.data = JSON.stringify(d)
+	data.make_request(API_URL + "/collect_item", HTTPClient.METHOD_POST, d)
 	_make_request(data)
 
 func _make_request(p_data: Data):
@@ -224,47 +199,68 @@ func _send_request(p_data: Data):
 	_http.request(p_data.url, p_data.headers, p_data.method_type, p_data.data)
 	_is_requesting = true
 
-func _on_http_request_request_completed(result, response_code, headers, body: PackedByteArray):
-	if response_code == 200:
-		var data = JSON.parse_string(body.get_string_from_utf8())
-		if data.has("planet_data"):
-			Server.solar_system_requested.emit(data.planet_data)
-		elif data.has("login"):
-			Server.login_requested.emit(data)
-		elif data.has("spawn_machine"):
-			data = data.spawn_machine
-			Server.client_miner_spawn(data.owner_id, data.planet_id, data.machine_asset_id, data.machine_instance_id, data)
-		elif data.has("cancel_task"):
-			data = data.cancel_task
-			if data.is_empty():
-				push_error("Failed to cancel task")
-			else:
-				Server.task_cancelled.emit(data.solar_system_id, data.planet_id, data.machine_id, data.task_id, data.requester_id)
-		elif data.has("planet_status"):
-			Server.update_planet_deposits(data.solar_system_id, data.planet_id, data.planet_status.mine_points)
-			Server.planet_status_requested.emit(data.solar_system_id, data.planet_id, data.planet_status)
-		elif data.has("execute_task"):
-			data = data.execute_task
-			Server.execute_task_requested.emit(data.solar_system_id, data.planet_id, data.machine_id, data.requester_id, data.task_data)
-		elif data.has("inventory_updated"):
-			data = data.inventory_updated
-			Server.inventory_updated.emit(data)
-		elif data.has("mining"):
-			Server.update_mining(data.solar_system_id, data.planet_id, data.mine_points)
-		elif data.has("mine_planet"):
-			data = data.mine_planet
-#			print("Returning mining action")
-			Server.set_mine_point_amount(data.solar_system_id, data.planet_id, data.location_id, data.remaining_amount)
-		elif data.has("despawn_machine"):
-			data = data.despawn_machine
-			Server.despawn_machine_requested.emit(data.solar_system_id, data.planet_id, data.machine_id)
-		elif data.has("collect_item"):
-			data = data.collect_item
-			Server.resource_collected.emit(data.item_id, data.item_amount)
-		elif data.has("planet_list"):
-			data = data.planet_list
-			Server.planet_listed.emit(data.solar_system_id, data.planet_ids)
+
+func _register_processor_request() -> void:
+	_request_processor["planet_data"] = func (data: Dictionary) -> void:
+		Server.solar_system_requested.emit(data.planet_data)
 	
+	_request_processor["login"] = func (data: Dictionary) -> void:
+		Server.login_requested.emit(data)
+	
+	_request_processor["spawn_machine"] = func (data: Dictionary) -> void:
+		data = data.spawn_machine
+		Server.client_miner_spawn(data.owner_id, data.planet_id, data.machine_asset_id, data.machine_instance_id, data)
+	
+	_request_processor["cancel_task"] = func (data: Dictionary) -> void:
+		data = data.cancel_task
+		if data.is_empty():
+			push_error("Failed to cancel task")
+		else:
+			Server.task_cancelled.emit(data.solar_system_id, data.planet_id, data.machine_id, data.task_id, data.requester_id)
+	
+	_request_processor["planet_status"] = func (data: Dictionary) -> void:
+		Server.update_planet_deposits(data.solar_system_id, data.planet_id, data.planet_status.mine_points)
+		Server.planet_status_requested.emit(data.solar_system_id, data.planet_id, data.planet_status)
+	
+	_request_processor["execute_task"] = func (data: Dictionary) -> void:
+		data = data.execute_task
+		Server.execute_task_requested.emit(data.solar_system_id, data.planet_id, data.machine_id, data.requester_id, data.task_data)
+	
+	_request_processor["inventory_update"] = func (data: Dictionary) -> void:
+		data = data.inventory_updated
+		Server.inventory_updated.emit(data)
+	
+	_request_processor["inventory_update"] = func (data: Dictionary) -> void:
+		data = data.inventory_updated
+		Server.inventory_updated.emit(data)
+	
+	_request_processor["mining"] = func (data: Dictionary) -> void:
+		Server.update_mining(data.solar_system_id, data.planet_id, data.mine_points)
+	
+	_request_processor["minine_planet"] = func (data: Dictionary) -> void:
+		data = data.mine_planet
+		Server.set_mine_point_amount(data.solar_system_id, data.planet_id, data.location_id, data.remaining_amount)
+	
+	_request_processor["despawn_machine"] = func (data: Dictionary) -> void:
+		data = data.despawn_machine
+		Server.despawn_machine_requested.emit(data.solar_system_id, data.planet_id, data.machine_id)
+	
+	_request_processor["collect_item"] = func (data: Dictionary) -> void:
+		data = data.collect_item
+		Server.resource_collected.emit(data.item_id, data.item_amount)
+	
+	_request_processor["planet_list"] = func (data: Dictionary) -> void:
+		data = data.planet_list
+		Server.planet_listed.emit(data.solar_system_id, data.planet_ids)
+
+
+func _on_http_request_request_completed(result, response_code, headers, body: PackedByteArray) -> void:
+	if response_code == 200:
+		var data: Dictionary = JSON.parse_string(body.get_string_from_utf8())
+		for r in _request_processor.keys():
+			if data.has(r):
+				_request_processor[r].call(data)
+				break
 	_is_requesting = false
 
 func _process(delta):
