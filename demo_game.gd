@@ -68,12 +68,16 @@ func _on_loading_progressed(p_progress_info):
 		
 
 
+
 func buy_ship() -> void:
 	if get_tree().get_nodes_in_group("ship").size() > 0:
 		print("You already has a ship!")
 		return
 	super.buy_ship()
-	var station: Station = get_tree().get_nodes_in_group("portal_station")[0]
+	var station: Station = get_tree().get_first_node_in_group(&"portal_station")
+	if station == null:
+		push_error("Station is null")
+		return
 	var ship: Ship = ShipScene.instantiate()
 	_solar_system.add_child(ship)
 	ship.position = station.spaceship_spawn_position

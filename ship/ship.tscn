@@ -1,4 +1,4 @@
-[gd_scene load_steps=32 format=3 uid="uid://blqdy4acm4wpa"]
+[gd_scene load_steps=33 format=3 uid="uid://blqdy4acm4wpa"]
 
 [ext_resource type="Script" path="res://ship/ship.gd" id="1"]
 [ext_resource type="Script" path="res://camera/camera_hints.gd" id="2"]
@@ -81,6 +81,9 @@ _data = {
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_ta54x"]
 size = Vector3(2, 3.32734, 0.230548)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_et0f3"]
+size = Vector3(1, 2.49764, 2.97307)
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_yulrx"]
 render_priority = 0
@@ -166,7 +169,7 @@ libraries = {
 transform = Transform3D(-1, 0, -3.25841e-07, 0, 1, 0, 3.25841e-07, 0, -1, 0, 0, 0)
 
 [node name="HatchUp" parent="Visual/VisualRoot/ship" index="2"]
-transform = Transform3D(1, 0, 0, 0, 0.939693, 0.34202, 0, -0.34202, 0.939693, 0, 0.907461, -7.5999)
+transform = Transform3D(1, 0, 0, 0, 0.766044, -0.642788, 0, 0.642788, 0.766044, 0, 0.907461, -7.5999)
 
 [node name="HatchDown" parent="Visual/VisualRoot/ship" index="3"]
 transform = Transform3D(1, 5.8616e-08, 5.42005e-07, 5.42005e-07, -0.213793, -0.976879, 5.8616e-08, 0.976879, -0.213793, 0, -1.0341, -4.21388)
@@ -176,6 +179,18 @@ transform = Transform3D(1, 5.8616e-08, 5.42005e-07, 5.42005e-07, -0.213793, -0.9
 [node name="CollisionShape" type="CollisionShape3D" parent="Visual/VisualRoot/ship/HatchDown/KinematicBody"]
 transform = Transform3D(1, -1.7053e-13, 4.26326e-14, 0, 1, 0, 0, 0, 1, 5.68434e-13, -1.61023, 0.0508492)
 shape = SubResource("BoxShape3D_ta54x")
+
+[node name="CharacterBody3D" type="CharacterBody3D" parent="Visual/VisualRoot/ship"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Visual/VisualRoot/ship/CharacterBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.49955, -1.74687, -5.06922)
+shape = SubResource("BoxShape3D_et0f3")
+
+[node name="CharacterBody3D2" type="CharacterBody3D" parent="Visual/VisualRoot/ship"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Visual/VisualRoot/ship/CharacterBody3D2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.52835, -1.74687, -5.06922)
+shape = SubResource("BoxShape3D_et0f3")
 
 [node name="MotionParticles" type="GPUParticles3D" parent="Visual/VisualRoot"]
 material_override = SubResource("ShaderMaterial_yulrx")

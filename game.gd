@@ -38,6 +38,8 @@ var _ship = null
 var _local_player: AController = null
 var _players: Dictionary = {}
 
+var _ships: Dictionary = {}
+
 var bufferNetworkClientData: Array[SyncBufferData]
 
 func _on_update_buffer_data(buffer: SyncBufferData) -> void:
@@ -477,14 +479,14 @@ func buy_ship() -> void:
 	pass
 
 
-func enter_ship():
+func enter_ship() -> void:
 	var camera: Camera3D = get_viewport().get_camera_3d()
 	var c: Node = _local_player.get_character()
 	c.queue_free()
 	_local_player.set_physics_process(false)
 	_local_player.unpossess()
 	_local_player.queue_free()
-	var ship: Ship = get_tree().get_nodes_in_group("ship")[0]
+	var ship: Ship = get_tree().get_first_node_in_group(&"ship")
 	_solar_system.target_ship = ship
 	_local_player = ShipController.instantiate() as AController
 	_local_player.possess(ship)

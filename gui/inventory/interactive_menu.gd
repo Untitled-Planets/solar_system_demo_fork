@@ -13,7 +13,7 @@ func _ready() -> void:
 
 
 func _process(delta: float) -> void:
-	if _buy_ship_button.visible and Input.is_key_pressed(KEY_B):
+	if visible and Input.is_key_pressed(KEY_B):
 		_game.buy_ship()
 
 

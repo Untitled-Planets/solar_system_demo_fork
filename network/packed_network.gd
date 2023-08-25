@@ -146,10 +146,11 @@ func set_properties(packet_data: Dictionary) -> void:
 	for k in packet_data.keys():
 		ASSERT_PROPERTY_EXIST(k)
 		if k == &"global_position":
-			pass
 			if entity_owner is Character:
 				if entity_owner.is_remote_controller():
-					pass
+					var r: RemoteController = entity_owner.get_controller()
+					r.set_remote_position(packet_data[k])
+					continue
 		entity_owner.set(k, packet_data[k])
 
 

@@ -5,7 +5,11 @@ signal escaped()
 
 var _player_id: int = -1
 var _game: Game
-var _character = null
+var _character = null:
+	set(val):
+		_character = val
+		if val == null:
+			print_stack()
 
 func _ready():
 	add_to_group("network")
