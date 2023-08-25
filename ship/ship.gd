@@ -166,6 +166,9 @@ func set_superspeed_cmd(cmd: bool):
 
 
 func _integrate_forces(state: PhysicsDirectBodyState3D):
+	if multiplayer.has_multiplayer_peer() and not is_multiplayer_authority():
+		return
+	
 	if _ref_change_info != null:
 		# Teleport
 		state.transform = _ref_change_info.inverse_transform * state.transform

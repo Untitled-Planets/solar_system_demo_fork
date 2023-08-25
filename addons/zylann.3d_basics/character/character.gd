@@ -141,7 +141,7 @@ func _physics_process(delta : float):
 		gtrans.origin += planet_up * 0.01
 		global_transform = gtrans
 
-	var plane := Plane(planet_up, 0)
+	var plane: Plane = Plane(planet_up, 0)
 	
 	
 	# Motor
@@ -240,6 +240,11 @@ func get_audio():
 
 func set_controller(p_controller) -> void:
 	_controller = p_controller
+
+
+func is_remote_controller() -> bool:
+	return _controller != null and _controller is RemoteController
+
 
 
 func is_landed() -> bool:

@@ -5,11 +5,16 @@ extends Control
 
 var _game: Game = null
 
-func _ready():
-	_game = get_tree().get_nodes_in_group("game")[0]
+func _ready() -> void:
+	_game = get_tree().get_first_node_in_group(&"game")
 	var children = $actions.get_children()
 	for c in children:
 		c.action_requested.connect(_on_action_requested)
+
+
+func _process(delta: float) -> void:
+	if _buy_ship_button.visible and Input.is_key_pressed(KEY_B):
+		_game.buy_ship()
 
 
 func customize_menu(p_objects: Array):

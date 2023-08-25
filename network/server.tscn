@@ -7,6 +7,7 @@
 script = ExtResource("1_17jlm")
 
 [node name="HTTPRequest" type="HTTPRequest" parent="."]
+timeout = 2.0
 
 [node name="request" type="Node" parent="."]
 script = ExtResource("2_k6hmx")

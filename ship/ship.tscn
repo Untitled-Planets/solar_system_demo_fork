@@ -1,4 +1,4 @@
-[gd_scene load_steps=31 format=3 uid="uid://blqdy4acm4wpa"]
+[gd_scene load_steps=32 format=3 uid="uid://blqdy4acm4wpa"]
 
 [ext_resource type="Script" path="res://ship/ship.gd" id="1"]
 [ext_resource type="Script" path="res://camera/camera_hints.gd" id="2"]
@@ -17,6 +17,7 @@
 [ext_resource type="AudioStream" uid="uid://d28pixxpehgae" path="res://sounds/superspeed_stop.wav" id="16"]
 [ext_resource type="AudioStream" uid="uid://di02v1xesv46s" path="res://sounds/flying_in_atmosphere.wav" id="17"]
 [ext_resource type="AudioStream" uid="uid://bwcnevn0yl66f" path="res://sounds/ship_scrape.wav" id="18"]
+[ext_resource type="Script" path="res://network/packed_network.gd" id="18_hc8m0"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_rrvor"]
 radius = 3.03344
@@ -269,6 +270,12 @@ stream = ExtResource("18")
 [node name="VoxelViewer" type="VoxelViewer" parent="."]
 view_distance = 64
 requires_visuals = false
+
+[node name="NetworkEntity" type="Node" parent="." node_paths=PackedStringArray("entity_owner")]
+script = ExtResource("18_hc8m0")
+entity_owner = NodePath("..")
+properties_sync = Array[StringName]([&"global_transform"])
+origin_control = 1
 
 [connection signal="body_entered" from="." to="ShipAudio" method="_on_Ship_body_entered"]
 

@@ -27,7 +27,7 @@ layout_mode = 2
 offset_top = 291.0
 offset_right = 158.0
 offset_bottom = 322.0
-display_action = "buy-ship"
+display_action = "buy-ship (press B key)"
 _action_id = "buy-ship"
 
 [node name="add_mine_to_miner" parent="actions" instance=ExtResource("2_m4g7a")]

@@ -31,14 +31,15 @@ func _on_login_requested(p_data: Dictionary) -> void:
 
 func _on_MainMenu_start_requested(p_username):
 	_username = p_username
-	
+	MultiplayerServer.setup_server()
 	Server.join(p_username)
 
 
 
 func _on_main_menu_start_client(p_username) -> void:
 	_username = p_username
-	
+	MultiplayerServer.setup_client("127.0.0.1")
+	await multiplayer.connected_to_server
 	Server.join(p_username)
 
 

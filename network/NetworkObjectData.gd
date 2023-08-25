@@ -9,13 +9,13 @@ func _init(node: NetworkEntity = null) -> void:
 
 func set_network_id(id: int) -> void:
 	assert(_object_node != null)
-	_object_node._peer_id = id
+	_object_node._network_object_id = id
 
 func get_network_id() -> int:
 	if _object_node == null:
 		return -1
 	
-	return _object_node._peer_id
+	return _object_node._network_object_id
 
 
 func get_network_entity() -> NetworkEntity:

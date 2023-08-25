@@ -54,8 +54,9 @@ signal update_client_network_frame(delta: float)
 signal request_instance_network_object(origin_peer: int, network_object_data: NetworkObjectData, sync_data: Dictionary)
 signal network_entity_propety_changed(entity: NetworkEntity, property: StringName, value: Variant)
 
-const DEFAULT_PORT: int = 4422
+const DEFAULT_PORT: int = 3000
 const MULTIPLAYER_FPS: int = 10
+const SERVER_PEER: int = 1
 
 enum UpdateMode {
 	IDLE = 0,
@@ -108,7 +109,7 @@ func setup_client(address: String, port: int = DEFAULT_PORT) -> Error:
 
 func setup_server(port: int = DEFAULT_PORT) -> Error:
 	close()
-	
+	print_stack()
 	_peer = null
 	_peer = ENetMultiplayerPeer.new()
 	
@@ -157,11 +158,11 @@ func register_network_object(n: NetworkEntity) -> void:
 	var data: NetworkObjectData = NetworkObjectData.new(n)
 	var n_name: StringName = n.get_name()
 	var origin: NetworkEntity.OriginControl = n.origin_control
-	
+	return
 	if multiplayer.is_server():
 		randomize()
 		var network_id: int = randi()
-		n._peer_id = network_id
+		#n._peer_id = network_id
 		
 		if origin != NetworkEntity.OriginControl.SERVER:
 			pass
@@ -178,7 +179,7 @@ func register_network_object(n: NetworkEntity) -> void:
 
 @rpc("any_peer")
 func remote_register_network_object(object_id: int, node_name: StringName, _origin_control: NetworkEntity.OriginControl) -> void:
-	assert(not multiplayer.is_server())
+	#assert(not multiplayer.is_server())
 	if not multiplayer.is_server():
 		return
 	
@@ -213,8 +214,8 @@ func remote_confirm_register_network_object(object_id: int, network_id: int) -> 
 			break
 	
 	assert(object_origin != null or del_idx > -1, "")
-	
-	waiting_network_objects_pairing.remove_at(del_idx)
+	if waiting_network_objects_pairing.size() > 0:
+		waiting_network_objects_pairing.remove_at(del_idx)
 	object_origin.set_network_id(network_id)
 	network_objects[network_id] = object_origin
 
@@ -243,15 +244,24 @@ func _on_server_connected() -> void:
 
 func _on_connection_fail() -> void:
 	printt("Connection failed")
+	close()
 
 
 func _on_server_disconnected() -> void:
 	print("Disconnected from server")
+	close()
 
+
+func is_server_headless() -> bool:
+	return false # To-Do: add logic to check this
+
+
+func peer_is_server(peer: int) -> bool:
+	return peer == SERVER_PEER
 
 
 func connection_status() -> MultiplayerPeer.ConnectionStatus:
-	if multiplayer.has_multiplayer_peer():
+	if not multiplayer.has_multiplayer_peer():
 		return MultiplayerPeer.CONNECTION_DISCONNECTED
 	return multiplayer.multiplayer_peer.get_connection_status()
 
@@ -342,11 +352,11 @@ func start_resource_collect(_p_solar_system_id: int, _p_planet_id: int, p_resour
 
 func arrives_on_planet(p_solar_system_id: int, p_planet_id: int, p_player_id):
 	MultiplayerServer.get_planet_status(p_solar_system_id, p_planet_id, p_player_id)
-	print("Arrving planet {0}".format([p_planet_id]))
+	print("Arrving planet %s" % [p_planet_id])
+
 
 # This should be called from server
-@warning_ignore("unused_parameter")
-func finish_resource_collect(p_resource_id: int):
+func finish_resource_collect(_p_resource_id: int):
 	pass
 
 
@@ -375,7 +385,11 @@ func pack_data() -> Dictionary:
 func pack_data_from_group(p_group: String) -> Dictionary:
 	var ns: Array = get_tree().get_nodes_in_group(p_group)
 	var data: Dictionary = {}
-	var peer_id: int = multiplayer.get_unique_id()
+	
+	var peer_id: int = -1
+	
+	if connection_status() == MultiplayerPeer.CONNECTION_CONNECTED:
+		peer_id = multiplayer.get_unique_id()
 	
 	for n in ns:
 		if n is NetworkEntity:
@@ -401,8 +415,8 @@ func _update(delta: float) -> void:
 	_delta_acc += delta
 	
 	if _delta_acc > _sync_delta:
-		if multiplayer.is_server():
-			_update_server_multiplayer(delta)
+		if connection_status() == MultiplayerPeer.CONNECTION_CONNECTED and multiplayer.is_server():
+			pass#_update_server_multiplayer(delta)
 		else:
 			update_client_network_frame.emit(delta)
 		user_position_updated.emit("dummy-id", _debug_player_pos)

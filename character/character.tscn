@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3 uid="uid://kmk540coucog"]
+[gd_scene load_steps=15 format=3 uid="uid://kmk540coucog"]
 
 [ext_resource type="Script" path="res://addons/zylann.3d_basics/character/character.gd" id="1"]
 [ext_resource type="Script" path="res://camera/camera_hints.gd" id="3"]
@@ -7,6 +7,7 @@
 [ext_resource type="AudioStream" uid="uid://u3v6wu6o27ys" path="res://sounds/place_waypoint.wav" id="6"]
 [ext_resource type="AudioStream" uid="uid://byjc2j67p68vt" path="res://sounds/flash_on.wav" id="7"]
 [ext_resource type="AudioStream" uid="uid://cvilca41rqwpc" path="res://sounds/flash_off.wav" id="8"]
+[ext_resource type="Script" path="res://network/packed_network.gd" id="9_7g2wu"]
 [ext_resource type="Script" path="res://character/remote_movement.gd" id="10_kvh01"]
 
 [sub_resource type="CapsuleShape3D" id="1"]
@@ -110,5 +111,14 @@ stream = ExtResource("8")
 
 [node name="remote_movement" type="Node" parent="."]
 script = ExtResource("10_kvh01")
+
+[node name="VoxelViewer" type="VoxelViewer" parent="."]
+requires_visuals = false
+
+[node name="NetworkEntity" type="Node" parent="." node_paths=PackedStringArray("entity_owner")]
+script = ExtResource("9_7g2wu")
+entity_owner = NodePath("..")
+properties_sync = Array[StringName]([&"global_position"])
+origin_control = 1
 
 [connection signal="jumped" from="." to="Audio" method="_on_Character_jumped"]

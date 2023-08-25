@@ -38,7 +38,13 @@ var _uuid: String = ""
 
 var _flashlight : SpotLight3D
 var _audio
-var _character: Character = null
+var _character: Character = null:
+	set(val):
+		_character = val
+		if _character == null:
+			set_physics_process(false)
+		else:
+				set_physics_process(true)
 var _solar_system: SolarSystem = null
 var _last_known_position: Vector3 = Vector3.ZERO
 
@@ -75,6 +81,10 @@ func set_uuid(p_uuid: String):
 #		_pickable.queue_free()
 
 func _physics_process(delta):
+	if not is_instance_valid(_character):
+		return
+	if _character.is_queued_for_deletion():
+		return
 	_follow_original(delta)
 
 func _follow_original(delta: float) -> void:

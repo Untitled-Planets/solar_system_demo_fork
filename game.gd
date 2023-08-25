@@ -91,11 +91,29 @@ func _ready() -> void:
 
 
 func _on_peer_connected(peer: int) -> void:
-	pass
+	if _solar_system.has_node("player_" + str(peer)):
+		return
+	
+	var new_character: Character = await _spawn_player()
+	new_character.set_multiplayer_authority(peer)
+	var r: RemoteController = RemoteControllerScene.instantiate()
+	new_character.set_controller(r)
+	r.possess(new_character)
+	add_child(r)
+	_solar_system.add_child(new_character)
+	new_character.name = "player_" + str(peer)
+	r.set_uuid(str(peer))
 
 
 func _on_peer_disconnected(peer: int) -> void:
-	pass
+	if not _solar_system.has_node("player_" + str(peer)):
+		return
+	
+	var character: Character = get_node("player_" + str(peer))
+	var r: RemoteController = character.get_controller()
+	
+	character.queue_free()
+	r.queue_free()
 
 
 func _on_data_updated(p_data: Dictionary) -> void:
@@ -105,10 +123,12 @@ func _on_data_updated(p_data: Dictionary) -> void:
 func _on_resources_generated(p_solar_system_id, p_planet_id, p_resources):
 	pass
 
+
 func _on_user_position_updated(p_user_id: String, p_position):
 	var c: RemoteController = _players.get(p_user_id, null)
 	if c:
 		c.set_remote_position(p_position)
+
 
 func _on_users_updated(p_joinigin_users, p_leaving_users):
 	for joining in p_joinigin_users:
@@ -135,28 +155,55 @@ func _on_resource_collection_progressed(p_resource_id, p_unit_procent: float):
 	_progress_bar.value = p_unit_procent
 
 func _on_loading_progressed(p_progress_info):
-	if p_progress_info.finished:
-		_solar_system.set_reference_body(2)
-		var controller: CharacterController = LocalControllerScene.instantiate()
-		var avatar: Character = await _spawn_player()
-		avatar.set_controller(controller)
-		controller.possess(avatar)
-		add_child(controller)
-		_solar_system.add_child(avatar)
-	#	avatar.network_id = p_player_id
-#		var controller: CharacterController = avatar.get_controller()
-		controller.set_uuid("")
-		_local_player = controller as AController
-		_mouse_capture.capture()
-		# Camera must process before the ship so we have to spawn it before...
-		var camera = CameraScene.instantiate()
-		camera.auto_find_camera_anchor = true
-		camera.set_target(avatar)
-	#	if _settings.world_scale_x10:
-	#		camera.far *= SolarSystemSetup.LARGE_SCALE
-		_solar_system.add_child(camera)
-		
-		
+	if not p_progress_info.finished:
+		return
+	
+	_solar_system.set_reference_body(2)
+	var controller: CharacterController = LocalControllerScene.instantiate()
+	var avatar: Character = await _spawn_player()
+	avatar.set_multiplayer_authority(multiplayer.get_unique_id())
+	avatar.set_controller(controller)
+	controller.possess(avatar)
+	add_child(controller)
+	_solar_system.add_child(avatar)
+	avatar.name = "player_" + str(multiplayer.get_unique_id())
+	#avatar.network_id = p_player_id
+	#var controller: CharacterController = avatar.get_controller()
+	controller.set_uuid("")
+	_local_player = controller as AController
+	_mouse_capture.capture()
+	# Camera must process before the ship so we have to spawn it before...
+	var camera = CameraScene.instantiate()
+	camera.auto_find_camera_anchor = true
+	camera.set_target(avatar)
+	#if _settings.world_scale_x10:
+		#camera.far *= SolarSystemSetup.LARGE_SCALE
+	_solar_system.add_child(camera)
+	
+	# Load other peers
+	if multiplayer.has_multiplayer_peer() and not multiplayer.is_server():
+		var peers: Array = multiplayer.get_peers()
+		peers.make_read_only()
+		for p in peers:
+			if MultiplayerServer.peer_is_server(p) and MultiplayerServer.is_server_headless():
+				continue
+			
+			if p == multiplayer.get_unique_id():
+				continue
+			
+			if _solar_system.has_node("player_" + str(p)):
+				continue
+			
+			var new_character: Character = await _spawn_player()
+			new_character.set_multiplayer_authority(p)
+			var r: RemoteController = RemoteControllerScene.instantiate()
+			new_character.set_controller(r)
+			r.possess(new_character)
+			add_child(r)
+			_solar_system.add_child(new_character)
+			new_character.name = "player_" + str(p)
+			r.set_uuid(str(p))
+	
 
 
 
@@ -170,11 +217,11 @@ func _spawn_player() -> Character:
 	while avatar == null:
 		await get_tree().process_frame
 		
-		var query := PhysicsRayQueryParameters3D.new()
+		var query: PhysicsRayQueryParameters3D = PhysicsRayQueryParameters3D.new()
 		query.from = _solar_system.get_reference_stellar_body().radius * 10 * Vector3.UP
 		query.to = Vector3.ZERO
-		var state := get_world_3d().direct_space_state
-		var result := state.intersect_ray(query)
+		var state: PhysicsDirectSpaceState3D = get_world_3d().direct_space_state
+		var result: Dictionary = state.intersect_ray(query)
 		
 		if not result.is_empty():
 			avatar = CharacterScene.instantiate()
@@ -234,14 +281,14 @@ func get_solar_system() -> SolarSystem:
 
 
 func get_click_position() -> Vector3:
-	var state := get_world_3d().direct_space_state
-	var query := PhysicsRayQueryParameters3D.new()
+	var state: PhysicsDirectSpaceState3D = get_world_3d().direct_space_state
+	var query: PhysicsRayQueryParameters3D = PhysicsRayQueryParameters3D.new()
 	var camera: Camera3D = get_viewport().get_camera_3d()
-	var origin := camera.project_ray_origin(get_viewport().get_mouse_position())
-	var dir := camera.project_ray_normal(get_viewport().get_mouse_position())
+	var origin: Vector3 = camera.project_ray_origin(get_viewport().get_mouse_position())
+	var dir: Vector3 = camera.project_ray_normal(get_viewport().get_mouse_position())
 	query.from = origin
 	query.to = origin + dir * 9999
-	var result := state.intersect_ray(query)
+	var result: Dictionary = state.intersect_ray(query)
 	if not result.is_empty():
 		return result.position
 	return Vector3.ZERO

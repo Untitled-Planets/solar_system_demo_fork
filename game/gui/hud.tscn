@@ -56,6 +56,8 @@ stream = ExtResource("6_uejyy")
 [node name="Inventory" parent="." instance=ExtResource("7_5ijpp")]
 visible = false
 layout_mode = 1
+mouse_filter = 1
 
 [node name="interactive_menu" parent="." instance=ExtResource("8_67liv")]
 layout_mode = 1
+mouse_filter = 1

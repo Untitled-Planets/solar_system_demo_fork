@@ -65,7 +65,7 @@ func _on_loading_progressed(p_progress_info):
 		
 		await get_tree().create_timer(1.0).timeout
 		#MultiplayerServer.join()
-		MultiplayerServer.setup_server()
+		
 
 
 func buy_ship() -> void:

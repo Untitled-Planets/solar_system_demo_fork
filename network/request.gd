@@ -1,6 +1,7 @@
 extends Node
 
-const API_URL: String = "http://127.0.0.1:5000"
+#const API_URL: String = "http://127.0.0.1:5000"
+const API_URL: String = "https://demo-planets.app.facudev.dev"
 
 var _queue: Array = []
 var _is_requesting: bool = false
@@ -23,12 +24,14 @@ class Data extends RefCounted:
 func _ready() -> void:
 	_register_processor_request()
 
+
+
 func join(p_username: String):
 	var d := {
 		username = p_username
 	}
 	var data := Data.new()
-	data.url = "http://127.0.0.1:5000/join"
+	data.url = API_URL + "/join"
 	data.headers = ["Content-Type: application/json"]
 	data.method_type = HTTPClient.METHOD_POST
 	data.data = JSON.stringify(d)
@@ -195,7 +198,8 @@ func collect_item(p_user_id: String, p_item_id: String, p_item_type: int, p_item
 func _make_request(p_data: Data):
 	_queue.push_back(p_data)
 
-func _send_request(p_data: Data):
+func _send_request(p_data: Data) -> void:
+	print("Making Request to %s - type: %s" % [p_data.url, p_data.method_type])
 	_http.request(p_data.url, p_data.headers, p_data.method_type, p_data.data)
 	_is_requesting = true
 
@@ -255,15 +259,20 @@ func _register_processor_request() -> void:
 
 
 func _on_http_request_request_completed(result, response_code, headers, body: PackedByteArray) -> void:
+	print("Result type " + str(result))
+	
 	if response_code == 200:
 		var data: Dictionary = JSON.parse_string(body.get_string_from_utf8())
 		for r in _request_processor.keys():
 			if data.has(r):
 				_request_processor[r].call(data)
 				break
+	
 	_is_requesting = false
 
 func _process(delta):
+	if Engine.get_process_frames() % 2 == 0:
+		pass#print(_http.get_http_client_status())
 	if not _is_requesting and _queue.size() != 0:
 		var d = _queue[0]
 		_queue.pop_front()
