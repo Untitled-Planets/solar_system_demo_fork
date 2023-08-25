@@ -36,9 +36,9 @@ func _on_MainMenu_start_requested(p_username):
 
 
 
-func _on_main_menu_start_client(p_username) -> void:
+func _on_main_menu_start_client(p_username, server_ip: String = "127.0.0.1") -> void:
 	_username = p_username
-	MultiplayerServer.setup_client("127.0.0.1")
+	MultiplayerServer.setup_client(server_ip)
 	await multiplayer.connected_to_server
 	Server.join(p_username)
 

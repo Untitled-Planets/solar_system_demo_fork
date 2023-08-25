@@ -90,9 +90,19 @@ size_flags_horizontal = 3
 layout_mode = 2
 text = "Start"
 
-[node name="StartClient" type="Button" parent="VBoxContainer/PanelContainer/VBoxContainer/HBoxContainer/VBoxContainer"]
+[node name="HBoxContainer3" type="HBoxContainer" parent="VBoxContainer/PanelContainer/VBoxContainer/HBoxContainer/VBoxContainer"]
 layout_mode = 2
-text = "Start client (no use)"
+alignment = 1
+
+[node name="LineEdit" type="LineEdit" parent="VBoxContainer/PanelContainer/VBoxContainer/HBoxContainer/VBoxContainer/HBoxContainer3"]
+custom_minimum_size = Vector2(160, 0)
+layout_mode = 2
+text = "127.0.0.1"
+placeholder_text = "Multiplayer Server IP"
+
+[node name="StartClient" type="Button" parent="VBoxContainer/PanelContainer/VBoxContainer/HBoxContainer/VBoxContainer/HBoxContainer3"]
+layout_mode = 2
+text = "Start client"
 
 [node name="Settings" type="Button" parent="VBoxContainer/PanelContainer/VBoxContainer/HBoxContainer/VBoxContainer"]
 layout_mode = 2
@@ -115,6 +125,6 @@ layout_mode = 2
 size_flags_vertical = 3
 
 [connection signal="pressed" from="VBoxContainer/PanelContainer/VBoxContainer/HBoxContainer/VBoxContainer/Start" to="." method="_on_Start_pressed"]
-[connection signal="pressed" from="VBoxContainer/PanelContainer/VBoxContainer/HBoxContainer/VBoxContainer/StartClient" to="." method="_on_start_client_pressed"]
+[connection signal="pressed" from="VBoxContainer/PanelContainer/VBoxContainer/HBoxContainer/VBoxContainer/HBoxContainer3/StartClient" to="." method="_on_start_client_pressed"]
 [connection signal="pressed" from="VBoxContainer/PanelContainer/VBoxContainer/HBoxContainer/VBoxContainer/Settings" to="." method="_on_Settings_pressed"]
 [connection signal="pressed" from="VBoxContainer/PanelContainer/VBoxContainer/HBoxContainer/VBoxContainer/Exit" to="." method="_on_Exit_pressed"]

@@ -2,11 +2,12 @@ extends Control
 
 
 signal start_requested(username: String)
-signal start_client(username: String)
+signal start_client(username: String, server_ip: String)
 signal settings_requested
 signal exit_requested
 
 @onready var _username: LineEdit = $VBoxContainer/PanelContainer/VBoxContainer/HBoxContainer/VBoxContainer/HBoxContainer/username
+@onready var multiplayer_server_ip: LineEdit = $VBoxContainer/PanelContainer/VBoxContainer/HBoxContainer/VBoxContainer/HBoxContainer3/LineEdit
 
 
 #func _ready():
@@ -18,7 +19,13 @@ func _on_Start_pressed():
 
 func _on_start_client_pressed() -> void:
 	if _username.text.length() != 0:
-		start_client.emit(_username.text)
+		var m_ip: String = multiplayer_server_ip.text
+		
+		if not m_ip.is_valid_ip_address():
+			OS.alert("The Multiplayer Server IP not is valid")
+			return
+		
+		start_client.emit(_username.text, m_ip)
 
 
 
