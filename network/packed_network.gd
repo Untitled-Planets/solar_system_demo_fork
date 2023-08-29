@@ -29,7 +29,7 @@ var _network_object_id: int = -1
 var _last_state: Dictionary = {}
 ## List of properties that will be updating over the network
 var _network_control: int = ServerPeerId : set = _set_network_control
-var _is_registered_network: bool
+var _is_registered_network: bool = false
 
 
 ## The current planet the entity target is on. It is used by Multiplayer Server Singleton
@@ -68,6 +68,9 @@ func _ready() -> void:
 		_last_state[p] = value
 	
 	MultiplayerServer.register_network_object(self)
+	
+	if not is_multiplayer_authority():
+		request_authority_parameters()
 
 
 func _process(_delta: float) -> void:
@@ -147,7 +150,8 @@ func set_properties(packet_data: Dictionary) -> void:
 		ASSERT_PROPERTY_EXIST(k)
 		if k == &"global_position":
 			if entity_owner is Character:
-				if entity_owner.is_remote_controller():
+				var diff: float = entity_owner.global_position.distance_squared_to(packet_data[k])
+				if entity_owner.is_remote_controller() and diff < (10 * 10):
 					var r: RemoteController = entity_owner.get_controller()
 					r.set_remote_position(packet_data[k])
 					continue

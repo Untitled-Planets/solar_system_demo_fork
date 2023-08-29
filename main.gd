@@ -61,7 +61,7 @@ func _on_game_exit_to_menu_requested():
 func _process(_delta):
 	AudioServer.set_bus_volume_db(0, linear_to_db(_settings.main_volume_linear))
 	DDD.visible = _settings.debug_text
-	var viewport = get_viewport()
+	var viewport: Viewport = get_viewport()
 	if _settings.wireframe != (viewport.debug_draw == Viewport.DEBUG_DRAW_WIREFRAME):
 		if _settings.wireframe:
 			viewport.debug_draw = Viewport.DEBUG_DRAW_WIREFRAME

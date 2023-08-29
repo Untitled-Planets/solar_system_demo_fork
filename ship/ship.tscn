@@ -183,14 +183,16 @@ shape = SubResource("BoxShape3D_ta54x")
 [node name="CharacterBody3D" type="CharacterBody3D" parent="Visual/VisualRoot/ship"]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Visual/VisualRoot/ship/CharacterBody3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.49955, -1.74687, -5.06922)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.42674, -1.74687, -5.06922)
 shape = SubResource("BoxShape3D_et0f3")
+disabled = true
 
 [node name="CharacterBody3D2" type="CharacterBody3D" parent="Visual/VisualRoot/ship"]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Visual/VisualRoot/ship/CharacterBody3D2"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.52835, -1.74687, -5.06922)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.3518, -1.74687, -5.06922)
 shape = SubResource("BoxShape3D_et0f3")
+disabled = true
 
 [node name="MotionParticles" type="GPUParticles3D" parent="Visual/VisualRoot"]
 material_override = SubResource("ShaderMaterial_yulrx")

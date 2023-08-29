@@ -113,8 +113,10 @@ func _find_interactive_station():
 	return _find_interactive_object_from_group("station_interactive_panel")
 
 func _find_interactive_object_from_group(p_group_name: String):
+	if get_character() == null:
+		return null
 	assert(get_character() != null, "The character is null")
-	var nodes:= get_tree().get_nodes_in_group(p_group_name)
+	var nodes: Array[Node] = get_tree().get_nodes_in_group(p_group_name)
 	for n in nodes:
 		if get_character().global_position.distance_squared_to(n.global_position) < _interactive_distance * _interactive_distance:
 			return  n

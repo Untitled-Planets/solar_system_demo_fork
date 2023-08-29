@@ -224,9 +224,9 @@ func _integrate_forces(state: PhysicsDirectBodyState3D):
 		# the core, because some mass is now behind you
 		# TODO Explicit typing should not be needed, there is a bug in GDScript2
 		var gd : float = abs(distance_to_core - stellar_body.radius) + stellar_body.radius
-		var gravity_dir := (pull_center - gtrans.origin).normalized()
-		var stellar_mass := Util.get_sphere_volume(stellar_body.radius)
-		var f := 0.005 * stellar_mass / (gd * gd)
+		var gravity_dir: Vector3 = (pull_center - gtrans.origin).normalized()
+		var stellar_mass: float = Util.get_sphere_volume(stellar_body.radius)
+		var f: float = 0.005 * stellar_mass / (gd * gd)
 		f = minf(f, 25.0)
 		state.apply_central_force(gravity_dir * f)
 		

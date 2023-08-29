@@ -63,6 +63,10 @@ enum UpdateMode {
 	PHYSICS = 1
 }
 
+enum NetworkNotification {
+	
+}
+
 var _sync_delta: float = 1.0 / MULTIPLAYER_FPS
 var _delta_acc: float = 0.0
 var _resources: Dictionary = {}
