@@ -129,8 +129,8 @@ func _on_loading_progressed(p_progress_info):
 	avatar.set_controller(controller)
 	controller.possess(avatar)
 	add_child(controller)
-	_solar_system.add_child(avatar)
 	avatar.name = "player_" + str(multiplayer.get_unique_id())
+	_solar_system.add_child(avatar)
 	#avatar.network_id = p_player_id
 	#var controller: CharacterController = avatar.get_controller()
 	controller.set_uuid("")
@@ -163,8 +163,8 @@ func _on_loading_progressed(p_progress_info):
 			new_character.set_controller(r)
 			r.possess(new_character)
 			add_child(r)
-			_solar_system.add_child(new_character)
 			new_character.name = "player_" + str(p)
+			_solar_system.add_child(new_character)
 			r.set_uuid(str(p))
 	
 	

@@ -42,7 +42,7 @@ var _is_registered_network: bool = false
 var current_planet
 
 
-var _waiting_sync: bool = false
+var _waiting_sync: bool = true
 var _waiting_sync_states: Array[Dictionary] = []
 
 
@@ -73,7 +73,7 @@ func _ready() -> void:
 		ASSERT_VALID_PROPERTY(value)
 		_last_state[p] = value
 	
-	MultiplayerServer.register_network_object(self)
+	#MultiplayerServer.register_network_object(self)
 	
 	if not is_multiplayer_authority():
 		request_authority_parameters()
@@ -112,15 +112,15 @@ func _process(_delta: float) -> void:
 ## Request the authority to send you the current data to keep them updated
 func request_authority_parameters() -> void:
 	assert(not is_multiplayer_authority())
-	_waiting_sync = true
+	_waiting_sync = false
 	_on_request_data_parameters.rpc_id(get_multiplayer_authority())
 
 
 @rpc("any_peer", "unreliable_ordered")
 func _on_data_recived(packet_data: Dictionary, sync_response: bool = false) -> void:
 	var sender: int = multiplayer.get_remote_sender_id()
-	if sender != get_multiplayer_authority():
-		return
+	#if sender != get_multiplayer_authority():
+	#	return
 	
 	if _waiting_sync and not sync_response:
 		_waiting_sync_states.append(packet_data)

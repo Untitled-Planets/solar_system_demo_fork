@@ -24,10 +24,6 @@ MultiplayerServer="*res://network/network_multiplayer.gd"
 PlanetMaterialManager="*res://solar_system/planet_materials/planet_material_manager.tscn"
 MultiplayerServerr="res://network/multiplayer_server.gd"
 
-[debug]
-
-settings/stdout/verbose_stdout=true
-
 [input]
 
 forward={

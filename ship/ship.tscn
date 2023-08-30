@@ -293,6 +293,7 @@ script = ExtResource("18_hc8m0")
 entity_owner = NodePath("..")
 properties_sync = Array[StringName]([&"global_transform"])
 origin_control = 1
+sync_mode = 1
 
 [connection signal="body_entered" from="." to="ShipAudio" method="_on_Ship_body_entered"]
 

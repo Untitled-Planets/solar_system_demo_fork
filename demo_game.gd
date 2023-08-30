@@ -75,8 +75,8 @@ func _on_peer_connected(peer: int) -> void:
 	new_character.set_controller(r)
 	r.possess(new_character)
 	add_child(r)
-	_solar_system.add_child(new_character)
 	new_character.name = "player_" + str(peer)
+	_solar_system.add_child(new_character)
 	r.set_uuid(str(peer))
 
 
