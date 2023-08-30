@@ -84,7 +84,7 @@ func _ready():
 #		_landed_node_parents[i].add_child(_landed_nodes[i])
 #	for cs in _flight_collision_shapes:
 #		cs.disabled = true
-#	freeze = true
+	
 	disable_controller()
 	await get_tree().process_frame
 	freeze_mode = RigidBody3D.FREEZE_MODE_STATIC

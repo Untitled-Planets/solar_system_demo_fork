@@ -37,7 +37,8 @@ var _controller
 var _direction: Vector3 = Vector3.ZERO
 
 
-
+func _ready() -> void:
+	add_to_group(&"character")
 
 func jump():
 	_jump_cmd = 5

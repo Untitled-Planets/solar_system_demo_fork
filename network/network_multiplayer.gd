@@ -68,7 +68,9 @@ enum NetworkNotification {
 	PLAYER_SPAWN,
 	PLAYER_DESPAWN,
 	SHIP_SWPAWN,
-	SHIP_DESPAWN
+	SHIP_DESPAWN,
+	ENTER_SHIP, # To-Do: i need to use this 
+	EXIT_SHIP
 }
 
 var _sync_delta: float = 1.0 / MULTIPLAYER_FPS

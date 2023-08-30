@@ -38,8 +38,6 @@ var _ship = null
 var _local_player: AController = null
 var _players: Dictionary = {}
 
-var _ships: Dictionary = {}
-
 var bufferNetworkClientData: Array[SyncBufferData]
 
 func _on_update_buffer_data(buffer: SyncBufferData) -> void:
@@ -66,12 +64,6 @@ func _update_client_multiplayer(delta: float) -> void:
 
 
 func _ready() -> void:
-	if MultiplayerServer.has_signal(&"update_client_network_frame") and MultiplayerServer.has_signal(&"on_update_client_buffer_data"):
-		MultiplayerServer.update_client_network_frame.connect(_update_client_multiplayer)
-		MultiplayerServer.on_update_client_buffer_data.connect(_on_update_buffer_data)
-		
-		multiplayer.peer_connected.connect(_on_peer_connected)
-	
 	Server.add_machine_requested.connect(_on_add_machine)
 	Server.task_cancelled.connect(_on_task_cancelled)
 	Server.execute_task_requested.connect(_on_task_requested)
@@ -88,39 +80,9 @@ func _ready() -> void:
 	MultiplayerServer.user_position_updated.connect(_on_user_position_updated)
 	MultiplayerServer.resources_generated.connect(_on_resources_generated)
 	MultiplayerServer.floating_resources_updated.connect(_on_floating_resources_updated)
-	MultiplayerServer.data_updated.connect(_on_data_updated)
+	
 	MultiplayerServer.init()
 
-
-func _on_peer_connected(peer: int) -> void:
-	if _solar_system.has_node("player_" + str(peer)):
-		return
-	
-	var new_character: Character = await _spawn_player()
-	new_character.set_multiplayer_authority(peer)
-	var r: RemoteController = RemoteControllerScene.instantiate()
-	new_character.set_controller(r)
-	r.possess(new_character)
-	add_child(r)
-	_solar_system.add_child(new_character)
-	new_character.name = "player_" + str(peer)
-	r.set_uuid(str(peer))
-
-
-func _on_peer_disconnected(peer: int) -> void:
-	if not _solar_system.has_node("player_" + str(peer)):
-		return
-	
-	var character: Character = get_node("player_" + str(peer))
-	var r: RemoteController = character.get_controller()
-	
-	character.queue_free()
-	r.queue_free()
-
-
-func _on_data_updated(p_data: Dictionary) -> void:
-	#print("receiving update from server")
-	pass
 
 func _on_resources_generated(p_solar_system_id, p_planet_id, p_resources):
 	pass
@@ -185,7 +147,6 @@ func _on_loading_progressed(p_progress_info):
 	# Load other peers
 	if multiplayer.has_multiplayer_peer() and not multiplayer.is_server():
 		var peers: Array = multiplayer.get_peers()
-		peers.make_read_only()
 		for p in peers:
 			if MultiplayerServer.peer_is_server(p) and MultiplayerServer.is_server_headless():
 				continue
@@ -206,6 +167,8 @@ func _on_loading_progressed(p_progress_info):
 			new_character.name = "player_" + str(p)
 			r.set_uuid(str(p))
 	
+	
+	push_warning(get_tree().get_nodes_in_group(&"character"))
 
 
 

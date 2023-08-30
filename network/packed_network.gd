@@ -20,10 +20,16 @@ enum OriginControl {
 	CLIENT = 1
 }
 
+enum SyncMode {
+	UPDATE,
+	FRAME
+}
+
 @export var entity_owner: Node = null
 ## List of properties that will be updating over the network
 @export var properties_sync: Array[StringName] = []
 @export var origin_control: OriginControl = OriginControl.SERVER
+@export var sync_mode: SyncMode = SyncMode.UPDATE
 
 var _network_object_id: int = -1
 var _last_state: Dictionary = {}
@@ -95,9 +101,12 @@ func _process(_delta: float) -> void:
 	
 	_last_state = current_state
 	
-	if not changed_values.is_empty():
-		properties_changed.emit(changed_values, self)
-		_on_data_recived.rpc(changed_values)
+	if sync_mode == SyncMode.UPDATE:
+		if not changed_values.is_empty():
+			properties_changed.emit(changed_values, self)
+			_on_data_recived.rpc(changed_values)
+	elif sync_mode == SyncMode.FRAME:
+		_on_data_recived.rpc(current_state)
 
 
 ## Request the authority to send you the current data to keep them updated
