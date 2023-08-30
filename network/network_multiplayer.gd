@@ -53,6 +53,7 @@ signal on_update_server_buffer_data(buffer: SyncBufferData)
 signal update_client_network_frame(delta: float)
 signal request_instance_network_object(origin_peer: int, network_object_data: NetworkObjectData, sync_data: Dictionary)
 signal network_entity_propety_changed(entity: NetworkEntity, property: StringName, value: Variant)
+signal multiplayer_event(event: NetworkNotification, origin_peer: int, data: Dictionary)
 
 const DEFAULT_PORT: int = 3000
 const MULTIPLAYER_FPS: int = 10
@@ -64,7 +65,10 @@ enum UpdateMode {
 }
 
 enum NetworkNotification {
-	
+	PLAYER_SPAWN,
+	PLAYER_DESPAWN,
+	SHIP_SWPAWN,
+	SHIP_DESPAWN
 }
 
 var _sync_delta: float = 1.0 / MULTIPLAYER_FPS
@@ -179,6 +183,14 @@ func register_network_object(n: NetworkEntity) -> void:
 		waiting_network_objects_pairing.append(data)
 		remote_register_network_object.rpc_id(1, data.get_instance_id(), n_name, origin)
 
+
+func send_network_notification(notification_event: NetworkNotification, data: Dictionary) -> void:
+	_on_notification_event_recived(notification_event, data)
+
+
+@rpc("any_peer")
+func _on_notification_event_recived(notification_event: NetworkNotification, data: Dictionary = {}) -> void:
+	multiplayer_event.emit(notification_event, multiplayer.get_remote_sender_id(), data)
 
 
 @rpc("any_peer")
