@@ -112,9 +112,6 @@ stream = ExtResource("8")
 [node name="remote_movement" type="Node" parent="."]
 script = ExtResource("10_kvh01")
 
-[node name="VoxelViewer" type="VoxelViewer" parent="."]
-requires_visuals = false
-
 [node name="NetworkEntity" type="Node" parent="." node_paths=PackedStringArray("entity_owner")]
 script = ExtResource("9_7g2wu")
 entity_owner = NodePath("..")

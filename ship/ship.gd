@@ -116,7 +116,8 @@ func enable_controller():
 func disable_controller():
 #	_controller.set_enabled(false)
 	for i in len(_landed_nodes):
-		_landed_node_parents[i].add_child(_landed_nodes[i])
+		if not _landed_node_parents[i].has_node(NodePath(_landed_nodes[i].name)):
+			_landed_node_parents[i].add_child(_landed_nodes[i])
 	for cs in _flight_collision_shapes:
 		cs.disabled = true
 	freeze = true
@@ -149,23 +150,23 @@ func _on_solar_system_reference_body_changed(info):
 	#_linear_velocity = info.inverse_transform.basis * _linear_velocity
 
 
-func get_solar_system():
+func get_solar_system() -> Node:
 	return get_parent()
 
 
-func set_move_cmd(vec: Vector3):
+func set_move_cmd(vec: Vector3) -> void:
 	_move_cmd = vec
 
 
-func set_turn_cmd(vec: Vector3):
+func set_turn_cmd(vec: Vector3) -> void:
 	_turn_cmd = vec
 
 
-func set_superspeed_cmd(cmd: bool):
+func set_superspeed_cmd(cmd: bool) -> void:
 	_superspeed_cmd = cmd
 
 
-func _integrate_forces(state: PhysicsDirectBodyState3D):
+func _integrate_forces(state: PhysicsDirectBodyState3D) -> void:
 	if multiplayer.has_multiplayer_peer() and not is_multiplayer_authority():
 		return
 	
@@ -184,7 +185,7 @@ func _integrate_forces(state: PhysicsDirectBodyState3D):
 	var linear_acceleration_mod := linear_acceleration
 	var speed_cap_in_space_mod := speed_cap_in_space
 	
-	var superspeed = false
+	var superspeed: bool = false
 	if _superspeed_cmd and stellar_body.type == StellarBody.TYPE_SUN:
 		speed_cap_in_space_mod *= _speed_cap_in_space_superspeed_multiplier
 		linear_acceleration_mod *= _linear_acceleration_superspeed_multiplier

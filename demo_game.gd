@@ -2,25 +2,6 @@ extends Game
 
 @export var _pickable_object_scene: PackedScene
 
-var _characters: Dictionary = {}
-"""
-{
-	"peer_id": {
-		instanced: bool
-	}
-}
-"""
-
-var _ships: Dictionary = {}
-"""
-{
-	"ship_id": { # key
-		owner_peer: int,
-		instanced: bool,
-	}
-}
-"""
-
 
 
 func _ready():
@@ -44,24 +25,39 @@ func request_sync() -> void:
 
 func _on_multiplayer_event(multiplayer_event: MultiplayerServer.NetworkNotification, from_peer: int, data: Dictionary = {}) -> void:
 	match  multiplayer_event:
-		MultiplayerServer.NetworkNotification.SHIP_SWPAWN:
-			_ships[data.ship_id] = {
-				"owner_peer": from_peer,
+		MultiplayerServer.NetworkNotification.SHIP_SPAWN:
+			var ship_id: int = data.ship_id
+			_ships[ship_id] = {
+				"owner": from_peer,
 				"instanced": true
 			}
 			
 			var station: Station = get_tree().get_first_node_in_group(&"portal_station")
-			if station == null:
-				push_error("Station is null")
-				return
 			var ship: Ship = ShipScene.instantiate()
 			ship.set_multiplayer_authority(from_peer)
+			ship.name = &"ship_%s" % ship_id
 			_solar_system.add_child(ship)
 			ship.position = station.spaceship_spawn_position
 		MultiplayerServer.NetworkNotification.PLAYER_SPAWN:
-			pass
+			if not _solar_system.has_node("player_%s" % from_peer):
+				var c: Character = await _spawn_player()
+				c.set_multiplayer_authority(from_peer)
+				var r: RemoteController = RemoteControllerScene.instantiate()
+				c.set_controller(r)
+				r.possess(c)
+				add_child(r)
+				c.name = &"player_%s" % from_peer
+				_solar_system.add_child(c)
+				r.set_uuid(str(from_peer))
+				if data.has("pos"):
+					c.global_position = data.get("pos")
 		MultiplayerServer.NetworkNotification.PLAYER_DESPAWN:
-			pass
+			if _solar_system.has_node("player_%s" % from_peer):
+				var char: Character = _solar_system.get_node("player_%s" % from_peer) as Character
+				if char.get_controller() != null:
+					char.get_controller().unpossess()
+					char.get_controller().queue_free()
+				char.queue_free()
 		_:
 			pass
 
@@ -165,10 +161,11 @@ func buy_ship() -> void:
 	ship.add_to_group(&"ship")
 	var id: int = multiplayer.get_unique_id()
 	ship.set_multiplayer_authority(id)
-	_solar_system.add_child(ship)
-	ship.position = station.spaceship_spawn_position
 	randomize()
 	var ship_id: int = id + (randi() % 1 << 16)
+	ship.name = &"ship_%s" % ship_id
+	_solar_system.add_child(ship)
+	ship.position = station.spaceship_spawn_position
 	var data: Dictionary = {
 		"owner": id,
 		"instanced": true,
@@ -179,14 +176,14 @@ func buy_ship() -> void:
 		"instanced": true,
 		"owner": id
 	}
-	MultiplayerServer.send_network_notification(MultiplayerServer.NetworkNotification.PLAYER_SPAWN, data)
+	MultiplayerServer.send_network_notification(MultiplayerServer.NetworkNotification.SHIP_SPAWN, data)
 
 
 func enter_ship() -> void:
 	super.enter_ship()
 #	_player_station_ui.visible = false
 
-func exit_ship():
+func exit_ship() -> void:
 	super.exit_ship()
 #	_player_station_ui.visible = true
 

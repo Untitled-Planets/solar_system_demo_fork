@@ -45,7 +45,7 @@ var _settings_ui : Control
 
 
 func _ready():
-	add_to_group("planet_mode") # TODO. Do this from editor
+	add_to_group(&"planet_mode") # TODO. Do this from editor
 	set_physics_process(false)
 #	_hud.hide()
 	Server.solar_system_requested.connect(_on_solar_system_data_requested)

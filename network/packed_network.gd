@@ -160,10 +160,15 @@ func set_properties(packet_data: Dictionary) -> void:
 		if k == &"global_position":
 			if entity_owner is Character:
 				var diff: float = entity_owner.global_position.distance_squared_to(packet_data[k])
-				if entity_owner.is_remote_controller() and diff < (10 * 10):
+				if entity_owner.is_remote_controller() and diff < (5 * 5):
 					var r: RemoteController = entity_owner.get_controller()
 					r.set_remote_position(packet_data[k])
 					continue
+		elif k == &"global_transform":
+			if entity_owner is Ship:
+				entity_owner.global_transform = packet_data[k]
+				entity_owner._visual_root.global_transform = packet_data[k]
+				continue
 		entity_owner.set(k, packet_data[k])
 
 

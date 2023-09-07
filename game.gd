@@ -38,6 +38,25 @@ var _ship = null
 var _local_player: AController = null
 var _players: Dictionary = {}
 
+var _characters: Dictionary = {}
+"""
+{
+	"peer_id": {
+		instanced: bool
+	}
+}
+"""
+
+var _ships: Dictionary = {}
+"""
+{
+	"ship_id": { # key
+		owner_peer: int,
+		instanced: bool,
+	}
+}
+"""
+
 var bufferNetworkClientData: Array[SyncBufferData]
 
 func _on_update_buffer_data(buffer: SyncBufferData) -> void:
@@ -82,6 +101,8 @@ func _ready() -> void:
 	MultiplayerServer.floating_resources_updated.connect(_on_floating_resources_updated)
 	
 	MultiplayerServer.init()
+	
+	
 
 
 func _on_resources_generated(p_solar_system_id, p_planet_id, p_resources):
@@ -166,9 +187,7 @@ func _on_loading_progressed(p_progress_info):
 			new_character.name = "player_" + str(p)
 			_solar_system.add_child(new_character)
 			r.set_uuid(str(p))
-	
-	
-	push_warning(get_tree().get_nodes_in_group(&"character"))
+	#push_warning(get_tree().get_nodes_in_group(&"character"))
 
 
 
@@ -448,6 +467,7 @@ func enter_ship() -> void:
 	c.queue_free()
 	_local_player.set_physics_process(false)
 	_local_player.unpossess()
+	MultiplayerServer.send_network_notification(MultiplayerServer.NetworkNotification.PLAYER_DESPAWN, {})
 	_local_player.queue_free()
 	var ship: Ship = get_tree().get_first_node_in_group(&"ship")
 	_solar_system.target_ship = ship
@@ -458,7 +478,7 @@ func enter_ship() -> void:
 	camera.set_target(ship)
 
 
-func exit_ship():
+func exit_ship() -> void:
 	var camera: Camera3D = get_viewport().get_camera_3d()
 	var ship: Ship = _local_player.get_character()
 	ship.disable_controller()
@@ -466,9 +486,12 @@ func exit_ship():
 	_local_player.set_physics_process(false)
 	_local_player.unpossess()
 	_local_player.queue_free()
+	var spawn_position: Vector3 = ship.get_character_spawn_position()
+	MultiplayerServer.send_network_notification(MultiplayerServer.NetworkNotification.PLAYER_SPAWN, {"pos": spawn_position})
 	var char: Character = CharacterScene.instantiate()
+	char.name = &"player_%s" % multiplayer.get_unique_id()
 	_solar_system.add_child(char)
-	char.global_position = ship.get_character_spawn_position()
+	char.global_position = spawn_position
 	_solar_system.target_ship = null
 	_local_player = LocalControllerScene.instantiate() as AController
 	_local_player.possess(char)

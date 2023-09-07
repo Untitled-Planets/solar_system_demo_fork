@@ -186,7 +186,7 @@ func _process_dig_actions():
 	ray_query.exclude = [ship.get_rid()]
 	var hit = space_state.intersect_ray(ray_query)
 	
-	var dig_cmd = Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT)
+	var dig_cmd = false#Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT)
 	
 	if not hit.is_empty():
 		if hit.collider is VoxelLodTerrain:

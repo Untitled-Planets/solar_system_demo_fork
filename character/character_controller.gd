@@ -267,21 +267,24 @@ func _unhandled_input(event):
 				KEY_E:
 					_interact_cmd = true
 				KEY_F:
-					_flashlight.visible = not _flashlight.visible
-					if _flashlight.visible:
-						_audio.play_light_on()
-					else:
-						_audio.play_light_off()
+					if _flashlight != null:
+						_flashlight.visible = not _flashlight.visible
+						if _flashlight.visible:
+							_audio.play_light_on()
+						else:
+							_audio.play_light_off()
 				KEY_T:
 					_waypoint_cmd = true
 					
 	elif event is InputEventMouseButton:
 		if event.pressed:
 			match event.button_index:
-				MOUSE_BUTTON_LEFT:
-					_dig_cmd = true
-				MOUSE_BUTTON_RIGHT:
-					_build_cmd = true
+				_:
+					pass
+				#MOUSE_BUTTON_LEFT:
+				#	_dig_cmd = true
+				#MOUSE_BUTTON_RIGHT:
+				#	_build_cmd = true
 
 
 func _interact():

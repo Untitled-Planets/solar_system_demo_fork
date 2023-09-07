@@ -67,7 +67,7 @@ enum UpdateMode {
 enum NetworkNotification {
 	PLAYER_SPAWN,
 	PLAYER_DESPAWN,
-	SHIP_SWPAWN,
+	SHIP_SPAWN,
 	SHIP_DESPAWN,
 	ENTER_SHIP, # To-Do: i need to use this 
 	EXIT_SHIP
@@ -119,7 +119,6 @@ func setup_client(address: String, port: int = DEFAULT_PORT) -> Error:
 
 func setup_server(port: int = DEFAULT_PORT) -> Error:
 	close()
-	print_stack()
 	_peer = null
 	_peer = ENetMultiplayerPeer.new()
 	
@@ -139,6 +138,7 @@ func setup_server(port: int = DEFAULT_PORT) -> Error:
 	server_started.emit()
 	
 	join()
+	get_viewport().get_window().title += "Server Instance"
 	return OK
 
 
@@ -187,7 +187,7 @@ func register_network_object(n: NetworkEntity) -> void:
 
 
 func send_network_notification(notification_event: NetworkNotification, data: Dictionary) -> void:
-	_on_notification_event_recived(notification_event, data)
+	_on_notification_event_recived.rpc(notification_event, data)
 
 
 @rpc("any_peer")
