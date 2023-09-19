@@ -277,7 +277,7 @@ func is_server_headless() -> bool:
 func peer_is_server(peer: int) -> bool:
 	return peer == SERVER_PEER
 
-
+	
 func connection_status() -> MultiplayerPeer.ConnectionStatus:
 	if not multiplayer.has_multiplayer_peer():
 		return MultiplayerPeer.CONNECTION_DISCONNECTED

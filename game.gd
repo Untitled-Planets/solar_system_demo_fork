@@ -307,8 +307,7 @@ func _on_reference_body_changed(body_info):
 	var previous_body := _solar_system.get_reference_stellar_body_by_id(body_info.old_id)
 	previous_body.remove_machines()
 	MultiplayerServer.arrives_on_planet(0, _solar_system.get_reference_stellar_body_id(), _username)
-	
-	
+
 
 func _on_planet_status_requested(solar_system_id, planet_id, data):
 #	await get_tree().create_timer(1.5).timeout
@@ -324,7 +323,6 @@ func _on_planet_status_requested(solar_system_id, planet_id, data):
 #		print("Location id: ", location_id)
 		m.set_planet_mine_location(location_id)
 		m.global_position = final_position
-	
 	
 	load_waypoints()
 

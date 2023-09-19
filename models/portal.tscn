@@ -1,8 +1,40 @@
-[gd_scene load_steps=2 format=3 uid="uid://8ttejgoay0g4"]
+[gd_scene load_steps=5 format=3 uid="uid://8ttejgoay0g4"]
 
-[ext_resource type="PackedScene" path="res://models/portal/portal.tscn" id="1"]
+[ext_resource type="PackedScene" uid="uid://dnx0k1r805ypb" path="res://models/portal/portal.tscn" id="1"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_xwiqt"]
+size = Vector3(67.9168, 51.5165, 13.7017)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_hqyux"]
+size = Vector3(17.3333, 58.1318, 16.802)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_2su00"]
+size = Vector3(31.4424, 33.1552, 11.0373)
 
 [node name="portal" type="Node3D"]
 
 [node name="portal" parent="." instance=ExtResource("1")]
 transform = Transform3D(8, 0, 0, 0, 8, 0, 0, 0, 8, 0, 0, 0)
+
+[node name="StaticBody3D" type="StaticBody3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 27.8196, -2.39689)
+shape = SubResource("BoxShape3D_xwiqt")
+
+[node name="CollisionShape3D2" type="CollisionShape3D" parent="StaticBody3D"]
+transform = Transform3D(1, 0, 0, 0, 0.307772, 0.95146, 0, -0.95146, 0.307772, -2.96883, -0.159823, 28.6618)
+shape = SubResource("BoxShape3D_hqyux")
+
+[node name="SpotLight3D" type="SpotLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -0.680938, 0.732341, 0, -0.732341, -0.680938, -2.96756, 43.0466, 0.267361)
+light_energy = 10.436
+spot_range = 70.1599
+
+[node name="Area3D" type="Area3D" parent="."]
+collision_layer = 0
+collision_mask = 2
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.98864, 30.5108, 2.9265)
+shape = SubResource("BoxShape3D_2su00")

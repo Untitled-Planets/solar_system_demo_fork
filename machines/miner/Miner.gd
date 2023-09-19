@@ -19,14 +19,14 @@ var _mining_amount: int = 0
 
 func _ready():
 	super._ready()
-	_game = get_tree().get_nodes_in_group("game")[0]
+	_game = get_tree().get_first_node_in_group(&"game")
 	var action := IActionsContext.ActionContext.new()
 	action.name = "Move"
 	action.function = func(): _game.prepare_task(get_task("move"), get_id())
 	_actions.append(action)
 	
 	action = IActionsContext.ActionContext.new()
-	action.name = "CM"
+	action.name = "CM" # Cancel Movement
 	action.function = func(): _game.cancel_task(get_id(), get_current_task().get_id())
 	_actions.append(action)
 	
@@ -41,7 +41,7 @@ func _ready():
 	_actions.append(action)
 	
 	action = IActionsContext.ActionContext.new()
-	action.name = "CMine"
+	action.name = "CMine" # Cancel Mine
 	action.function = func(): _game.cancel_task(get_id(), get_current_task().get_id())
 	_actions.append(action)
 

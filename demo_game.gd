@@ -103,8 +103,9 @@ func _spawn_player() -> Character:
 		await get_tree().process_frame
 		result = state.intersect_ray(query)
 	
-	var station: Station = get_tree().get_nodes_in_group("portal_station")[0]
-	a.position = station.character_spawn_position
+	var station: Station = get_tree().get_first_node_in_group("portal_station")
+	if station:
+		a.position = station.character_spawn_position
 	return a
 
 func _on_planet_status_requested(solar_system_id, planet_id, data):

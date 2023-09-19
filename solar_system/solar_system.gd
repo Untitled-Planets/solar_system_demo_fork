@@ -42,6 +42,7 @@ var _physics_count_on_last_reference_change = 0
 # It will be overriden in the normal flow.
 var _settings := Settings.new()
 var _settings_ui : Control
+var _last_clouds_quality := -1
 
 
 func _ready():
@@ -53,6 +54,9 @@ func _ready():
 
 
 func _on_solar_system_data_requested(p_data: Dictionary):
+	config_solar_system()
+	
+	return
 	_settings.world_scale_x10 = p_data["world_scale_x10"]
 	_settings.shadows_enabled = p_data["shadows_enabled"]
 	_settings.lens_flares_enabled = p_data["lens_flares_enabled"]
@@ -86,7 +90,6 @@ func config_solar_system():
 		var sun_light := SolarSystemSetup.setup_stellar_body(body, self, _settings)
 		if sun_light != null:
 			_directional_light = sun_light
-
 	
 	
 	set_physics_process(true)
@@ -198,6 +201,17 @@ func _physics_process(delta: float):
 	else:
 		_environment.background_sky_orientation = Basis()
 	
+	_process_setting_changes()
+	
+	_physics_count += 1
+	
+	_process_debug()
+	
+	if _settings.world_scale_x10:
+		_process_atmosphere_large_distance_hack()
+
+
+func _process_setting_changes():
 	# Update graphics settings
 	if _settings.shadows_enabled != _directional_light.shadow_enabled:
 		_directional_light.shadow_enabled = _settings.shadows_enabled
@@ -205,11 +219,14 @@ func _physics_process(delta: float):
 		_environment.glow_enabled = _settings.glow_enabled
 	if _settings.lens_flares_enabled != _lens_flare.enabled:
 		_lens_flare.enabled = _settings.lens_flares_enabled
-	
-	_physics_count += 1
-	
-	# Debug
-	
+
+	if _settings.clouds_quality != _last_clouds_quality:
+		_last_clouds_quality = _settings.clouds_quality
+		for body in _bodies:
+			if body.atmosphere != null:
+				SolarSystemSetup.update_atmosphere_settings(body, _settings)
+
+func _process_debug():
 	for body in _bodies:
 		var volume : VoxelLodTerrain = body.volume
 		if body.volume == null:
@@ -227,30 +244,21 @@ func _physics_process(delta: float):
 		else:
 			volume.debug_set_draw_enabled(false)
 	
-#	if len(_bodies) > 0:
-#		DDD.set_text("Reference body", _bodies[_reference_body_id].name)
-#
-#	for i in len(_bodies):
-#		var body : StellarBody = _bodies[i]
-#		if body.volume == null:
-#			continue
-#		var s = str(
-#			"D: ", body.volume.debug_get_data_block_count(), ", ", 
-#			"M: ", body.volume.debug_get_mesh_block_count())
-#		if body.instancer != null:
-#			s += str("| I: ", body.instancer.debug_get_block_count())
-#		DDD.set_text(str("Blocks in ", body.name), s)
-		#var stats = body.volume.get_statistics()
-		#for k in stats:
-		#	if k.begins_with("time_"):
-		#		var t = stats[k]
-		#		if t > 8000:
-		#			DDD.set_text(str("!! ", body.name, " ", k), t)
-		#if stats.blocked_lods > 0:
-		#	DDD.set_text(str("!! blocked lods on ", body.name), stats.blocked_lods)
+	if len(_bodies) > 0:
+		DDD.set_text("Reference body", _bodies[_reference_body_id].name)
 
-	if _settings.world_scale_x10:
-		_process_atmosphere_large_distance_hack()
+	for i in len(_bodies):
+		var body : StellarBody = _bodies[i]
+		if body.volume == null:
+			continue
+		var s := str(
+			"D: ", body.volume.debug_get_data_block_count(), ", ", 
+			"M: ", body.volume.debug_get_mesh_block_count())
+		if body.instancer != null:
+			s += str("| I: ", body.instancer.debug_get_block_count())
+		DDD.set_text(str("Blocks in ", body.name), s)
+
+
 
 
 func _process_directional_shadow_distance():
@@ -259,27 +267,28 @@ func _process_directional_shadow_distance():
 		return
 	var light := _directional_light
 	var ref_body := get_reference_stellar_body()
-	var distance_to_core = \
+	var distance_to_core := \
 		ref_body.node.global_transform.origin.distance_to(camera.global_transform.origin)
-	var distance_to_surface = maxf(distance_to_core - ref_body.radius, 0.0)
+	var distance_to_surface := maxf(distance_to_core - ref_body.radius, 0.0)
 
-	var s := 1.0
+	var scale := 1.0
 	if _settings.world_scale_x10:
-		s = SolarSystemSetup.LARGE_SCALE
+		scale = SolarSystemSetup.LARGE_SCALE
 
-	var near_distance := 10.0 * s
+	var near_distance := 10.0 * scale
 	# TODO Increase near shadow distance when flying ship?
 	var near_shadow_distance := 500.0
-	var far_distance := 1000.0 * s
+	var far_distance := 1000.0 * scale
 	var far_shadow_distance := 20000.0
 
 	# Increase shadow distance when far from planets
-	var t = clamp((distance_to_surface - near_distance) / (far_distance - near_distance), 0.0, 1.0)
-	var shadow_distance = lerp(near_shadow_distance, far_shadow_distance, t)
+	var t := clampf(
+		(distance_to_surface - near_distance) / (far_distance - near_distance), 0.0, 1.0)
+	var shadow_distance := lerpf(near_shadow_distance, far_shadow_distance, t)
 	light.directional_shadow_max_distance = shadow_distance
 	# if not Input.is_key_pressed(KEY_KP_0):
 	# 	light.directional_shadow_max_distance = 500.0
-#	DDD.set_text("Shadow distance", shadow_distance)
+	DDD.set_text("Shadow distance", shadow_distance)
 
 
 # This helps with planet flickering in the distance.
@@ -329,13 +338,6 @@ func set_reference_body(ref_id: int):
 	for sb in body.static_bodies:
 		body.node.add_child(sb)
 	body.static_bodies_are_in_tree = true
-
-	# TODO Shadow opacity was removed in Godot 4, need it back because it's too dark now.
-	# See https://github.com/godotengine/godot/pull/61893
-	#_directional_light.shadow_color = body.atmosphere_color.darkened(0.8)
-	var environment = get_viewport().world_3d.environment
-	environment.ambient_light_color = body.atmosphere_color
-	environment.ambient_light_energy = 20
 	
 	reference_body_changed.emit(info)
 
