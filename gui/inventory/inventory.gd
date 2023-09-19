@@ -37,7 +37,7 @@ func _on_inventory_updated(p_data: Dictionary):
 		_machine_items.add_asset_item(asset)
 	
 
-func add_instance_item(instance: MachineCharacter) -> void:
+func add_instance_item(_instance: MachineCharacter) -> void:
 	pass
 
 func _on_horizontal_items_item_selected(p_asset_panel):

@@ -155,6 +155,11 @@ func close() -> void:
 		multiplayer.multiplayer_peer.close()
 
 
+func is_remote_object(node: Node) -> bool:
+	if multiplayer.has_multiplayer_peer():
+		return node.is_multiplayer_authority()
+	return false
+
 func get_network_object(network_id: int) -> NetworkObjectData:
 	return network_objects.get(network_id, null)
 

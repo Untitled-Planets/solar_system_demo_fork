@@ -20,14 +20,19 @@ const JUMP_COOLDOWN_TIME = 0.3
 const JUMP_SPEED = 8.0
 
 
+@warning_ignore("unused_private_class_variable")
 @export var _mouse_turn_sensitivity: float = 0.1
+@warning_ignore("unused_private_class_variable")
 @export var _max_angle: float = 89.0
+@warning_ignore("unused_private_class_variable")
 @export var _min_angle: float = -89.0
 
 var _dig_cmd := false
 var _interact_cmd := false
 var _build_cmd := false
+@warning_ignore("unused_private_class_variable")
 var _waypoint_cmd := false
+@warning_ignore("unused_private_class_variable")
 var _visual_state = Mannequiny.States.IDLE
 var _last_motor := Vector3()
 var _player_id: int = -1
@@ -48,7 +53,9 @@ var _character: Character = null:
 var _solar_system: SolarSystem = null
 var _last_known_position: Vector3 = Vector3.ZERO
 
+@warning_ignore("unused_private_class_variable")
 var _pitch := 0.0
+@warning_ignore("unused_private_class_variable")
 var _yaw := 0.0
 
 
@@ -87,7 +94,7 @@ func _physics_process(delta):
 		return
 	_follow_original(delta)
 
-func _follow_original(delta: float) -> void:
+func _follow_original(_delta: float) -> void:
 	if _last_known_position != Vector3.ZERO:
 		var delta_movement := _last_known_position - _character.global_position
 	

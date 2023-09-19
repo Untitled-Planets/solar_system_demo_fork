@@ -29,6 +29,7 @@ var _dig_cmd := false
 var _interact_cmd := false
 var _build_cmd := false
 var _waypoint_cmd := false
+@warning_ignore("unused_private_class_variable")
 var _visual_state = Mannequiny.States.IDLE
 var _last_motor := Vector3()
 
@@ -60,7 +61,7 @@ func set_uuid(p_uuid: String):
 	_uuid = p_uuid
 
 
-func _on_resource_collection_finished(p_resource_id):
+func _on_resource_collection_finished(_p_resource_id):
 	if _pickable:
 		_pickable.spawn_vfx()
 		_pickable.queue_free()
@@ -82,7 +83,7 @@ func _process(_delta):
 		motor += Vector3(1, 0, 0)
 	
 	var character_body := _get_body()
-	var camera: Camera3D = get_viewport().get_camera_3d()
+#	var camera: Camera3D = get_viewport().get_camera_3d()
 	
 	character_body.set_motor(motor)
 	

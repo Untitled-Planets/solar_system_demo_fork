@@ -1,6 +1,7 @@
-[gd_scene load_steps=5 format=3 uid="uid://8ttejgoay0g4"]
+[gd_scene load_steps=6 format=3 uid="uid://8ttejgoay0g4"]
 
 [ext_resource type="PackedScene" uid="uid://dnx0k1r805ypb" path="res://models/portal/portal.tscn" id="1"]
+[ext_resource type="Script" path="res://models/portal.gd" id="1_6r10e"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_xwiqt"]
 size = Vector3(67.9168, 51.5165, 13.7017)
@@ -9,12 +10,15 @@ size = Vector3(67.9168, 51.5165, 13.7017)
 size = Vector3(17.3333, 58.1318, 16.802)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_2su00"]
-size = Vector3(31.4424, 33.1552, 11.0373)
+size = Vector3(31.4424, 28.9449, 11.0373)
 
 [node name="portal" type="Node3D"]
+script = ExtResource("1_6r10e")
 
 [node name="portal" parent="." instance=ExtResource("1")]
 transform = Transform3D(8, 0, 0, 0, 8, 0, 0, 0, 8, 0, 0, 0)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="portal"]
 
 [node name="StaticBody3D" type="StaticBody3D" parent="."]
 
@@ -36,5 +40,8 @@ collision_layer = 0
 collision_mask = 2
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.98864, 30.5108, 2.9265)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.98864, 31.2735, 2.9265)
 shape = SubResource("BoxShape3D_2su00")
+
+[connection signal="body_entered" from="Area3D" to="." method="_on_area_3d_body_entered"]
+[connection signal="body_exited" from="Area3D" to="." method="_on_area_3d_body_exited"]

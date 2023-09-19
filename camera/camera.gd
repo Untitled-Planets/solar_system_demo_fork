@@ -23,6 +23,7 @@ var _default_side_offset := 0.0
 var _target : Node3D = null
 var _target_rigidbody : RigidBody3D = null
 var _prev_target_pos := Vector3()
+@warning_ignore("unused_private_class_variable")
 var _max_target_speed := 50.0
 
 var _wait_for_fucking_physics := 0

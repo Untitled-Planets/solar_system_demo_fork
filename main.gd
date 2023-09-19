@@ -16,7 +16,7 @@ func _ready():
 	Server.login_requested.connect(_on_login_requested)
 
 
-func _on_login_requested(p_data: Dictionary) -> void:
+func _on_login_requested(_p_data: Dictionary) -> void:
 	assert(_game == null)
 	_main_menu.hide()
 	var game_scene : PackedScene = load("res://demo_game.tscn")

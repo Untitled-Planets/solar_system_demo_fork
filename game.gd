@@ -33,11 +33,12 @@ var _username := ""
 var _info_object = null
 var _task_ui_from_node_selected: ITask = null
 var _settings_ui : Control
-var _avatar
-var _ship = null
+#var _avatar
+#var _ship = null
 var _local_player: AController = null
 var _players: Dictionary = {}
 
+@warning_ignore("unused_private_class_variable")
 var _characters: Dictionary = {}
 """
 {
@@ -47,6 +48,7 @@ var _characters: Dictionary = {}
 }
 """
 
+@warning_ignore("unused_private_class_variable")
 var _ships: Dictionary = {}
 """
 {
@@ -63,7 +65,7 @@ func _on_update_buffer_data(buffer: SyncBufferData) -> void:
 	bufferNetworkClientData = [buffer]
 
 
-func _update_client_multiplayer(delta: float) -> void:
+func _update_client_multiplayer(_delta: float) -> void:
 	var size: int = bufferNetworkClientData.size()
 	
 	if size == 0:
@@ -105,7 +107,7 @@ func _ready() -> void:
 	
 
 
-func _on_resources_generated(p_solar_system_id, p_planet_id, p_resources):
+func _on_resources_generated(_p_solar_system_id, _p_planet_id, _p_resources):
 	pass
 
 
@@ -115,28 +117,28 @@ func _on_user_position_updated(p_user_id: String, p_position):
 		c.set_remote_position(p_position)
 
 
-func _on_users_updated(p_joinigin_users, p_leaving_users):
+func _on_users_updated(p_joinigin_users, _p_leaving_users):
 	for joining in p_joinigin_users:
 		if _players.has(joining):
 			continue
 		
 		var c: RemoteController = RemoteControllerScene.instantiate()
-		var char: Character = await _spawn_player()
-		char.set_controller(c)
+		var character: Character = await _spawn_player()
+		character.set_controller(c)
 		_players[joining] = c
-		c.possess(char)
+		c.possess(character)
 		add_child(c)
-		_solar_system.add_child(char)
+		_solar_system.add_child(character)
 		c.set_uuid(joining)
 
 
-func _on_resource_collection_started(p_resource_id):
+func _on_resource_collection_started(_p_resource_id):
 	_progress_bar.visible = true
 
-func _on_resource_collection_finished(p_resource_id):
+func _on_resource_collection_finished(_p_resource_id):
 	_progress_bar.visible = false
 
-func _on_resource_collection_progressed(p_resource_id, p_unit_procent: float):
+func _on_resource_collection_progressed(_p_resource_id, p_unit_procent: float):
 	_progress_bar.value = p_unit_procent
 
 func _on_loading_progressed(p_progress_info):
@@ -215,7 +217,7 @@ func _spawn_player() -> Character:
 	return avatar
 
 
-func _process(delta):
+func _process(_delta: float) -> void:
 	_process_input()
 	if _info_object:
 		_update_info(_info_object)
@@ -344,12 +346,12 @@ func _on_add_machine(player_id: String, _planet_id: int, machine_asset_id: int, 
 	miner.set_machine_data(md)
 
 
-func _on_task_cancelled(solar_system_id: int, planet_id: int, machine_id: int, task_id: int, requester_id: String) -> void:
+func _on_task_cancelled(_solar_system_id: int, _planet_id: int, machine_id: int, task_id: int, _requester_id: String) -> void:
 	var w: IWorker = _machines.get(machine_id, null)
 	if w:
 		w.cancel_task(task_id)
 
-func _on_task_requested(solar_system_id: int, planet_id: int, machine_id: int, requester_id: String, p_task_data: Dictionary) -> void:
+func _on_task_requested(_solar_system_id: int, _planet_id: int, machine_id: int, _requester_id: String, p_task_data: Dictionary) -> void:
 	if not _machines.has(machine_id):
 		return
 	
@@ -486,15 +488,15 @@ func exit_ship() -> void:
 	_local_player.queue_free()
 	var spawn_position: Vector3 = ship.get_character_spawn_position()
 	MultiplayerServer.send_network_notification(MultiplayerServer.NetworkNotification.PLAYER_SPAWN, {"pos": spawn_position})
-	var char: Character = CharacterScene.instantiate()
-	char.name = &"player_%s" % multiplayer.get_unique_id()
-	_solar_system.add_child(char)
-	char.global_position = spawn_position
+	var character: Character = CharacterScene.instantiate()
+	character.name = &"player_%s" % multiplayer.get_unique_id()
+	_solar_system.add_child(character)
+	character.global_position = spawn_position
 	_solar_system.target_ship = null
 	_local_player = LocalControllerScene.instantiate() as AController
-	_local_player.possess(char)
+	_local_player.possess(character)
 	add_child(_local_player)
-	camera.set_target(char)
+	camera.set_target(character)
 
 ##############################
 # End Helper functions
@@ -513,7 +515,7 @@ func prepare_task(p_task_node: ITask, p_machine_id: int):
 	_task_ui_from_node_selected = p_task_node
 	_machine_selected = _machines[p_machine_id]
 
-func _on_despawn_machine_requested(p_solar_system_id: int, p_planet_id: int, p_machine_id: int):
+func _on_despawn_machine_requested(_p_solar_system_id: int, _p_planet_id: int, p_machine_id: int):
 	var m: MachineCharacter = _machines[p_machine_id]
 	if m == _info_object:
 		_info_object = null
@@ -524,7 +526,7 @@ func _on_despawn_machine_requested(p_solar_system_id: int, p_planet_id: int, p_m
 func _on_floating_resources_updated(p_solar_system_id, p_planet_id, p_resources):
 	_load_floating_resource(p_solar_system_id, p_planet_id, p_resources)
 
-func _load_floating_resource(p_solar_system_id, p_planet_id, p_resources):
+func _load_floating_resource(_p_solar_system_id, _p_planet_id, p_resources):
 	var floating_resources = p_resources
 	for fr in floating_resources:
 		var instance = PlanetMaterialManager.spawn_material(fr.type, fr.uuid)
@@ -591,7 +593,7 @@ func remove_player(p_player_id: int):
 		_players.erase(p_player_id)
 
 
-func on_resource_colleted(p_machine_id, p_amount_type, p_amount) -> void:
+func on_resource_colleted(_p_machine_id, _p_amount_type, _p_amount) -> void:
 	print("resource collected")
 	pass
 
@@ -599,7 +601,7 @@ func pm_enabled(value: bool):
 	_hud.set_inventory_enable(value)
 
 
-func show_interactive_menu(p_objects: Array):
+func show_interactive_menu(_p_objects: Array):
 	pass
 
 func add_mines_to_miner():

@@ -52,6 +52,7 @@ const STATE_FLYING = 1
 var _move_cmd := Vector3()
 var _turn_cmd := Vector3()
 var _superspeed_cmd := false
+@warning_ignore("unused_private_class_variable")
 var _exit_ship_cmd := false
 var _state := STATE_FLYING
 var _planet_damping_amount := 0.0 # TODO Doesnt need to be a member var

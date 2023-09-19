@@ -11,8 +11,11 @@ static func create(obj, var_name: String, control: Control) -> BindingBase:
 
 
 class BindingBase:
+	@warning_ignore("unused_private_class_variable")
 	var _var_name := ""
+	@warning_ignore("unused_private_class_variable")
 	var _obj
+	@warning_ignore("unused_private_class_variable")
 	var _updating_ui = false
 	
 	func update_ui():

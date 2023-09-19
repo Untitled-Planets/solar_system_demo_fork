@@ -19,7 +19,7 @@ func get_task_name() -> String:
 func start() -> void:
 	assert(false)
 
-func update(delta: float) -> void:
+func update(_delta: float) -> void:
 	assert(false)
 
 func pause() -> void:
@@ -28,10 +28,10 @@ func pause() -> void:
 func stop() -> void:
 	assert(false)
 
-func resume_task(p_data: Dictionary) -> void:
+func resume_task(_p_data: Dictionary) -> void:
 	assert(false)
 
-func set_started_time_delta(p_started_time: float) -> void:
+func set_started_time_delta(_p_started_time: float) -> void:
 	assert(false)
 
 
@@ -39,7 +39,7 @@ func get_finished() -> int:
 	assert(false, "")
 	return Finished.FAILED
 
-func set_id(p_id: int) -> void:
+func set_id(_p_id: int) -> void:
 	assert(false)
 
 func get_id() -> int:

@@ -21,7 +21,7 @@ signal planet_listed(solar_system_id, planet_ids)
 var inventory := {}
 var _planets := {}
 
-func update_planet_deposits(solar_system_id: int, p_planet_id: int, p_points: Array):
+func update_planet_deposits(_solar_system_id: int, p_planet_id: int, p_points: Array):
 	if not _planets.has(p_planet_id):
 		_planets[p_planet_id] = {}
 	var dps := []
@@ -33,7 +33,7 @@ func update_planet_deposits(solar_system_id: int, p_planet_id: int, p_points: Ar
 	_planets[p_planet_id]["deposits"] = dps
 
 
-func set_mine_point_amount(p_solar_system_id: int, p_planet_id: int, p_location_id: int, p_remaining_amount: int) -> void:
+func set_mine_point_amount(_p_solar_system_id: int, p_planet_id: int, p_location_id: int, p_remaining_amount: int) -> void:
 	if not _planets.has(p_planet_id):
 		return
 	
@@ -98,7 +98,7 @@ func get_mine_deposit_id_by_unit_coordinates(_p_solar_system_id: int, p_planet_i
 	return -1
 
 
-func cosume_mine_amount_by_location_id(p_solar_system_id: int, p_planet_id: int, p_location_id: int, p_amount):
+func cosume_mine_amount_by_location_id(_p_solar_system_id: int, p_planet_id: int, p_location_id: int, p_amount):
 	var deposits: Array = _planets[p_planet_id].deposits
 	var d: Dictionary = deposits[p_location_id]
 	d.amount = clamp(d.amount - p_amount, 0, p_amount)
@@ -136,7 +136,7 @@ func client_machine_move(machine_id: int, task_id: String, p_data: MoveMachineDa
 
 
 
-func machine_collect_resource(p_solar_system_id: int, planet_id: int, location_id: int, machine_id: int, p_username: String, p_amount: int) -> void:
+func machine_collect_resource(_p_solar_system_id: int, planet_id: int, location_id: int, machine_id: int, _p_username: String, p_amount: int) -> void:
 	var amount = _collect_resource(planet_id, location_id, p_amount)
 	planet_resource_collected.emit(machine_id, planet_id, amount)
 
@@ -167,9 +167,9 @@ func get_resource_amount(planet_id: int, location_id: int) -> int:
 	if location_id < deposits.size():
 		return _planets[planet_id].deposits[location_id].amount
 	else:
-		return 0.0
+		return 0
 
-func get_deposit_coordinate(p_solar_system_id: int, p_planet_id: int, p_location_id: int) -> Vector2:
+func get_deposit_coordinate(_p_solar_system_id: int, p_planet_id: int, p_location_id: int) -> Vector2:
 	return _planets[p_planet_id]["deposits"][p_location_id].pos
 
 func machine_move(p_solar_system_id, p_planet_id, p_machine_id: int, p_requester_id, task_name: String, move_data: MoveMachineData):

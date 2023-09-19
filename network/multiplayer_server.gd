@@ -15,8 +15,10 @@ var _delta_acc: float = 0.0
 
 var _resources: Dictionary = {}
 var _solar_systems: Array = []
+@warning_ignore("unused_private_class_variable")
 var _planet_system: Dictionary
 
+@warning_ignore("unused_private_class_variable")
 var _ws: WebSocketPeer = WebSocketPeer.new()
 
 
@@ -73,7 +75,7 @@ func _generate_resources_for_planets(p_planet_ids) -> Dictionary:
 	return resources
 
 
-func get_resource_for_planet(p_solar_system_id, p_planet_id, p_resource) -> Array:
+func get_resource_for_planet(p_solar_system_id, p_planet_id, _p_resource) -> Array:
 	return _resources[p_solar_system_id][p_planet_id]
 
 func _generate_resources(p_amount: int) -> Array:
@@ -103,18 +105,18 @@ func _initialize():
 	_solar_systems.append(ssd)
 
 
-func _on_resource_collected(resource_id: String, resource_amount: int):
+func _on_resource_collected(resource_id: String, _resource_amount: int):
 	resource_collection_finished.emit(resource_id)
 
-func _generate_resources_for_planet(p_planet_id) -> PlanetData:
+func _generate_resources_for_planet(_p_planet_id) -> PlanetData:
 	return null
 
 var _debug_player_pos: Vector3
 
-func send_last_position(p_user_id: String, p_position: Vector3):
+func send_last_position(_p_user_id: String, p_position: Vector3):
 	_debug_player_pos = p_position
 
-func start_resource_collect(p_solar_system_id: int, p_planet_id: int, p_resource_id: String, p_player_id: String):
+func start_resource_collect(_p_solar_system_id: int, _p_planet_id: int, p_resource_id: String, p_player_id: String):
 	_resource_selected = ResourceCollectionData.new()
 	_resource_selected.progress = 0
 	_resource_selected.resource_id = p_resource_id
@@ -127,7 +129,7 @@ func arrives_on_planet(p_solar_system_id: int, p_planet_id: int, p_player_id):
 	print("Arrving planet {0}".format([p_planet_id]))
 
 # This should be called from server
-func finish_resource_collect(p_resource_id: int):
+func finish_resource_collect(_p_resource_id: int):
 	pass
 
 func _process(delta):

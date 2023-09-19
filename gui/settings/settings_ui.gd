@@ -28,6 +28,7 @@ const Binding = preload("res://binding.gd")
 
 
 var _settings : Settings
+@warning_ignore("unused_private_class_variable")
 var _updating_gui := false
 var _bindings : Array[Binding.BindingBase] = []
 

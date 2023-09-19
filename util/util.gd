@@ -31,7 +31,7 @@ static func format_integer_with_commas(n: int) -> String:
 	if n < 1000:
 		return str(n)
 	if n < 1000000:
-		return str(n / 1000, ",", str(n % 1000).pad_zeros(3))
+		return str((n / 1000), ",", str(n % 1000).pad_zeros(3))
 	if n < 10000000000:
 		return str(n / 1000000, ",", 
 			str((n / 1000) % 10000000).pad_zeros(3), ",", 
@@ -147,7 +147,7 @@ static func generate_unit_coordinates() -> Vector2:
 
 static func unit_coordinates_to_unit_vector(p_coord: Vector2) -> Vector3:
 	var aangle := p_coord.y * TWO_PI
-	var forward := Vector3.FORWARD
+	#var forward := Vector3.FORWARD
 	var v := Vector3.FORWARD.rotated(Vector3.UP, aangle)
 	var c := v.cross(Vector3.UP)
 	return v.rotated(c, p_coord.x * HALF_PI)

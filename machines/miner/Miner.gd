@@ -53,7 +53,7 @@ func _process(delta: float):
 #func grab(p_amount: float):
 #	return _resource_producer.grab(p_amount)
 
-func set_mining(value: bool) -> void:
+func set_mining(_value: bool) -> void:
 	pass
 
 

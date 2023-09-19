@@ -1,0 +1,49 @@
+[gd_scene load_steps=4 format=3 uid="uid://g0v4xog8klps"]
+
+[ext_resource type="Script" path="res://gui/Portal Menu/portal_menu.gd" id="1_8rsn2"]
+[ext_resource type="PackedScene" uid="uid://cetsk5akyouej" path="res://gui/inventory/action_button.tscn" id="2_qig6l"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_jrnu8"]
+font_size = 32
+
+[node name="PortalMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_8rsn2")
+
+[node name="PanelContainer" type="PanelContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="CenterContainer" type="CenterContainer" parent="PanelContainer"]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/CenterContainer"]
+custom_minimum_size = Vector2(560, 300)
+layout_mode = 2
+
+[node name="Label" type="Label" parent="PanelContainer/CenterContainer/VBoxContainer"]
+layout_mode = 2
+text = "Buy Ship"
+label_settings = SubResource("LabelSettings_jrnu8")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="GridContainer" type="GridContainer" parent="PanelContainer/CenterContainer/VBoxContainer"]
+layout_mode = 2
+columns = 6
+
+[node name="action_button" parent="PanelContainer/CenterContainer/VBoxContainer/GridContainer" instance=ExtResource("2_qig6l")]
+layout_mode = 2
+display_action = "Buy basic Ship"
+_action_id = "buy-ship"
+
+[connection signal="action_requested" from="PanelContainer/CenterContainer/VBoxContainer/GridContainer/action_button" to="." method="_on_action_button_action_requested"]

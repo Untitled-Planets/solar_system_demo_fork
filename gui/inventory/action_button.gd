@@ -3,7 +3,7 @@ class_name ActionButton
 extends MarginContainer
 
 
-signal action_requested(action_id)
+signal action_requested(action_id: String)
 
 @onready var _button: Button = $Button
 

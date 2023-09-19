@@ -13,8 +13,8 @@ func _ready() -> void:
 
 
 func _process(delta: float) -> void:
-	if visible and Input.is_key_pressed(KEY_B):
-		_game.buy_ship()
+	pass#if visible and Input.is_key_pressed(KEY_B):
+		#_game.buy_ship()
 
 
 func customize_menu(p_objects: Array):

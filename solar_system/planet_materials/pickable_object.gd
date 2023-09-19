@@ -11,7 +11,7 @@ func _ready():
 func get_id() -> String:
 	return uuid
 
-func _physics_process(delta):
+func _physics_process(_delta: float) -> void:
 	pass
 
 func _on_area_3d_body_entered(body):

@@ -258,7 +258,7 @@ func _register_processor_request() -> void:
 		Server.planet_listed.emit(data.solar_system_id, data.planet_ids)
 
 
-func _on_http_request_request_completed(result, response_code, headers, body: PackedByteArray) -> void:
+func _on_http_request_request_completed(result, response_code, _headers, body: PackedByteArray) -> void:
 	print("Result type " + str(result))
 	
 	if response_code == 200:
@@ -270,9 +270,10 @@ func _on_http_request_request_completed(result, response_code, headers, body: Pa
 	
 	_is_requesting = false
 
-func _process(delta):
-	if Engine.get_process_frames() % 2 == 0:
-		pass#print(_http.get_http_client_status())
+func _process(_delta: float) -> void:
+	#if Engine.get_process_frames() % 2 == 0:
+	#	pass#print(_http.get_http_client_status())
+	
 	if not _is_requesting and _queue.size() != 0:
 		var d = _queue[0]
 		_queue.pop_front()

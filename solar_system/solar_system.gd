@@ -26,6 +26,7 @@ signal exit_to_menu_requested
 
 
 @onready var _environment : Environment = $WorldEnvironment.environment
+@warning_ignore("unused_private_class_variable")
 @onready var _spawn_point = $SpawnPoint
 @onready var _lens_flare = $LensFlare
 @onready var _planet_mode: PlanetMode = $planet_mode
@@ -41,6 +42,7 @@ var _physics_count_on_last_reference_change = 0
 # This is a placeholder instance to allow testing the game without going from the usual main scene.
 # It will be overriden in the normal flow.
 var _settings := Settings.new()
+@warning_ignore("unused_private_class_variable")
 var _settings_ui : Control
 var _last_clouds_quality := -1
 
@@ -54,9 +56,7 @@ func _ready():
 
 
 func _on_solar_system_data_requested(p_data: Dictionary):
-	config_solar_system()
-	
-	return
+	#config_solar_system()
 	_settings.world_scale_x10 = p_data["world_scale_x10"]
 	_settings.shadows_enabled = p_data["shadows_enabled"]
 	_settings.lens_flares_enabled = p_data["lens_flares_enabled"]
@@ -271,6 +271,7 @@ func _process_directional_shadow_distance():
 		ref_body.node.global_transform.origin.distance_to(camera.global_transform.origin)
 	var distance_to_surface := maxf(distance_to_core - ref_body.radius, 0.0)
 
+	@warning_ignore("shadowed_variable_base_class")
 	var scale := 1.0
 	if _settings.world_scale_x10:
 		scale = SolarSystemSetup.LARGE_SCALE

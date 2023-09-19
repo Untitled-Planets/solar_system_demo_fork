@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://dig3qsvc3wh4c"]
+[gd_scene load_steps=10 format=3 uid="uid://dig3qsvc3wh4c"]
 
 [ext_resource type="Script" path="res://gui/hud.gd" id="1_kwnpe"]
 [ext_resource type="FontFile" path="res://gui/fonts/hack_regular_16_dynamic_font.tres" id="2_kjkfq"]
@@ -8,6 +8,7 @@
 [ext_resource type="AudioStream" uid="uid://bpacs3ufj22ps" path="res://sounds/ui_planet_hover.wav" id="6_uejyy"]
 [ext_resource type="PackedScene" uid="uid://c37n15l6adtfq" path="res://gui/inventory/inventory.tscn" id="7_5ijpp"]
 [ext_resource type="PackedScene" uid="uid://dvb1owwg5brgk" path="res://gui/inventory/interactive_menu.tscn" id="8_67liv"]
+[ext_resource type="PackedScene" uid="uid://g0v4xog8klps" path="res://gui/Portal Menu/portal_menu.tscn" id="9_0ivtx"]
 
 [node name="HUD" type="Control"]
 layout_mode = 3
@@ -61,3 +62,7 @@ mouse_filter = 1
 [node name="interactive_menu" parent="." instance=ExtResource("8_67liv")]
 layout_mode = 1
 mouse_filter = 1
+
+[node name="PortalMenu" parent="." instance=ExtResource("9_0ivtx")]
+visible = false
+layout_mode = 1

@@ -6,7 +6,7 @@ extends Node3D
 var stellar_body: StellarBody = null
 
 
-func set_focus(p_value: bool) -> void:
+func set_focus(_p_value: bool) -> void:
 #	_is_focussed = p_value
 	pass
 
