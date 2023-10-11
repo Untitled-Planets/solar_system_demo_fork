@@ -12,7 +12,7 @@ func _ready() -> void:
 		c.action_requested.connect(_on_action_requested)
 
 
-func _process(delta: float) -> void:
+func _process(_delta: float) -> void:
 	pass#if visible and Input.is_key_pressed(KEY_B):
 		#_game.buy_ship()
 
@@ -37,6 +37,6 @@ func _hide_all():
 func _on_action_requested(p_action_id: String) -> void:
 	match p_action_id:
 		"buy-ship":
-			_game.buy_ship()
+			_game.buy_ship(Vector3.ZERO)
 		"mines-to-miner":
 			_game.add_mines_to_miner()

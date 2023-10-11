@@ -10,6 +10,10 @@ signal exit_requested
 @onready var multiplayer_server_ip: LineEdit = $VBoxContainer/PanelContainer/VBoxContainer/HBoxContainer/VBoxContainer/HBoxContainer3/LineEdit
 
 
+func _ready() -> void:
+	_username.text = "character_" + str(randi() % 10)
+
+
 #func _ready():
 #	ProjectSettings.set_setting("solar_system/network/server", $VBoxContainer/PanelContainer/VBoxContainer/HBoxContainer/VBoxContainer/HBoxContainer2/check.button_pressed)
 

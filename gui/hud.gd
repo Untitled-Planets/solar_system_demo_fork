@@ -1,7 +1,7 @@
 class_name HUD
 extends Control
 
-#const StellarBody = preload("../solar_system/stellar_body.gd")
+const StellarBody = preload("../solar_system/stellar_body.gd")
 #const Util = preload("../util/util.gd")
 
 @onready var _target_planet_label = $TargetPlanetLabel
@@ -10,22 +10,44 @@ extends Control
 @onready var _planet_hover_audio_player = $PlanetHoverSound
 @onready var _inventory = $Inventory
 @onready var _interactive_menu = $interactive_menu
+@onready var collect_mineral_container: PanelContainer = $CollectMineralContainer as PanelContainer
+
+@onready var mineral_label: Label = $VBoxContainer/Minerals as Label
+@onready var refined_label: Label = $VBoxContainer/RefMinerals as Label
+
 
 var _solar_system: SolarSystem = null
 #var _target_planet_screen_pos := Vector2()
 var _pointed_body = null
 
+var _can_mineral_interact_count: int = 0:
+	set(val):
+		_can_mineral_interact_count = maxi(val, 0)
+		
+		if collect_mineral_container:
+			if _can_mineral_interact_count > 0:
+				collect_mineral_container.visible = true
+			else:
+				collect_mineral_container.visible = false
 
 func _ready():
 	await get_tree().process_frame
 	_solar_system = get_parent().get_solar_system()
 	_waypoint_hud.set_solar_system(_solar_system)
+	collect_mineral_container.hide()
 
 
 func _process(_delta: float):
 	var camera := get_viewport().get_camera_3d()
 	if camera == null:
 		return
+	
+	if Engine.get_process_frames() % 2 == 0:
+		var stock_coal: int = MultiplayerServer.stock_of("coal")
+		var stock_coal_refined: int = MultiplayerServer.stock_of("coal_refined")
+		$VBoxContainer/Minerals.text = "Minerals: " + str(stock_coal)
+		$VBoxContainer/RefMinerals.text = "Refined: " + str(stock_coal_refined)
+	
 	
 	# Pointed planet info
 	var pointed_body := _find_pointed_planet(camera)

@@ -99,6 +99,7 @@ func get_mine_deposit_id_by_unit_coordinates(_p_solar_system_id: int, p_planet_i
 
 
 func cosume_mine_amount_by_location_id(_p_solar_system_id: int, p_planet_id: int, p_location_id: int, p_amount):
+	OS.alert("aaaaa")
 	var deposits: Array = _planets[p_planet_id].deposits
 	var d: Dictionary = deposits[p_location_id]
 	d.amount = clamp(d.amount - p_amount, 0, p_amount)

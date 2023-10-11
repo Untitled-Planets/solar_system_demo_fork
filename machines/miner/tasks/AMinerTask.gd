@@ -1,7 +1,9 @@
 class_name AMinerTask
 extends ITask
 
+@warning_ignore("unused_private_class_variable")
 @onready var _miner: Miner = get_parent().get_parent()
+@warning_ignore("unused_private_class_variable")
 @onready var _movement: MachineMovement = get_parent().get_parent().get_node("movement")
 
 var _task_started: bool = false
@@ -18,7 +20,7 @@ func update(delta: float):
 	if _task_started:
 		_update_task(delta)
 
-func _update_task(delta: float) -> void:
+func _update_task(_delta: float) -> void:
 	pass
 
 func start() -> void:

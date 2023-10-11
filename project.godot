@@ -102,6 +102,9 @@ toggle_mouse={
 
 [rendering]
 
+global_illumination/gi/use_half_resolution=true
+environment/ssao/quality=1
+environment/glow/upscale_mode=0
 environment/default_clear_color=Color(0, 0, 0, 1)
 environment/default_environment="res://default_env.tres"
 

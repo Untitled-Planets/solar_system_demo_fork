@@ -1,23 +1,16 @@
 class_name SolarSystem
 extends Node3D
 
-
+const StellarBody = preload("./stellar_body.gd")
 const SolarSystemSetup = preload("./solar_system_setup.gd")
 const Settings = preload("res://settings.gd")
+const LensFlare = preload("res://addons/SIsilicon.vfx.lens flare/lens-flare.gd")
+const SS_Camera = preload("res://camera/camera.gd")
+const ReferenceChangeInfo = preload("./reference_change_info.gd")
+const LoadingProgress = preload("./loading_progress.gd")
 
 const BODY_REFERENCE_ENTRY_RADIUS_FACTOR = 3.0
 const BODY_REFERENCE_EXIT_RADIUS_FACTOR = 3.1 # Must be higher for hysteresis
-
-
-
-class ReferenceChangeInfo:
-	var inverse_transform : Transform3D
-	var old_id: int
-
-class LoadingProgress:
-	var progress := 0.0
-	var message := ""
-	var finished := false
 
 
 signal reference_body_changed(info)
@@ -42,7 +35,6 @@ var _physics_count_on_last_reference_change = 0
 # This is a placeholder instance to allow testing the game without going from the usual main scene.
 # It will be overriden in the normal flow.
 var _settings := Settings.new()
-@warning_ignore("unused_private_class_variable")
 var _settings_ui : Control
 var _last_clouds_quality := -1
 
@@ -271,7 +263,6 @@ func _process_directional_shadow_distance():
 		ref_body.node.global_transform.origin.distance_to(camera.global_transform.origin)
 	var distance_to_surface := maxf(distance_to_core - ref_body.radius, 0.0)
 
-	@warning_ignore("shadowed_variable_base_class")
 	var scale := 1.0
 	if _settings.world_scale_x10:
 		scale = SolarSystemSetup.LARGE_SCALE
@@ -310,7 +301,7 @@ func _process_atmosphere_large_distance_hack():
 				clamp((distance - transition_distance_start) / transition_length, 0.0, 1.0)
 			# DDD.set_text(str("Sphere atmo factor in ", body.name), sphere_factor)
 			# DDD.set_text(str("Atmo mode in ", body.name), body.atmosphere._mode)
-			body.atmosphere.set_shader_param("u_sphere_depth_factor", sphere_factor)
+			body.atmosphere.set_shader_parameter("u_sphere_depth_factor", sphere_factor)
 
 
 func set_reference_body(ref_id: int):
@@ -322,7 +313,7 @@ func set_reference_body(ref_id: int):
 		sb.get_parent().remove_child(sb)
 	previous_body.static_bodies_are_in_tree = false
 	
-	var old_id = _reference_body_id
+	var last_id: int = _reference_body_id
 	_reference_body_id = ref_id
 	var body = _bodies[_reference_body_id]
 	print("Setting reference to ", ref_id, " (", body.name, ")")
@@ -330,7 +321,7 @@ func set_reference_body(ref_id: int):
 	body.node.transform = Transform3D()
 	
 	var info := ReferenceChangeInfo.new()
-	info.old_id = old_id
+	info.old_id = last_id
 	# TODO Also have relative velocity of the body,
 	# so the ship can integrate it so it looks seamless
 	info.inverse_transform = trans.affine_inverse() * body.node.transform
@@ -339,6 +330,13 @@ func set_reference_body(ref_id: int):
 	for sb in body.static_bodies:
 		body.node.add_child(sb)
 	body.static_bodies_are_in_tree = true
+
+	# TODO Shadow opacity was removed in Godot 4, need it back because it's too dark now.
+	# See https://github.com/godotengine/godot/pull/61893
+	#_directional_light.shadow_color = body.atmosphere_color.darkened(0.8)
+#	var environment := get_viewport().world_3d.environment
+#	environment.ambient_light_color = body.atmosphere_color
+#	environment.ambient_light_energy = 20
 	
 	reference_body_changed.emit(info)
 
@@ -356,8 +354,8 @@ func _compute_absolute_body_transform(body: StellarBody) -> Transform3D:
 	var pos := Vector3(cos(orbit_angle), 0, sin(orbit_angle)) * body.distance_to_parent
 	pos = pos.rotated(Vector3(0, 0, 1), body.orbit_tilt)
 	var self_angle := body.self_revolution_progress * TAU
-	var b := Basis.from_euler(Vector3(0, self_angle, body.self_tilt))
-	var local_transform := Transform3D(b, pos)
+	var basis := Basis.from_euler(Vector3(0, self_angle, body.self_tilt))
+	var local_transform := Transform3D(basis, pos)
 	return parent_transform * local_transform
 
 

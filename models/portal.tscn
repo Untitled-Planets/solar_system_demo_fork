@@ -1,16 +1,28 @@
-[gd_scene load_steps=6 format=3 uid="uid://8ttejgoay0g4"]
+[gd_scene load_steps=10 format=3 uid="uid://8ttejgoay0g4"]
 
 [ext_resource type="PackedScene" uid="uid://dnx0k1r805ypb" path="res://models/portal/portal.tscn" id="1"]
 [ext_resource type="Script" path="res://models/portal.gd" id="1_6r10e"]
 
+[sub_resource type="BoxMesh" id="BoxMesh_lh1kx"]
+size = Vector3(5, 1, 5)
+
+[sub_resource type="ConcavePolygonShape3D" id="ConcavePolygonShape3D_ex4qi"]
+data = PackedVector3Array(-2.5, 0.5, 2.5, 2.5, 0.5, 2.5, -2.5, -0.5, 2.5, 2.5, 0.5, 2.5, 2.5, -0.5, 2.5, -2.5, -0.5, 2.5, 2.5, 0.5, -2.5, -2.5, 0.5, -2.5, 2.5, -0.5, -2.5, -2.5, 0.5, -2.5, -2.5, -0.5, -2.5, 2.5, -0.5, -2.5, 2.5, 0.5, 2.5, 2.5, 0.5, -2.5, 2.5, -0.5, 2.5, 2.5, 0.5, -2.5, 2.5, -0.5, -2.5, 2.5, -0.5, 2.5, -2.5, 0.5, -2.5, -2.5, 0.5, 2.5, -2.5, -0.5, -2.5, -2.5, 0.5, 2.5, -2.5, -0.5, 2.5, -2.5, -0.5, -2.5, 2.5, 0.5, 2.5, -2.5, 0.5, 2.5, 2.5, 0.5, -2.5, -2.5, 0.5, 2.5, -2.5, 0.5, -2.5, 2.5, 0.5, -2.5, -2.5, -0.5, 2.5, 2.5, -0.5, 2.5, -2.5, -0.5, -2.5, 2.5, -0.5, 2.5, 2.5, -0.5, -2.5, -2.5, -0.5, -2.5)
+
+[sub_resource type="BoxMesh" id="BoxMesh_ude6o"]
+size = Vector3(12, 1, 12)
+
+[sub_resource type="ConcavePolygonShape3D" id="ConcavePolygonShape3D_uo7er"]
+data = PackedVector3Array(-6, 0.5, 6, 6, 0.5, 6, -6, -0.5, 6, 6, 0.5, 6, 6, -0.5, 6, -6, -0.5, 6, 6, 0.5, -6, -6, 0.5, -6, 6, -0.5, -6, -6, 0.5, -6, -6, -0.5, -6, 6, -0.5, -6, 6, 0.5, 6, 6, 0.5, -6, 6, -0.5, 6, 6, 0.5, -6, 6, -0.5, -6, 6, -0.5, 6, -6, 0.5, -6, -6, 0.5, 6, -6, -0.5, -6, -6, 0.5, 6, -6, -0.5, 6, -6, -0.5, -6, 6, 0.5, 6, -6, 0.5, 6, 6, 0.5, -6, -6, 0.5, 6, -6, 0.5, -6, 6, 0.5, -6, -6, -0.5, 6, 6, -0.5, 6, -6, -0.5, -6, 6, -0.5, 6, 6, -0.5, -6, -6, -0.5, -6)
+
 [sub_resource type="BoxShape3D" id="BoxShape3D_xwiqt"]
-size = Vector3(67.9168, 51.5165, 13.7017)
+size = Vector3(67.9168, 16.5247, 11.9651)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_hqyux"]
 size = Vector3(17.3333, 58.1318, 16.802)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_2su00"]
-size = Vector3(31.4424, 28.9449, 11.0373)
+size = Vector3(31.4424, 28.9449, 17.4263)
 
 [node name="portal" type="Node3D"]
 script = ExtResource("1_6r10e")
@@ -19,11 +31,31 @@ script = ExtResource("1_6r10e")
 transform = Transform3D(8, 0, 0, 0, 8, 0, 0, 0, 8, 0, 0, 0)
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="portal"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.52711, -2.00008)
+mesh = SubResource("BoxMesh_lh1kx")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="portal/MeshInstance3D"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="portal/MeshInstance3D/StaticBody3D"]
+shape = SubResource("ConcavePolygonShape3D_ex4qi")
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="portal"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.52711, -10.4661)
+mesh = SubResource("BoxMesh_ude6o")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="portal/MeshInstance3D2"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="portal/MeshInstance3D2/StaticBody3D"]
+shape = SubResource("ConcavePolygonShape3D_uo7er")
+
+[node name="SpawnPosition" type="Marker3D" parent="portal"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.1368, -10.4431)
+gizmo_extents = 0.0
 
 [node name="StaticBody3D" type="StaticBody3D" parent="."]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 27.8196, -2.39689)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 7.88019, -0.312215)
 shape = SubResource("BoxShape3D_xwiqt")
 
 [node name="CollisionShape3D2" type="CollisionShape3D" parent="StaticBody3D"]
@@ -31,16 +63,17 @@ transform = Transform3D(1, 0, 0, 0, 0.307772, 0.95146, 0, -0.95146, 0.307772, -2
 shape = SubResource("BoxShape3D_hqyux")
 
 [node name="SpotLight3D" type="SpotLight3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, -0.680938, 0.732341, 0, -0.732341, -0.680938, -2.96756, 43.0466, 0.267361)
+transform = Transform3D(1, 0, 0, 0, -0.680938, 0.732341, 0, -0.732341, -0.680938, -2.96756, 97.9483, -89.6342)
 light_energy = 10.436
-spot_range = 70.1599
+light_bake_mode = 0
+spot_range = 122.033
 
 [node name="Area3D" type="Area3D" parent="."]
 collision_layer = 0
 collision_mask = 2
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.98864, 31.2735, 2.9265)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.98864, 31.2735, 0.931703)
 shape = SubResource("BoxShape3D_2su00")
 
 [connection signal="body_entered" from="Area3D" to="." method="_on_area_3d_body_entered"]

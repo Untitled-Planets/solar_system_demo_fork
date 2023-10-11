@@ -14,13 +14,15 @@ func get_id() -> String:
 func _physics_process(_delta: float) -> void:
 	pass
 
-func _on_area_3d_body_entered(body):
+func _on_area_3d_body_entered(body) -> void:
 	if body is Character:
+		_get_hud()._can_mineral_interact_count += 1
 		body.get_controller().set_pickable_object(self)
 
 
-func _on_area_3d_body_exited(body):
+func _on_area_3d_body_exited(body) -> void:
 	if body is Character:
+		_get_hud()._can_mineral_interact_count -= 1
 		body.get_controller().set_pickable_object(null)
 
 
@@ -31,5 +33,8 @@ func spawn_vfx():
 		instance.global_position = global_position
 		instance.emitting = true
 
-#func _exit_tree():
-	
+
+func _get_hud() -> Control:
+	return get_tree().get_first_node_in_group(&"hud")
+
+

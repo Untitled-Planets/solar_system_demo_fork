@@ -1,16 +1,15 @@
 [gd_scene load_steps=5 format=3 uid="uid://bwa4tmi1yanqs"]
 
-[ext_resource type="Script" path="res://solar_system/planet_materials/pickable_object.gd" id="1_vxo5h"]
-[ext_resource type="PackedScene" uid="uid://b14k1eb3okfho" path="res://resources/sfxs/collection_resource_finished_particles.tscn" id="2_d3b6w"]
+[ext_resource type="Script" path="res://solar_system/planet_materials/pickable_object.gd" id="1_aba5l"]
+[ext_resource type="PackedScene" uid="uid://b14k1eb3okfho" path="res://resources/sfxs/collection_resource_finished_particles.tscn" id="2_15da4"]
+[ext_resource type="PackedScene" uid="uid://ck4x5v8tv1s23" path="res://models/basic asteroid/asteroid.tscn" id="3_n7qy0"]
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_ppgxq"]
 radius = 1.5
 
-[sub_resource type="SphereMesh" id="SphereMesh_mde6k"]
-
 [node name="PickableObject" type="Node3D"]
-script = ExtResource("1_vxo5h")
-_collect_sfx_scene = ExtResource("2_d3b6w")
+script = ExtResource("1_aba5l")
+_collect_sfx_scene = ExtResource("2_15da4")
 
 [node name="Area3D" type="Area3D" parent="."]
 collision_layer = 3
@@ -19,8 +18,7 @@ collision_mask = 3
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D"]
 shape = SubResource("SphereShape3D_ppgxq")
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="Area3D"]
-mesh = SubResource("SphereMesh_mde6k")
+[node name="Asteroid" parent="Area3D" instance=ExtResource("3_n7qy0")]
 
 [connection signal="body_entered" from="Area3D" to="." method="_on_area_3d_body_entered"]
 [connection signal="body_exited" from="Area3D" to="." method="_on_area_3d_body_exited"]

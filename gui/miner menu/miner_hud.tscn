@@ -1,0 +1,71 @@
+[gd_scene load_steps=2 format=3 uid="uid://db2bredw5bfrs"]
+
+[ext_resource type="Script" path="res://gui/miner menu/miner_hud.gd" id="1_sbpv7"]
+
+[node name="MinerHUD" type="Control" groups=["miner_hud"]]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_sbpv7")
+
+[node name="PanelContainer" type="PanelContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+metadata/_edit_use_anchors_ = true
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer"]
+layout_mode = 2
+theme_override_constants/separation = 30
+
+[node name="CenterContainer2" type="CenterContainer" parent="PanelContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/VBoxContainer/CenterContainer2"]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer/VBoxContainer/CenterContainer2/VBoxContainer"]
+layout_mode = 2
+
+[node name="MineralCountlabel" type="Label" parent="PanelContainer/VBoxContainer/CenterContainer2/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+text = "Minerals in the inventory:"
+
+[node name="MineralCount" type="Label" parent="PanelContainer/VBoxContainer/CenterContainer2/VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(140, 0)
+layout_mode = 2
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="PanelContainer/VBoxContainer/CenterContainer2/VBoxContainer"]
+layout_mode = 2
+
+[node name="RefinedMineralsLabel" type="Label" parent="PanelContainer/VBoxContainer/CenterContainer2/VBoxContainer/HBoxContainer2"]
+layout_mode = 2
+text = "Refined Minerals in the inventory:"
+
+[node name="RefindeCount" type="Label" parent="PanelContainer/VBoxContainer/CenterContainer2/VBoxContainer/HBoxContainer2"]
+custom_minimum_size = Vector2(140, 0)
+layout_mode = 2
+
+[node name="CenterContainer3" type="CenterContainer" parent="PanelContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Button" type="Button" parent="PanelContainer/VBoxContainer/CenterContainer3"]
+layout_mode = 2
+text = "Refine"
+
+[node name="CenterContainer" type="CenterContainer" parent="PanelContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="ProgressBar" type="ProgressBar" parent="PanelContainer/VBoxContainer/CenterContainer"]
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
+max_value = 1.0
+step = 0.001
+
+[connection signal="pressed" from="PanelContainer/VBoxContainer/CenterContainer3/Button" to="." method="_on_button_pressed"]

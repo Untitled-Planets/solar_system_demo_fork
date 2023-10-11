@@ -162,7 +162,7 @@ func _get_material() -> ShaderMaterial:
 
 # TODO Obsolete
 func set_shader_param(param_name: String, value):
-	push_warning("set_shader_param is deprecated, use set_shader_parameter")
+	push_warning("set_shader_parameter is deprecated, use set_shader_parameter")
 	set_shader_parameter(param_name, value)
 
 

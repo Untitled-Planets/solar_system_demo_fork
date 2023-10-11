@@ -31,19 +31,40 @@ class SolarSystemData extends ObjectData:
 		self.planets = planets
 
 class ResourceCollectionData extends RefCounted:
+	enum CollectionType {
+		MINERAL,
+		REFINED
+	}
+	
 	var resource_id: String
 	var progress: float
 	var user_id: String
+	var type: CollectionType
+	var amount: int = 10
+	
+	func _init(resource_id: String, progress: float, user_id: String, type: CollectionType) -> void:
+		self.resource_id = resource_id
+		self.progress = progress
+		self.user_id = user_id
+		self.type = type
 
 
-signal resource_collection_progressed(resource_id, p_procent)
-signal resource_collection_finished(resource_id)
-signal resource_collection_started(resource_id)
+signal resource_collection_progressed(resource_id: String, p_procent: float)
+signal resource_collection_finished(resource_id: String, amount: int)
+signal resource_collection_started(resource_id: String)
+
+signal resource_refined_progress(p_resource_id: String, p_procent: float)
+signal resource_refined_finished(p_resource_id: String, amount: int)
+signal resource_refined_started(p_resource_id: String)
+
+signal refined_resource_finished(resource_is: String, amount: int)
+
 signal users_updated(user_joining, user_leaving)
 signal user_position_updated(p_user_id, player_position)
 signal resources_generated(solar_system_id, planet_id ,resources)
 signal planet_status_requested(solar_system_id, planet_id, data)
 signal floating_resources_updated(solar_system_id, planet_id, resources)
+
 signal data_updated(data: Dictionary)
 
 signal server_started
@@ -80,79 +101,72 @@ var _solar_systems: Array[SolarSystemData] = []
 
 var _planet_system: Dictionary = {}
 var _resource_selected: ResourceCollectionData = null
-var _peer: ENetMultiplayerPeer = null
+var _resource_selected_refined: ResourceCollectionData = null
 var network_objects: Dictionary = {}
 var waiting_network_objects_pairing: Array[NetworkObjectData] = []
 
 var update_mode: UpdateMode = UpdateMode.IDLE
-
 var _debug_player_pos: Vector3
 
+var _mineral_amount: int = 0
+var refined_resource: int = 0
+
+var _ws: MultiplayerServerWebSocket = MultiplayerServerWebSocket.new()
+
+func _ready() -> void:
+	add_child(_ws)
+	_ws.packet_recived.connect(_on_packet_recived)
 
 
-func setup_client(address: String, port: int = DEFAULT_PORT) -> Error:
+func _on_packet_recived(type: MultiplayerServerWebSocket.MessageType, data: Dictionary) -> void:
+	match type:
+		MultiplayerServerWebSocket.MessageType.UPDATE_STATE:
+			pass
+		MultiplayerServerWebSocket.MessageType.COLLECT_RESOURCE_FINISHED:
+			var inventoryArr: Array = data.get("inventory", [])
+			var inventory: MultiplayerServerAPI.Inventory = MultiplayerServerAPI.Inventory.new()
+			
+			for i in inventoryArr:
+				var item: MultiplayerServerAPI.Item = MultiplayerServerAPI.Item.new(i["id"], i["name"], i["type"], i["stock"], i.get("description", ""))
+				inventory.push(item)
+			
+			_ws._update_inventory(inventory)
+			
+			resource_collection_finished.emit(_ws.current_player, 0)
+		MultiplayerServerWebSocket.MessageType.REFIN_RESOURCE_FINISHED:
+			var inventoryArr: Array = data.get("inventory", [])
+			var inventory: MultiplayerServerAPI.Inventory = MultiplayerServerAPI.Inventory.new()
+			
+			for i in inventoryArr:
+				var item: MultiplayerServerAPI.Item = MultiplayerServerAPI.Item.new(i["id"], i["name"], i["type"], i["stock"], i.get("description", ""))
+				inventory.push(item)
+			
+			_ws._update_inventory(inventory)
+			
+			refined_resource_finished.emit(_ws.current_player, 0)
+		MultiplayerServerWebSocket.MessageType.ENTER_SHIP:
+			pass
+		MultiplayerServerWebSocket.MessageType.EXIT_SHIP:
+			pass
+		
+
+
+func stock_of(type: String) -> int:
+	if _ws.players.size() == 0:
+		return -1
+	
+	var p = _ws.find_by_id(_ws.current_player)
+	if p:
+		return p.inventory.stock_of(type)
+	else: return -1
+
+func setup_client(address: String) -> Error:
 	close()
-	
-	_peer = null
-	_peer = ENetMultiplayerPeer.new()
-	
-	var err: Error = _peer.create_client(address, port)
-	
-	if err != OK:
-		return err
-	
-	multiplayer.multiplayer_peer = _peer
-	
-	if not multiplayer.connected_to_server.is_connected(_on_server_connected):
-		multiplayer.connected_to_server.connect(_on_server_connected)
-	
-	if not multiplayer.server_disconnected.is_connected(_on_server_disconnected):
-		multiplayer.server_disconnected.connect(_on_server_disconnected)
-	
-	if not multiplayer.connection_failed.is_connected(_on_connection_fail):
-		multiplayer.connection_failed.connect(_on_connection_fail)
-	
-	client_started.emit()
-	
-	return OK
-
-
-func setup_server(port: int = DEFAULT_PORT) -> Error:
-	close()
-	_peer = null
-	_peer = ENetMultiplayerPeer.new()
-	
-	var err: Error = _peer.create_server(port)
-	
-	if err != OK:
-		return err
-	
-	multiplayer.multiplayer_peer = _peer
-	
-	if  not multiplayer.peer_connected.is_connected(_on_peer_connected):
-		multiplayer.peer_connected.connect(_on_peer_connected)
-	
-	if  not multiplayer.peer_disconnected.is_connected(_on_peer_disconnected):
-		multiplayer.peer_disconnected.connect(_on_peer_connected)
-	
-	server_started.emit()
-	
-	join()
-	get_viewport().get_window().title += "Server Instance"
-	return OK
+	return _ws.connect_to_server(address)
 
 
 func close() -> void:
-	if not multiplayer.has_multiplayer_peer():
-		return
-	
-	if multiplayer.multiplayer_peer == null:
-		return
-	
-	if multiplayer.multiplayer_peer.get_connection_status() != MultiplayerPeer.CONNECTION_DISCONNECTED:
-		waiting_network_objects_pairing.clear()
-		network_objects.clear()
-		multiplayer.multiplayer_peer.close()
+	_ws.close()
 
 
 func is_remote_object(node: Node) -> bool:
@@ -173,22 +187,23 @@ func register_network_object(n: NetworkEntity) -> void:
 	var data: NetworkObjectData = NetworkObjectData.new(n)
 	var n_name: StringName = n.get_name()
 	var origin: NetworkEntity.OriginControl = n.origin_control
-	return
-	if multiplayer.is_server():
-		randomize()
-		var network_id: int = randi()
-		#n._peer_id = network_id
-		
-		if origin != NetworkEntity.OriginControl.SERVER:
-			pass
+	
+	if (false):
+		if multiplayer.is_server():
+			randomize()
+			var network_id: int = randi()
+			#n._peer_id = network_id
+			
+			if origin != NetworkEntity.OriginControl.SERVER:
+				pass
+			else:
+				n._is_registered_network = true
+				n.set_multiplayer_authority(origin)
+			
+			network_objects[network_id] = data
 		else:
-			n._is_registered_network = true
-			n.set_multiplayer_authority(origin)
-		
-		network_objects[network_id] = data
-	else:
-		waiting_network_objects_pairing.append(data)
-		remote_register_network_object.rpc_id(1, data.get_instance_id(), n_name, origin)
+			waiting_network_objects_pairing.append(data)
+			remote_register_network_object.rpc_id(1, data.get_instance_id(), n_name, origin)
 
 
 func send_network_notification(notification_event: NetworkNotification, data: Dictionary) -> void:
@@ -299,7 +314,9 @@ func init() -> void:
 func _on_planet_status_requested(p_solar_system_id, p_planet_id, data):
 	planet_status_requested.emit(p_solar_system_id, p_planet_id, data)
 #	_generate_floating_resources_for_solar_system(p_solar_system_id, [int(p_planet_id)])
-	_resources[int(p_solar_system_id)] = {int(p_planet_id): _generate_resources(100)} # temp
+	_resources[int(p_solar_system_id)] = {
+		int(p_planet_id): _generate_resources(100)
+		} # temp
 	floating_resources_updated.emit(p_solar_system_id, p_planet_id, _resources[int(p_solar_system_id)][int(p_planet_id)])
 
 
@@ -326,6 +343,7 @@ func _generate_resources_for_planets(p_planet_ids) -> Dictionary:
 
 func get_resource_for_planet(p_solar_system_id, p_planet_id, _p_resource) -> Array:
 	return _resources[p_solar_system_id][p_planet_id]
+
 
 func _generate_resources(p_amount: int) -> Array[Dictionary]:
 	var rs: Array[Dictionary] = []
@@ -354,8 +372,10 @@ func _initialize()  -> void:
 	_solar_systems.append(ssd)
 
 
-func _on_resource_collected(resource_id: String, _resource_amount: int)  -> void:
-	resource_collection_finished.emit(resource_id)
+func _on_resource_collected(resource_id: String, resource_amount: int)  -> void:
+	print("Resource collected: id: %s - amount %s" % [resource_id, resource_amount])
+	_mineral_amount += resource_amount
+	resource_collection_finished.emit(resource_id, resource_amount)
 
 
 func _generate_resources_for_planet(_p_planet_id) -> PlanetData:
@@ -365,12 +385,40 @@ func _generate_resources_for_planet(_p_planet_id) -> PlanetData:
 func send_last_position(_p_user_id: String, p_position: Vector3)  -> void:
 	_debug_player_pos = p_position
 
+func get_unique_id() -> int:
+	return _ws.get_unique_id()
+
 func start_resource_collect(_p_solar_system_id: int, _p_planet_id: int, p_resource_id: String, p_player_id: String) -> void:
-	_resource_selected = ResourceCollectionData.new()
-	_resource_selected.progress = 0
-	_resource_selected.resource_id = p_resource_id
-	_resource_selected.user_id = p_player_id
+	_resource_selected = ResourceCollectionData.new(
+		p_resource_id,
+		0,
+		p_player_id,
+		ResourceCollectionData.CollectionType.MINERAL
+		)
+	
+	_ws.start_collect_resource()
 	resource_collection_started.emit(p_resource_id)
+
+
+func start_refinery_resource(
+	_p_solar_system_id: int,
+	_p_planet_id: int,
+	p_resource_id: String,
+	p_player_id: String,
+	amount: int
+	) -> void:
+	_resource_selected = ResourceCollectionData.new(
+		p_resource_id,
+		0,
+		p_player_id,
+		ResourceCollectionData.CollectionType.REFINED
+		)
+	
+	_resource_selected.amount = amount
+	_ws.start_refin_resource()
+	resource_refined_started.emit(p_resource_id)
+
+
 
 
 func arrives_on_planet(p_solar_system_id: int, p_planet_id: int, p_player_id):
@@ -395,6 +443,16 @@ func _physics_process(delta: float) -> void:
 		_update(delta)
 
 
+func send_entity_state(from: NetworkEntity, state: Dictionary) -> void:
+	var type: String = from._type
+	var desialized: Dictionary = Util.serialize_dic(state)
+	var id: String = from._network_id
+	desialized["id"] = id
+	desialized["type"] = type
+	
+	_ws.send_data(MultiplayerServerAPI.MessageType.UPDATE_STATE, desialized)
+
+
 
 func pack_data() -> Dictionary:
 	var data: Dictionary = {
@@ -412,7 +470,7 @@ func pack_data_from_group(p_group: String) -> Dictionary:
 	var peer_id: int = -1
 	
 	if connection_status() == MultiplayerPeer.CONNECTION_CONNECTED:
-		peer_id = multiplayer.get_unique_id()
+		peer_id = MultiplayerServer.get_unique_id()
 	
 	for n in ns:
 		if n is NetworkEntity:
@@ -428,11 +486,24 @@ func pack_data_from_group(p_group: String) -> Dictionary:
 
 
 func _update(delta: float) -> void:
-	if _resource_selected:
+	if false:#_resource_selected:
 		_resource_selected.progress = _resource_selected.progress + delta
-		resource_collection_progressed.emit(_resource_selected.resource_id, _resource_selected.progress)
+		
+		if _resource_selected.type == ResourceCollectionData.CollectionType.MINERAL:
+			resource_collection_progressed.emit(_resource_selected.resource_id, _resource_selected.progress)
+		elif _resource_selected.type == ResourceCollectionData.CollectionType.REFINED:
+			resource_refined_progress.emit(_resource_selected.resource_id, _resource_selected.progress)
+		
 		if _resource_selected.progress >= 1.0:
-			Server.collect_item(_resource_selected.user_id, _resource_selected.resource_id, 1, 10)
+			if _resource_selected.type == ResourceCollectionData.CollectionType.REFINED:
+				_mineral_amount = 0
+				refined_resource += roundi(_resource_selected.amount / 2)
+				resource_refined_finished.emit(_resource_selected.resource_id, roundi(_resource_selected.amount / 2))
+				Server.collect_item(_resource_selected.user_id, _resource_selected.resource_id, 1, roundi(_resource_selected.amount / 2))
+			else:
+				_mineral_amount += 10
+				resource_collection_finished.emit(_resource_selected.resource_id, 10)
+			
 			_resource_selected = null
 	
 	_delta_acc += delta

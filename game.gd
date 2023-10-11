@@ -1,6 +1,8 @@
 class_name Game
 extends Node3D
 
+const StellarBody = preload("res://solar_system/stellar_body.gd")
+
 signal machine_instance_from_ui_selected(machine_id: int)
 signal exit_to_menu_requested
 
@@ -104,7 +106,6 @@ func _ready() -> void:
 	
 	MultiplayerServer.init()
 	
-	
 
 
 func _on_resources_generated(_p_solar_system_id, _p_planet_id, _p_resources):
@@ -135,24 +136,29 @@ func _on_users_updated(p_joinigin_users, _p_leaving_users):
 func _on_resource_collection_started(_p_resource_id):
 	_progress_bar.visible = true
 
-func _on_resource_collection_finished(_p_resource_id):
+
+func _on_resource_collection_finished(_p_resource_id, amount: int) -> void:
 	_progress_bar.visible = false
+
 
 func _on_resource_collection_progressed(_p_resource_id, p_unit_procent: float):
 	_progress_bar.value = p_unit_procent
 
+
 func _on_loading_progressed(p_progress_info):
+	print(p_progress_info)
 	if not p_progress_info.finished:
 		return
 	
 	_solar_system.set_reference_body(2)
 	var controller: CharacterController = LocalControllerScene.instantiate()
 	var avatar: Character = await _spawn_player()
-	avatar.set_multiplayer_authority(multiplayer.get_unique_id())
+	
+	#avatar.set_multiplayer_authority(MultiplayerServer.get_unique_id())
 	avatar.set_controller(controller)
 	controller.possess(avatar)
 	add_child(controller)
-	avatar.name = "player_" + str(multiplayer.get_unique_id())
+	avatar.name = "player_" + str(MultiplayerServer.get_unique_id())
 	_solar_system.add_child(avatar)
 	#avatar.network_id = p_player_id
 	#var controller: CharacterController = avatar.get_controller()
@@ -167,14 +173,16 @@ func _on_loading_progressed(p_progress_info):
 		#camera.far *= SolarSystemSetup.LARGE_SCALE
 	_solar_system.add_child(camera)
 	
+	print("Added camera")
+	
 	# Load other peers
-	if multiplayer.has_multiplayer_peer() and not multiplayer.is_server():
+	if false:# multiplayer.has_multiplayer_peer() and not multiplayer.is_server():
 		var peers: Array = multiplayer.get_peers()
 		for p in peers:
 			if MultiplayerServer.peer_is_server(p) and MultiplayerServer.is_server_headless():
 				continue
 			
-			if p == multiplayer.get_unique_id():
+			if p == MultiplayerServer.get_unique_id():
 				continue
 			
 			if _solar_system.has_node("player_" + str(p)):
@@ -189,7 +197,6 @@ func _on_loading_progressed(p_progress_info):
 			new_character.name = "player_" + str(p)
 			_solar_system.add_child(new_character)
 			r.set_uuid(str(p))
-	#push_warning(get_tree().get_nodes_in_group(&"character"))
 
 
 
@@ -202,6 +209,7 @@ func _spawn_player() -> Character:
 	var avatar = null
 	while avatar == null:
 		await get_tree().process_frame
+		print("_spawn_player: waiting process frame")
 		
 		var query: PhysicsRayQueryParameters3D = PhysicsRayQueryParameters3D.new()
 		query.from = _solar_system.get_reference_stellar_body().radius * 10 * Vector3.UP
@@ -213,7 +221,7 @@ func _spawn_player() -> Character:
 			avatar = CharacterScene.instantiate()
 #			_solar_system.add_child(avatar)
 			avatar.position = result.position
-	
+	print("returning avatar")
 	return avatar
 
 
@@ -306,7 +314,7 @@ func _on_mineral_extracted(id, amount) -> void:
 	_warehouse.add_item(Warehouse.ItemData.new(id, amount))
 
 func _on_reference_body_changed(body_info):
-	var previous_body := _solar_system.get_reference_stellar_body_by_id(body_info.old_id)
+	var previous_body = _solar_system.get_reference_stellar_body_by_id(body_info.old_id)
 	previous_body.remove_machines()
 	MultiplayerServer.arrives_on_planet(0, _solar_system.get_reference_stellar_body_id(), _username)
 
@@ -456,8 +464,7 @@ func finish_task(machine_id: int, task_id: int) -> void:
 func despawn_machine(p_machine_id: int) -> void:
 	Server.despawn_machine(0, _solar_system.get_reference_stellar_body_id(), p_machine_id, _username)
 
-func buy_ship() -> void:
-	
+func buy_ship(spawn_position: Vector3) -> void:
 	pass
 
 
@@ -489,7 +496,7 @@ func exit_ship() -> void:
 	var spawn_position: Vector3 = ship.get_character_spawn_position()
 	MultiplayerServer.send_network_notification(MultiplayerServer.NetworkNotification.PLAYER_SPAWN, {"pos": spawn_position})
 	var character: Character = CharacterScene.instantiate()
-	character.name = &"player_%s" % multiplayer.get_unique_id()
+	character.name = &"player_%s" % MultiplayerServer.get_unique_id()
 	_solar_system.add_child(character)
 	character.global_position = spawn_position
 	_solar_system.target_ship = null

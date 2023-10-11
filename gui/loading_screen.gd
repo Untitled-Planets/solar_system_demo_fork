@@ -8,5 +8,5 @@ func _on_GameWorld_loading_progressed(info):
 	if info.finished:
 		hide()
 	else:
-		pass#_label.text = info.message
-		#_progress_bar.value = info.progress
+		_label.text = info.message
+		_progress_bar.value = info.progress

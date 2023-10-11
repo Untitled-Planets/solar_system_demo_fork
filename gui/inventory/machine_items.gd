@@ -5,6 +5,7 @@ signal item_selected(asset_panel)
 signal item_instance_selected(istance_panel)
 
 @onready var _assets = $VBoxContainer/AssetsScroll/VBoxContainer
+@warning_ignore("unused_private_class_variable")
 @onready var _instances = $VBoxContainer/InstancesScroll/VBoxContainer
 
 @export var _asset_panel_scene: PackedScene = null

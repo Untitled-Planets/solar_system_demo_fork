@@ -12,12 +12,9 @@ var _character = null:
 			print_stack()
 
 func _ready():
-	add_to_group("network")
-	var ns: Array = get_tree().get_nodes_in_group("game")
-	if ns.size() != 0:
-		_game = ns[0]
-		return
-	push_warning("No game class exists in the scene")
+	add_to_group(&"network")
+	_game = get_tree().get_first_node_in_group(&"game")
+	#push_warning("No game class exists in the scene")
 
 func get_player_id() -> int:
 	return _player_id
@@ -72,17 +69,17 @@ func release_mouse():
 	escape()
 
 
-func capture():
+func capture() -> void:
 #	if in_ui:
 #		return
 	# Remove focus from the HUD
-	var focus_owner = get_viewport().gui_get_focus_owner()
+	var focus_owner: Control = get_viewport().gui_get_focus_owner()
 	if focus_owner != null:
 		focus_owner.release_focus()
 	
 	# Capture the mouse for the game
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 
-func escape():
+func escape() -> void:
 	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
-	emit_signal("escaped")
+	escaped.emit()

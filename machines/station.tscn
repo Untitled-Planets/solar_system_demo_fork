@@ -39,7 +39,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -40.5547, 3, 50.617)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -58.4752, 0, 54.0141)
 
 [node name="interactive_point" type="Marker3D" parent="." groups=["station_interactive_panel"]]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -31.302, 0, 47.921)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.0406, 26.4088, -93.3597)
 script = ExtResource("3_r3ap2")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="interactive_point"]

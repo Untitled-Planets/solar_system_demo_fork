@@ -155,3 +155,41 @@ static func unit_coordinates_to_unit_vector(p_coord: Vector2) -> Vector3:
 # p_coordinates must be in radians
 static func coordinate_to_unit_coordinates(p_coordinate: Vector2) -> Vector2:
 	return Vector2(p_coordinate.x / HALF_PI, p_coordinate.y / TWO_PI)
+
+
+static func serialize_dic(data: Dictionary) -> Dictionary:
+	var new_dic: Dictionary = {}
+	
+	for k in data.keys():
+		if typeof(data[k]) == TYPE_VECTOR3:
+			new_dic[k] = serialize_vec3(data[k])
+		else:
+			new_dic[k] = data[k]
+	
+	return new_dic
+
+
+static func deserialize_dic(data: Dictionary) -> Dictionary:
+	var new_dic: Dictionary = {}
+	
+	for k in data.keys():
+		if typeof(data[k]) == TYPE_DICTIONARY and (data[k].has("x") and data[k].has("y") and data[k].has("z")):
+			new_dic[k] = deserialize_vec3(data[k])
+		else:
+			new_dic[k] = data[k]
+	
+	return new_dic
+
+
+static func serialize_vec3(vec: Vector3) -> Dictionary:
+	return {
+		"x": vec.x,
+		"y": vec.y,
+		"z": vec.z
+	}
+
+
+static func deserialize_vec3(vec_data: Dictionary) -> Vector3:
+	return Vector3(vec_data.get("x", 0), vec_data.get("y", 0), vec_data.get("z", 0))
+
+

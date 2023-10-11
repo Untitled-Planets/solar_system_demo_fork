@@ -1,6 +1,8 @@
 extends Game
 
-@export var _pickable_object_scene: PackedScene
+#const StellarBody = preload("res://solar_system/stellar_body.gd")
+
+#@export var _pickable_object_scene: PackedScene
 
 
 
@@ -14,7 +16,6 @@ func _ready():
 	
 	super._ready()
 #	_player_station_ui.visible = true
-	
 
 
 func request_sync() -> void:
@@ -53,11 +54,11 @@ func _on_multiplayer_event(multiplayer_event: MultiplayerServer.NetworkNotificat
 					c.global_position = data.get("pos")
 		MultiplayerServer.NetworkNotification.PLAYER_DESPAWN:
 			if _solar_system.has_node("player_%s" % from_peer):
-				var char: Character = _solar_system.get_node("player_%s" % from_peer) as Character
-				if char.get_controller() != null:
-					char.get_controller().unpossess()
-					char.get_controller().queue_free()
-				char.queue_free()
+				var character: Character = _solar_system.get_node("player_%s" % from_peer) as Character
+				if character.get_controller() != null:
+					character.get_controller().unpossess()
+					character.get_controller().queue_free()
+				character.queue_free()
 		_:
 			pass
 
@@ -149,28 +150,30 @@ func _on_loading_progressed(p_progress_info):
 
 
 
-func buy_ship() -> void:
-	if get_tree().get_nodes_in_group("ship").size() > 0:
+func buy_ship(spawn_position: Vector3) -> void:
+	if get_tree().get_nodes_in_group(&"ship").size() > 0:
 		print("You already has a ship!")
 		return
-	super.buy_ship()
+	super.buy_ship(spawn_position)
 	var station: Station = get_tree().get_first_node_in_group(&"portal_station")
 	if station == null:
 		push_error("Station is null")
 		return
 	var ship: Ship = ShipScene.instantiate()
 	ship.add_to_group(&"ship")
-	var id: int = multiplayer.get_unique_id()
+	var id: int = MultiplayerServer.get_unique_id()
 	ship.set_multiplayer_authority(id)
 	randomize()
 	var ship_id: int = id + (randi() % 1 << 16)
 	ship.name = &"ship_%s" % ship_id
 	_solar_system.add_child(ship)
-	ship.position = station.spaceship_spawn_position
+	print("spawn position: %s" % spawn_position)
+	ship.global_position = spawn_position
 	var data: Dictionary = {
 		"owner": id,
 		"instanced": true,
-		"ship_id": ship_id
+		"ship_id": ship_id,
+		"position": spawn_position
 	}
 	
 	_ships[ship_id] = {

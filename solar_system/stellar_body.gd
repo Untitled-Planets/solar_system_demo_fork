@@ -1,4 +1,4 @@
-class_name StellarBody
+
 const PlanetAtmosphere = preload("res://addons/zylann.atmosphere/planet_atmosphere.gd")
 
 const TYPE_SUN = 0
@@ -70,11 +70,13 @@ func get_surface_transform(pos: Vector2):
 
 
 func add_machine(p_machine: MachineCharacter) -> void:
-	_machine_pivot.add_child(p_machine)
+	if _machine_pivot:
+		_machine_pivot.add_child(p_machine)
 
 func remove_machines() -> void:
-	for c in _machine_pivot.get_children():
-		c.queue_free()
+	if _machine_pivot:
+		for c in _machine_pivot.get_children():
+			c.queue_free()
 
 
 func add_waypoint(p_index: int, p_waypoint: Waypoint):

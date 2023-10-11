@@ -1,0 +1,267 @@
+[gd_scene format=3 uid="uid://bweb7ttjg6quk"]
+
+[node name="ItemInventory" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = -699.0
+grow_horizontal = 2
+grow_vertical = 2
+metadata/_edit_horizontal_guides_ = [-52.0]
+
+[node name="PanelContainer" type="PanelContainer" parent="."]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="PanelContainer/VBoxContainer"]
+layout_mode = 2
+text = "Inventory:"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="PanelContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="ScrollContainer" type="ScrollContainer" parent="PanelContainer/VBoxContainer"]
+custom_minimum_size = Vector2(450, 600)
+layout_mode = 2
+
+[node name="GridContainer" type="GridContainer" parent="PanelContainer/VBoxContainer/ScrollContainer"]
+custom_minimum_size = Vector2(400, 500)
+layout_mode = 2
+theme_override_constants/h_separation = 10
+theme_override_constants/v_separation = 10
+columns = 4
+
+[node name="ColorRect" type="ColorRect" parent="PanelContainer/VBoxContainer/ScrollContainer/GridContainer"]
+custom_minimum_size = Vector2(80, 80)
+layout_mode = 2
+
+[node name="ColorRect2" type="ColorRect" parent="PanelContainer/VBoxContainer/ScrollContainer/GridContainer"]
+custom_minimum_size = Vector2(80, 80)
+layout_mode = 2
+
+[node name="ColorRect3" type="ColorRect" parent="PanelContainer/VBoxContainer/ScrollContainer/GridContainer"]
+custom_minimum_size = Vector2(80, 80)
+layout_mode = 2
+
+[node name="ColorRect4" type="ColorRect" parent="PanelContainer/VBoxContainer/ScrollContainer/GridContainer"]
+custom_minimum_size = Vector2(80, 80)
+layout_mode = 2
+
+[node name="ColorRect5" type="ColorRect" parent="PanelContainer/VBoxContainer/ScrollContainer/GridContainer"]
+custom_minimum_size = Vector2(80, 80)
+layout_mode = 2
+
+[node name="ColorRect6" type="ColorRect" parent="PanelContainer/VBoxContainer/ScrollContainer/GridContainer"]
+custom_minimum_size = Vector2(80, 80)
+layout_mode = 2
+
+[node name="ColorRect7" type="ColorRect" parent="PanelContainer/VBoxContainer/ScrollContainer/GridContainer"]
+custom_minimum_size = Vector2(80, 80)
+layout_mode = 2
+
+[node name="ColorRect8" type="ColorRect" parent="PanelContainer/VBoxContainer/ScrollContainer/GridContainer"]
+custom_minimum_size = Vector2(80, 80)
+layout_mode = 2
+
+[node name="ColorRect9" type="ColorRect" parent="PanelContainer/VBoxContainer/ScrollContainer/GridContainer"]
+custom_minimum_size = Vector2(80, 80)
+layout_mode = 2
+
+[node name="ColorRect10" type="ColorRect" parent="PanelContainer/VBoxContainer/ScrollContainer/GridContainer"]
+custom_minimum_size = Vector2(80, 80)
+layout_mode = 2
+
+[node name="ColorRect11" type="ColorRect" parent="PanelContainer/VBoxContainer/ScrollContainer/GridContainer"]
+custom_minimum_size = Vector2(80, 80)
+layout_mode = 2
+
+[node name="ColorRect12" type="ColorRect" parent="PanelContainer/VBoxContainer/ScrollContainer/GridContainer"]
+custom_minimum_size = Vector2(80, 80)
+layout_mode = 2
+
+[node name="ColorRect13" type="ColorRect" parent="PanelContainer/VBoxContainer/ScrollContainer/GridContainer"]
+custom_minimum_size = Vector2(80, 80)
+layout_mode = 2
+
+[node name="ColorRect14" type="ColorRect" parent="PanelContainer/VBoxContainer/ScrollContainer/GridContainer"]
+custom_minimum_size = Vector2(80, 80)
+layout_mode = 2
+
+[node name="ColorRect15" type="ColorRect" parent="PanelContainer/VBoxContainer/ScrollContainer/GridContainer"]
+custom_minimum_size = Vector2(80, 80)
+layout_mode = 2
+
+[node name="ColorRect16" type="ColorRect" parent="PanelContainer/VBoxContainer/ScrollContainer/GridContainer"]
+custom_minimum_size = Vector2(80, 80)
+layout_mode = 2
+
+[node name="ColorRect17" type="ColorRect" parent="PanelContainer/VBoxContainer/ScrollContainer/GridContainer"]
+custom_minimum_size = Vector2(80, 80)
+layout_mode = 2
+
+[node name="ColorRect18" type="ColorRect" parent="PanelContainer/VBoxContainer/ScrollContainer/GridContainer"]
+custom_minimum_size = Vector2(80, 80)
+layout_mode = 2
+
+[node name="ColorRect19" type="ColorRect" parent="PanelContainer/VBoxContainer/ScrollContainer/GridContainer"]
+custom_minimum_size = Vector2(80, 80)
+layout_mode = 2
+
+[node name="ColorRect20" type="ColorRect" parent="PanelContainer/VBoxContainer/ScrollContainer/GridContainer"]
+custom_minimum_size = Vector2(80, 80)
+layout_mode = 2
+
+[node name="ColorRect21" type="ColorRect" parent="PanelContainer/VBoxContainer/ScrollContainer/GridContainer"]
+custom_minimum_size = Vector2(80, 80)
+layout_mode = 2
+
+[node name="ColorRect22" type="ColorRect" parent="PanelContainer/VBoxContainer/ScrollContainer/GridContainer"]
+custom_minimum_size = Vector2(80, 80)
+layout_mode = 2
+
+[node name="ColorRect23" type="ColorRect" parent="PanelContainer/VBoxContainer/ScrollContainer/GridContainer"]
+custom_minimum_size = Vector2(80, 80)
+layout_mode = 2
+
+[node name="ColorRect24" type="ColorRect" parent="PanelContainer/VBoxContainer/ScrollContainer/GridContainer"]
+custom_minimum_size = Vector2(80, 80)
+layout_mode = 2
+
+[node name="ColorRect25" type="ColorRect" parent="PanelContainer/VBoxContainer/ScrollContainer/GridContainer"]
+custom_minimum_size = Vector2(80, 80)
+layout_mode = 2
+
+[node name="ColorRect26" type="ColorRect" parent="PanelContainer/VBoxContainer/ScrollContainer/GridContainer"]
+custom_minimum_size = Vector2(80, 80)
+layout_mode = 2
+
+[node name="ColorRect27" type="ColorRect" parent="PanelContainer/VBoxContainer/ScrollContainer/GridContainer"]
+custom_minimum_size = Vector2(80, 80)
+layout_mode = 2
+
+[node name="ColorRect28" type="ColorRect" parent="PanelContainer/VBoxContainer/ScrollContainer/GridContainer"]
+custom_minimum_size = Vector2(80, 80)
+layout_mode = 2
+
+[node name="ColorRect29" type="ColorRect" parent="PanelContainer/VBoxContainer/ScrollContainer/GridContainer"]
+custom_minimum_size = Vector2(80, 80)
+layout_mode = 2
+
+[node name="ColorRect30" type="ColorRect" parent="PanelContainer/VBoxContainer/ScrollContainer/GridContainer"]
+custom_minimum_size = Vector2(80, 80)
+layout_mode = 2
+
+[node name="ColorRect31" type="ColorRect" parent="PanelContainer/VBoxContainer/ScrollContainer/GridContainer"]
+custom_minimum_size = Vector2(80, 80)
+layout_mode = 2
+
+[node name="ColorRect32" type="ColorRect" parent="PanelContainer/VBoxContainer/ScrollContainer/GridContainer"]
+custom_minimum_size = Vector2(80, 80)
+layout_mode = 2
+
+[node name="ColorRect33" type="ColorRect" parent="PanelContainer/VBoxContainer/ScrollContainer/GridContainer"]
+custom_minimum_size = Vector2(80, 80)
+layout_mode = 2
+
+[node name="ColorRect34" type="ColorRect" parent="PanelContainer/VBoxContainer/ScrollContainer/GridContainer"]
+custom_minimum_size = Vector2(80, 80)
+layout_mode = 2
+
+[node name="ColorRect35" type="ColorRect" parent="PanelContainer/VBoxContainer/ScrollContainer/GridContainer"]
+custom_minimum_size = Vector2(80, 80)
+layout_mode = 2
+
+[node name="ColorRect36" type="ColorRect" parent="PanelContainer/VBoxContainer/ScrollContainer/GridContainer"]
+custom_minimum_size = Vector2(80, 80)
+layout_mode = 2
+
+[node name="ColorRect37" type="ColorRect" parent="PanelContainer/VBoxContainer/ScrollContainer/GridContainer"]
+custom_minimum_size = Vector2(80, 80)
+layout_mode = 2
+
+[node name="ColorRect38" type="ColorRect" parent="PanelContainer/VBoxContainer/ScrollContainer/GridContainer"]
+custom_minimum_size = Vector2(80, 80)
+layout_mode = 2
+
+[node name="ColorRect39" type="ColorRect" parent="PanelContainer/VBoxContainer/ScrollContainer/GridContainer"]
+custom_minimum_size = Vector2(80, 80)
+layout_mode = 2
+
+[node name="ColorRect40" type="ColorRect" parent="PanelContainer/VBoxContainer/ScrollContainer/GridContainer"]
+custom_minimum_size = Vector2(80, 80)
+layout_mode = 2
+
+[node name="ColorRect41" type="ColorRect" parent="PanelContainer/VBoxContainer/ScrollContainer/GridContainer"]
+custom_minimum_size = Vector2(80, 80)
+layout_mode = 2
+
+[node name="ColorRect42" type="ColorRect" parent="PanelContainer/VBoxContainer/ScrollContainer/GridContainer"]
+custom_minimum_size = Vector2(80, 80)
+layout_mode = 2
+
+[node name="ColorRect43" type="ColorRect" parent="PanelContainer/VBoxContainer/ScrollContainer/GridContainer"]
+custom_minimum_size = Vector2(80, 80)
+layout_mode = 2
+
+[node name="ColorRect44" type="ColorRect" parent="PanelContainer/VBoxContainer/ScrollContainer/GridContainer"]
+custom_minimum_size = Vector2(80, 80)
+layout_mode = 2
+
+[node name="ColorRect45" type="ColorRect" parent="PanelContainer/VBoxContainer/ScrollContainer/GridContainer"]
+custom_minimum_size = Vector2(80, 80)
+layout_mode = 2
+
+[node name="ColorRect46" type="ColorRect" parent="PanelContainer/VBoxContainer/ScrollContainer/GridContainer"]
+custom_minimum_size = Vector2(80, 80)
+layout_mode = 2
+
+[node name="ColorRect47" type="ColorRect" parent="PanelContainer/VBoxContainer/ScrollContainer/GridContainer"]
+custom_minimum_size = Vector2(80, 80)
+layout_mode = 2
+
+[node name="ColorRect48" type="ColorRect" parent="PanelContainer/VBoxContainer/ScrollContainer/GridContainer"]
+custom_minimum_size = Vector2(80, 80)
+layout_mode = 2
+
+[node name="ColorRect49" type="ColorRect" parent="PanelContainer/VBoxContainer/ScrollContainer/GridContainer"]
+custom_minimum_size = Vector2(80, 80)
+layout_mode = 2
+
+[node name="ColorRect50" type="ColorRect" parent="PanelContainer/VBoxContainer/ScrollContainer/GridContainer"]
+custom_minimum_size = Vector2(80, 80)
+layout_mode = 2
+
+[node name="ColorRect51" type="ColorRect" parent="PanelContainer/VBoxContainer/ScrollContainer/GridContainer"]
+custom_minimum_size = Vector2(80, 80)
+layout_mode = 2
+
+[node name="ColorRect52" type="ColorRect" parent="PanelContainer/VBoxContainer/ScrollContainer/GridContainer"]
+custom_minimum_size = Vector2(80, 80)
+layout_mode = 2
+
+[node name="ColorRect53" type="ColorRect" parent="PanelContainer/VBoxContainer/ScrollContainer/GridContainer"]
+custom_minimum_size = Vector2(80, 80)
+layout_mode = 2
+
+[node name="ColorRect54" type="ColorRect" parent="PanelContainer/VBoxContainer/ScrollContainer/GridContainer"]
+custom_minimum_size = Vector2(80, 80)
+layout_mode = 2
+
+[node name="ColorRect55" type="ColorRect" parent="PanelContainer/VBoxContainer/ScrollContainer/GridContainer"]
+custom_minimum_size = Vector2(80, 80)
+layout_mode = 2
+
+[node name="ColorRect56" type="ColorRect" parent="PanelContainer/VBoxContainer/ScrollContainer/GridContainer"]
+custom_minimum_size = Vector2(80, 80)
+layout_mode = 2
+
+[node name="ColorRect57" type="ColorRect" parent="PanelContainer/VBoxContainer/ScrollContainer/GridContainer"]
+custom_minimum_size = Vector2(80, 80)
+layout_mode = 2

@@ -15,7 +15,7 @@ signal mineral_extracted(id, amount)
 
 var _actions: Array[IActionsContext.ActionContext] = []
 var _mining_amount: int = 0
-#var _game: Game
+
 
 func _ready():
 	super._ready()
@@ -44,6 +44,12 @@ func _ready():
 	action.name = "CMine" # Cancel Mine
 	action.function = func(): _game.cancel_task(get_id(), get_current_task().get_id())
 	_actions.append(action)
+	
+	#_game.sola
+	
+	#if $RayCast3D.is_colliding():
+	#	var point: Vector3 = $RayCast3D.get_collision_point()
+	#	global_position = point
 
 
 func _process(delta: float):
@@ -69,3 +75,17 @@ func get_mining_speed() -> int:
 func set_machine_data(p_data: Dictionary) -> void:
 	super.set_machine_data(p_data)
 	_mining_amount = p_data.mining_speed
+
+
+func _on_area_3d_body_entered(body: Node3D) -> void:
+	if body.is_in_group(&"character"):
+		var miner_hud = get_tree().get_first_node_in_group(&"miner_hud")
+		if miner_hud:
+			miner_hud.show()
+
+
+func _on_area_3d_body_exited(body: Node3D) -> void:
+	if body.is_in_group(&"character"):
+		var miner_hud: Control = get_tree().get_first_node_in_group(&"miner_hud")
+		if miner_hud:
+			miner_hud.hide()

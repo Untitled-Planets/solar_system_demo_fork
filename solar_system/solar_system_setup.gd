@@ -1,5 +1,5 @@
 
-const stellarBody = preload("./stellar_body.gd")
+const StellarBody = preload("./stellar_body.gd")
 const Settings = preload("res://settings.gd")
 const PlanetAtmosphere = preload("res://addons/zylann.atmosphere/planet_atmosphere.gd")
 
@@ -548,4 +548,3 @@ static func setup_stellar_body(body: StellarBody, parent: Node,
 		_setup_atmosphere(body, root, settings)
 	
 	return sun_light
-

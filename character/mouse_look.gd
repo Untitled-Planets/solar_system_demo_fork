@@ -6,7 +6,9 @@ const MIN_ANGLE = -90.0
 
 #@onready var _head : Node3D = get_node("../Head")
 
+@warning_ignore("unused_private_class_variable")
 var _pitch := 0.0
+@warning_ignore("unused_private_class_variable")
 var _yaw := 0.0
 
 

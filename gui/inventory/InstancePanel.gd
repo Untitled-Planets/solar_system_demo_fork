@@ -35,7 +35,7 @@ func _on_texture_button_pressed():
 		emit_signal("instance_selected", self)
 
 func _spawn_machine() -> void:
-	Server.machine
+	pass#Server.machine
 
 func get_actions() -> Array[IActionsContext.ActionContext]:
 	var spawn_action := IActionsContext.ActionContext.new()

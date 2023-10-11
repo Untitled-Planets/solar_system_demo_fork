@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3 uid="uid://dy68vys8biwod"]
+[gd_scene load_steps=9 format=3 uid="uid://dy68vys8biwod"]
 
 [ext_resource type="PackedScene" uid="uid://d20pdti6fffac" path="res://machines/Machine.tscn" id="1_v8j52"]
 [ext_resource type="Script" path="res://machines/miner/Miner.gd" id="2_0ykg2"]
@@ -6,6 +6,10 @@
 [ext_resource type="PackedScene" uid="uid://b2u7640pp47m4" path="res://machines/vfx/miner_laser.tscn" id="4_7jnsw"]
 [ext_resource type="Script" path="res://machines/miner/tasks/MinerMineTask.gd" id="5_ar27r"]
 [ext_resource type="Script" path="res://machines/miner/tasks/MinerMoveTask.gd" id="7_aq5ft"]
+[ext_resource type="Script" path="res://machines/miner/refinery.gd" id="7_mydpe"]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_73p3y"]
+radius = 25.9302
 
 [node name="Miner" groups=["miner"] instance=ExtResource("1_v8j52")]
 script = ExtResource("2_0ykg2")
@@ -26,4 +30,20 @@ script = ExtResource("5_ar27r")
 
 [node name="move" type="Node" parent="tasks" index="1"]
 script = ExtResource("7_aq5ft")
-_mine_interval = null
+
+[node name="refinery" type="Node" parent="tasks" index="2"]
+script = ExtResource("7_mydpe")
+
+[node name="RayCast3D" type="RayCast3D" parent="." index="4"]
+target_position = Vector3(0, -30, 0)
+
+[node name="Area3D" type="Area3D" parent="." index="5"]
+collision_layer = 0
+collision_mask = 2
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D" index="0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5.07594, 0)
+shape = SubResource("SphereShape3D_73p3y")
+
+[connection signal="body_entered" from="Area3D" to="." method="_on_area_3d_body_entered"]
+[connection signal="body_exited" from="Area3D" to="." method="_on_area_3d_body_exited"]

@@ -11,7 +11,7 @@ var _game: Game
 var _mine_acc: float = 0.0
 
 func _ready():
-	_game = get_tree().get_nodes_in_group("game")[0]
+	_game = get_tree().get_first_node_in_group(&"game")
 	Server.planet_resource_collected.connect(_on_resource_collected)
 	_miner.resource_collected.connect(_game.on_resource_colleted)
 
@@ -49,12 +49,12 @@ func get_finished() -> int:
 	return _status
 
 
-func _on_move_finished(request_id: int) -> void:
+func _on_move_finished(_request_id: int) -> void:
 	_movement.move_request_finished.disconnect(_on_move_finished)
 	_is_on_place = true
 
 
-func _on_resource_collected(machine_id: int, planet_id, amount: int) -> void:
+func _on_resource_collected(machine_id: int, _planet_id, amount: int) -> void:
 	if machine_id == _miner.get_id():
 		if amount == 0:
 			_status = ITask.Finished.SUCCESS

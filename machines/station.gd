@@ -10,6 +10,6 @@ var character_spawn_position: Vector3:
 
 var spaceship_spawn_position: Vector3:
 	get:
-		return $spacehsip_pivot.global_position
+		return $portal.spawn_ship_position.global_position
 
 

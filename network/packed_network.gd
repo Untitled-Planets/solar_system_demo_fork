@@ -25,12 +25,16 @@ enum SyncMode {
 	FRAME
 }
 
+
+
 @export var entity_owner: Node = null
 ## List of properties that will be updating over the network
 @export var properties_sync: Array[StringName] = []
 @export var origin_control: OriginControl = OriginControl.SERVER
 @export var sync_mode: SyncMode = SyncMode.UPDATE
 
+var _network_id: String = "";
+var _type: String = "";
 var _network_object_id: int = -1
 var _last_state: Dictionary = {}
 ## List of properties that will be updating over the network
@@ -104,19 +108,19 @@ func _process(_delta: float) -> void:
 	if sync_mode == SyncMode.UPDATE:
 		if not changed_values.is_empty():
 			properties_changed.emit(changed_values, self)
-			_on_data_recived.rpc(changed_values)
+			MultiplayerServer.send_entity_state(self, changed_values)
 	elif sync_mode == SyncMode.FRAME:
-		_on_data_recived.rpc(current_state)
+		MultiplayerServer.send_entity_state(self, current_state)
 
 
 ## Request the authority to send you the current data to keep them updated
 func request_authority_parameters() -> void:
 	assert(not is_multiplayer_authority())
 	_waiting_sync = false
-	_on_request_data_parameters.rpc_id(get_multiplayer_authority())
+	#_on_request_data_parameters.rpc_id(get_multiplayer_authority())
 
 
-@rpc("any_peer", "unreliable_ordered")
+#@rpc("any_peer", "unreliable_ordered")
 func _on_data_recived(packet_data: Dictionary, sync_response: bool = false) -> void:
 	var sender: int = multiplayer.get_remote_sender_id()
 	#if sender != get_multiplayer_authority():
@@ -175,16 +179,15 @@ func set_properties(packet_data: Dictionary) -> void:
 ## @expermiental
 ## @deprecated
 func serialize() -> Dictionary:
-	return {}
-	assert(false, "Implement this")
+	#assert(false, "Implement this")
 	return {}
 
 
 ## @expermiental
 ## @deprecated
 func deserialize(p_data: Dictionary) -> void:
-	return
-	assert(false, "Implement this")
+	#assert(false, "Implement this")
+	pass
 
 
 ## @expermiental

@@ -2,6 +2,7 @@
 class_name StellarBodyWrapper
 extends Node3D
 
+const StellarBody = preload("res://solar_system/stellar_body.gd")
 
 var stellar_body: StellarBody = null
 

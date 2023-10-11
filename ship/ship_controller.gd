@@ -1,6 +1,6 @@
 extends AController
 
-#const StellarBody = preload("../solar_system/stellar_body.gd")
+const StellarBody = preload("../solar_system/stellar_body.gd")
 #var CharacterScene = load("res://character/character.tscn")
 @export var CharacterScene: PackedScene
 
@@ -84,7 +84,7 @@ func _try_exit_ship():
 		print("Can't walk on this")
 		return
 	var planet_center := stellar_body.node.global_transform.origin
-	var space_state : PhysicsDirectSpaceState3D = ship.get_world_3d().direct_space_state
+	var _space_state : PhysicsDirectSpaceState3D = ship.get_world_3d().direct_space_state
 	var ship_trans : Transform3D = ship.global_transform
 	var ship_pos : Vector3 = ship_trans.origin
 	var down := (planet_center - ship_pos).normalized()

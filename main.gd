@@ -2,6 +2,7 @@ extends Node
 
 
 const Settings = preload("res://settings.gd")
+const game_scene: PackedScene = preload("res://demo_game.tscn")
 
 @onready var _main_menu = $MainMenu
 @onready var _settings_ui = $SettingsUI
@@ -19,7 +20,6 @@ func _ready():
 func _on_login_requested(_p_data: Dictionary) -> void:
 	assert(_game == null)
 	_main_menu.hide()
-	var game_scene : PackedScene = load("res://demo_game.tscn")
 	_game = game_scene.instantiate()
 	_game._username = _username
 	add_child(_game)
@@ -38,7 +38,7 @@ func _on_MainMenu_start_requested(p_username):
 
 func _on_main_menu_start_client(p_username, server_ip: String = "127.0.0.1") -> void:
 	_username = p_username
-	MultiplayerServer.setup_client(server_ip)
+	MultiplayerServer.setup_client("ws://" + server_ip + ":8080")
 	await multiplayer.connected_to_server
 	Server.join(p_username)
 

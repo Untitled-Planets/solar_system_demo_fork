@@ -1,0 +1,5 @@
+[gd_scene load_steps=2 format=3 uid="uid://ck4x5v8tv1s23"]
+
+[ext_resource type="PackedScene" uid="uid://10ha7g8ioebr" path="res://models/basic asteroid/Asteroid.fbx" id="1_3lwlm"]
+
+[node name="Asteroid" instance=ExtResource("1_3lwlm")]

@@ -1,7 +1,7 @@
 class_name PlanetMode
 extends Node
 
-#const StellarBody = preload("res://solar_system/stellar_body.gd")
+const StellarBody = preload("res://solar_system/stellar_body.gd")
 #const SolarSystem = preload("res://solar_system/solar_system.gd")
 const MOUSE_TURN_SENSITIVITY = 0.1
 

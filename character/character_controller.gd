@@ -49,6 +49,7 @@ var _yaw := 0.0
 func _ready():
 	super._ready()
 	MultiplayerServer.resource_collection_finished.connect(_on_resource_collection_finished)
+	MultiplayerServer.refined_resource_finished.connect(_on_refined_resource_finished)
 
 func set_enable_local_controller(p_value: bool):
 	var enabled := p_value
@@ -61,10 +62,13 @@ func set_uuid(p_uuid: String):
 	_uuid = p_uuid
 
 
-func _on_resource_collection_finished(_p_resource_id):
+func _on_resource_collection_finished(_p_resource_id: String, amount: int):
 	if _pickable:
 		_pickable.spawn_vfx()
 		_pickable.queue_free()
+
+func _on_refined_resource_finished(_p_resource_id: String, amount: int) -> void:
+	print("Refined Resource: %s" % amount)
 
 func _process(_delta):
 	var motor := Vector3()

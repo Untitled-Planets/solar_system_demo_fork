@@ -1,6 +1,8 @@
 class_name MachineCharacter
 extends IWorker
 
+const StellarBody = preload("res://solar_system/stellar_body.gd")
+
 enum State {
 	WORKING,
 	MOVING,
@@ -27,11 +29,8 @@ var _task_data_queue: Array = []
 var _planet_mine_location_id: int = -1
 
 func _ready():
-	add_to_group("network")
-	var ns: Array = get_tree().get_nodes_in_group("game")
-	if ns.size() != 0:
-		_game = ns[0]
-		return
+	add_to_group(&"network")
+	_game = get_tree().get_first_node_in_group(&"game")
 	push_warning("No game class exists in the scene")
 
 #####################################
@@ -216,7 +215,8 @@ func get_color() -> Color:
 	return Color.WHITE
 
 func set_machine_data(p_data: Dictionary) -> void:
-	_movement.set_speed(p_data.speed)
+	if _movement:
+		_movement.set_speed(p_data.speed)
 
 #func _exit_tree():
 #	WaypointManager.remove_waypoint(_waypoint)
