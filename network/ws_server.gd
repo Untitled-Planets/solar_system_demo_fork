@@ -14,14 +14,14 @@ func connect_to_server(url: String) -> Error:
 func close() -> void:
 	_socket.close()
 
-func send_data(type: MessageType, data: Dictionary):
-	print("Sending data")
+func send_data(type: MessageType, data: Dictionary) -> Error:
 	var utf: String = JSON.stringify({"type": type, "data": data})
-	var packet: PackedByteArray = utf.to_utf8_buffer()
-	var err: int = _socket.send_text(utf)
+	#var packet: PackedByteArray = utf.to_utf8_buffer()
+	var err: Error = _socket.send_text(utf)
 	
 	if err != OK:
 		printerr("Error sending the packet type %s - ERROR_CODE: %s" % [type, error_string(err)])
+	return err
 
 
 func _ready() -> void:

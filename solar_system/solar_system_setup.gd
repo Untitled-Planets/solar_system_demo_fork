@@ -167,7 +167,7 @@ static func _setup_sun(body: StellarBody, root: Node3D) -> DirectionalLight3D:
 	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	root.add_child(mi)
 	
-	var directional_light := DirectionalLight3D.new()
+	var directional_light: DirectionalLight3D = DirectionalLight3D.new()
 	directional_light.shadow_enabled = true
 	# The environment in this game is a space background so it's very dark. Sky is actually a post
 	# effect because you can fly out and it's a planet... And still you can also have shadows while
@@ -180,6 +180,7 @@ static func _setup_sun(body: StellarBody, root: Node3D) -> DirectionalLight3D:
 	directional_light.directional_shadow_blend_splits = true
 	directional_light.directional_shadow_max_distance = 20000.0
 	directional_light.name = "DirectionalLight"
+	directional_light.add_to_group(&"sun_light")
 	body.node.add_child(directional_light)
 	
 	return directional_light
@@ -263,7 +264,7 @@ static func _setup_atmosphere(body: StellarBody, root: Node3D, settings: Setting
 		atmo.planet_radius = body.radius * 1.03
 		atmo.atmosphere_height = 0.12 * body.radius
 	# TODO This is kinda bad to hardcode the path, need to find another robust way
-	atmo.sun_path = "/root/Main/GameWorld/Sun/DirectionalLight"
+	atmo.sun_path = "/root/Main/Game/Sun/DirectionalLight"
 	#atmo.day_color = body.atmosphere_color
 	#atmo.night_color = body.atmosphere_color.darkened(0.8)
 	var atmo_density = 0.001
@@ -271,13 +272,13 @@ static func _setup_atmosphere(body: StellarBody, root: Node3D, settings: Setting
 		if settings.world_scale_x10:
 			# TODO Need to investigate this, atmosphere currently blows up HDR when large and dense
 			atmo_density /= LARGE_SCALE
-	atmo.set_shader_param("u_density", atmo_density)
-	atmo.set_shader_param("u_attenuation_distance", 50.0)
-	atmo.set_shader_param("u_day_color0", body.atmosphere_color)
-	atmo.set_shader_param("u_day_color1", 
+	atmo.set_shader_parameter("u_density", atmo_density)
+	atmo.set_shader_parameter("u_attenuation_distance", 50.0)
+	atmo.set_shader_parameter("u_day_color0", body.atmosphere_color)
+	atmo.set_shader_parameter("u_day_color1", 
 		body.atmosphere_color.lerp(Color(1,1,1), 0.5))
-	atmo.set_shader_param("u_night_color0", body.atmosphere_color.darkened(0.8))
-	atmo.set_shader_param("u_night_color1", 
+	atmo.set_shader_parameter("u_night_color0", body.atmosphere_color.darkened(0.8))
+	atmo.set_shader_parameter("u_night_color1", 
 		body.atmosphere_color.darkened(0.8).lerp(Color(1,1,1), 0.0))
 	body.atmosphere = atmo
 	root.add_child(atmo)

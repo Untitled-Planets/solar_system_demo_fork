@@ -24,13 +24,13 @@ func get_player_id() -> int:
 #####################################
 
 func serialize() -> Dictionary:
-	var char: Character = get_character()
+	var _char: Character = get_character()
 	return {
 		"id": 0,
 		"position": {
-			"x": char.global_position.x,
-			"y": char.global_position.z,
-			"z": char.global_position.y
+			"x": _char.global_position.x,
+			"y": _char.global_position.z,
+			"z": _char.global_position.y
 		}
 	}
 

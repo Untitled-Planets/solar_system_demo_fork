@@ -62,7 +62,7 @@ func set_uuid(p_uuid: String):
 	_uuid = p_uuid
 
 
-func _on_resource_collection_finished(_p_resource_id: String, amount: int):
+func _on_resource_collection_finished(_p_resource_id: String, _amount: int):
 	if _pickable:
 		_pickable.spawn_vfx()
 		_pickable.queue_free()

@@ -247,7 +247,7 @@ func _process_lines():
 			i += 1
 
 
-func _process_canvas():
+func _process_canvas() -> void:
 	# Remove text lines after some time
 	for key in _texts.keys():
 		var t = _texts[key]
@@ -263,7 +263,8 @@ func _process_canvas():
 	_canvas_item.queue_redraw()
 
 
-func _on_CanvasItem_draw():
+func _on_CanvasItem_draw() -> void:
+	return
 	var ci := _canvas_item
 	
 	var font := DebugDrawFont
@@ -307,12 +308,10 @@ static func _create_wirecube_mesh(color := Color.WHITE) -> ArrayMesh:
 		1, 2,
 		2, 3,
 		3, 0,
-
 		4, 5,
 		5, 6,
 		6, 7,
 		7, 4,
-
 		0, 4,
 		1, 5,
 		2, 6,

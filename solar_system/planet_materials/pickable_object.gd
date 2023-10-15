@@ -4,8 +4,8 @@ extends Node3D
 @export var _collect_sfx_scene: PackedScene = null
 @export var uuid: String = ""
 
-func _ready():
-	pass
+func _ready() -> void:
+	add_to_group(&"pickable_object")
 
 
 func get_id() -> String:
@@ -26,7 +26,7 @@ func _on_area_3d_body_exited(body) -> void:
 		body.get_controller().set_pickable_object(null)
 
 
-func spawn_vfx():
+func spawn_vfx() -> void:
 	if _collect_sfx_scene:
 		var instance: GPUParticles3D = _collect_sfx_scene.instantiate()
 		get_tree().root.add_child(instance)

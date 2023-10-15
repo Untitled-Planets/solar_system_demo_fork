@@ -35,7 +35,7 @@ var _physics_count_on_last_reference_change = 0
 # This is a placeholder instance to allow testing the game without going from the usual main scene.
 # It will be overriden in the normal flow.
 var _settings := Settings.new()
-var _settings_ui : Control
+#var _settings_ui : Control
 var _last_clouds_quality := -1
 
 
@@ -263,19 +263,18 @@ func _process_directional_shadow_distance():
 		ref_body.node.global_transform.origin.distance_to(camera.global_transform.origin)
 	var distance_to_surface := maxf(distance_to_core - ref_body.radius, 0.0)
 
-	var scale := 1.0
+	var _scale: float = 1.0
 	if _settings.world_scale_x10:
-		scale = SolarSystemSetup.LARGE_SCALE
+		_scale = SolarSystemSetup.LARGE_SCALE
 
-	var near_distance := 10.0 * scale
+	var near_distance := 10.0 * _scale
 	# TODO Increase near shadow distance when flying ship?
 	var near_shadow_distance := 500.0
-	var far_distance := 1000.0 * scale
+	var far_distance := 1000.0 * _scale
 	var far_shadow_distance := 20000.0
 
 	# Increase shadow distance when far from planets
-	var t := clampf(
-		(distance_to_surface - near_distance) / (far_distance - near_distance), 0.0, 1.0)
+	var t := clampf((distance_to_surface - near_distance) / (far_distance - near_distance), 0.0, 1.0)
 	var shadow_distance := lerpf(near_shadow_distance, far_shadow_distance, t)
 	light.directional_shadow_max_distance = shadow_distance
 	# if not Input.is_key_pressed(KEY_KP_0):
@@ -354,8 +353,8 @@ func _compute_absolute_body_transform(body: StellarBody) -> Transform3D:
 	var pos := Vector3(cos(orbit_angle), 0, sin(orbit_angle)) * body.distance_to_parent
 	pos = pos.rotated(Vector3(0, 0, 1), body.orbit_tilt)
 	var self_angle := body.self_revolution_progress * TAU
-	var basis := Basis.from_euler(Vector3(0, self_angle, body.self_tilt))
-	var local_transform := Transform3D(basis, pos)
+	var _basis := Basis.from_euler(Vector3(0, self_angle, body.self_tilt))
+	var local_transform := Transform3D(_basis, pos)
 	return parent_transform * local_transform
 
 

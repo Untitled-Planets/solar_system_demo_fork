@@ -16,6 +16,7 @@ const StellarBody = preload("../solar_system/stellar_body.gd")
 @onready var refined_label: Label = $VBoxContainer/RefMinerals as Label
 
 
+var _can_toggle_inventory: bool = true
 var _solar_system: SolarSystem = null
 #var _target_planet_screen_pos := Vector2()
 var _pointed_body = null
@@ -36,6 +37,10 @@ func _ready():
 	_waypoint_hud.set_solar_system(_solar_system)
 	collect_mineral_container.hide()
 
+func _unhandled_input(event: InputEvent) -> void:
+	if _can_toggle_inventory and event.is_action_pressed(&"toggle_inventory"):
+		$ItemInventory.visible = not $ItemInventory.visible
+		DDD.visible = not $ItemInventory.visible
 
 func _process(_delta: float):
 	var camera := get_viewport().get_camera_3d()
@@ -125,17 +130,6 @@ func set_inventory_enable(value: bool) -> void:
 
 func add_machine_instance(instance: MachineCharacter) -> void:
 	_inventory.add_instance_item(instance)
-#static func int_max(a: int, b: int) -> int:
-#	return a if a > b else b
-
-
-#static func try_unproject(camera: Camera3D, pos: Vector3):
-#	var cam_trans = camera.global_transform
-#	var forward = -cam_trans.basis.z
-#	var dir = (pos - cam_trans.origin).normalized()
-#	if dir.dot(forward) <= 0.0:
-#		return null
-#	return camera.unproject_position(pos)
 
 
 func config_menu(p_objects: Array):

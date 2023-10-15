@@ -14,6 +14,9 @@ class Item extends RefCounted:
 		self.type = type
 		self.stock = stock
 		self.description = description
+	
+	func _to_string() -> String:
+		return ""
 
 
 class Inventory extends RefCounted:
@@ -39,15 +42,23 @@ class Inventory extends RefCounted:
 		return count
 
 
-class PlayerData extends RefCounted:
+class EntityData extends  RefCounted:
 	var id: String
 	var peer: int
+	var position: Vector3 = Vector3.ZERO
+
+class PlayerData extends EntityData:
 	var inventory: Inventory
 	
 	func _init(id: String, peer: int) -> void:
 		self.id = id
 		self.peer = peer
 		inventory = Inventory.new()
+
+class ShipData extends EntityData:
+	func _init(id: String, peer: int) -> void:
+		self.id = id
+		self.peer = peer
 
 enum MessageType {
 	SYNC_REQUEST,
@@ -72,9 +83,9 @@ signal packet_recived(type: MessageType, data: Dictionary)
 var current_player: String = ""
 var _peer: int = -1
 var players: Array[PlayerData] = []
+var ships: Array[ShipData] = []
 
-
-func send_data(type: MessageType, data: Dictionary):
+func send_data(_type: MessageType, _data: Dictionary):
 	assert(false, "Implement this")
 
 func get_unique_id() -> int:
@@ -87,14 +98,14 @@ func _client_connected(id: String, peer: int, _data: Dictionary) -> void:
 	multiplayer.peer_connected.emit(peer)
 
 
-func _server_connected(origin_id: String, peer: int, client_list: Array, ships_list: Array) -> void:
+func _server_connected(origin_id: String, peer: int, client_list: Array, _ships_list: Array) -> void:
 	current_player = origin_id
 	_peer = peer
 	var new_player: PlayerData = PlayerData.new(origin_id, peer)
 	players.append(new_player)
-	multiplayer.connected_to_server.emit()
 	for c in client_list:
 		_client_connected(c.id, c.peer, c)
+	multiplayer.connected_to_server.emit()
 
 
 func _update_inventory(inventory: Inventory) -> void:
@@ -103,12 +114,28 @@ func _update_inventory(inventory: Inventory) -> void:
 	
 
 
+func get_players(exclude_origin: bool = true) -> Array[PlayerData]:
+	var arr: Array[PlayerData] = players.duplicate()
+	if exclude_origin:
+		for i in range(arr.size()):
+			if arr[i].id == current_player:
+				arr.remove_at(i)
+				break
+	return arr
+
+
 func find_by_peer(peer: int) -> PlayerData:
 	for i in range(players.size()):
 		if players[i].peer == peer:
 			return players[i]
 	return null
 
+func find_id_by_peer(peer: int) -> String:
+	var r: PlayerData = find_by_peer(peer)
+	if r != null:
+		return r.id
+	else:
+		return ""
 
 func find_by_id(id: String) -> PlayerData:
 	for i in range(players.size()):

@@ -137,7 +137,7 @@ func _on_resource_collection_started(_p_resource_id):
 	_progress_bar.visible = true
 
 
-func _on_resource_collection_finished(_p_resource_id, amount: int) -> void:
+func _on_resource_collection_finished(_p_resource_id, _amount: int) -> void:
 	_progress_bar.visible = false
 
 
@@ -153,8 +153,11 @@ func _on_loading_progressed(p_progress_info):
 	_solar_system.set_reference_body(2)
 	var controller: CharacterController = LocalControllerScene.instantiate()
 	var avatar: Character = await _spawn_player()
+	avatar.set_meta(&"entity_id", MultiplayerServer._ws.current_player)
+	avatar.set_meta(&"entity_type", "PLAYER")
+	avatar.set_meta(&"origin_peer", MultiplayerServer.get_unique_id())
 	
-	#avatar.set_multiplayer_authority(MultiplayerServer.get_unique_id())
+	avatar.set_multiplayer_authority(MultiplayerServer.get_unique_id())
 	avatar.set_controller(controller)
 	controller.possess(avatar)
 	add_child(controller)
@@ -176,27 +179,25 @@ func _on_loading_progressed(p_progress_info):
 	print("Added camera")
 	
 	# Load other peers
-	if false:# multiplayer.has_multiplayer_peer() and not multiplayer.is_server():
-		var peers: Array = multiplayer.get_peers()
-		for p in peers:
-			if MultiplayerServer.peer_is_server(p) and MultiplayerServer.is_server_headless():
-				continue
-			
-			if p == MultiplayerServer.get_unique_id():
-				continue
-			
-			if _solar_system.has_node("player_" + str(p)):
+	if true:# multiplayer.has_multiplayer_peer() and not multiplayer.is_server():
+		var players: Array[MultiplayerServerAPI.PlayerData] = MultiplayerServer.get_players()
+		print(players.map(func (e) -> String: return e.id))
+		for p in players:
+			if _solar_system.has_node("player_" + str(p.peer)):
 				continue
 			
 			var new_character: Character = await _spawn_player()
-			new_character.set_multiplayer_authority(p)
+			new_character.set_meta(&"entity_id", p.id)
+			new_character.set_meta(&"entity_type", "PLAYER")
+			new_character.set_meta(&"origin_peer", p.peer)
+			new_character.set_multiplayer_authority(p.peer)
 			var r: RemoteController = RemoteControllerScene.instantiate()
 			new_character.set_controller(r)
 			r.possess(new_character)
 			add_child(r)
-			new_character.name = "player_" + str(p)
+			new_character.name = "player_" + str(p.peer)
 			_solar_system.add_child(new_character)
-			r.set_uuid(str(p))
+			r.set_uuid(p.id)
 
 
 
@@ -464,7 +465,7 @@ func finish_task(machine_id: int, task_id: int) -> void:
 func despawn_machine(p_machine_id: int) -> void:
 	Server.despawn_machine(0, _solar_system.get_reference_stellar_body_id(), p_machine_id, _username)
 
-func buy_ship(spawn_position: Vector3) -> void:
+func buy_ship(_spawn_position: Vector3) -> void:
 	pass
 
 

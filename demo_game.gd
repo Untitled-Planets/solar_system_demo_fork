@@ -68,6 +68,9 @@ func _on_peer_connected(peer: int) -> void:
 	
 	var new_character: Character = await _spawn_player()
 	new_character.set_multiplayer_authority(peer)
+	new_character.set_meta(&"entity_id", MultiplayerServer.find_id_by_peer(peer))
+	new_character.set_meta(&"entity_type", "PLAYER")
+	new_character.set_meta(&"origin_peer", peer)
 	var r: RemoteController = RemoteControllerScene.instantiate()
 	new_character.set_controller(r)
 	r.possess(new_character)
@@ -145,8 +148,6 @@ func _on_loading_progressed(p_progress_info):
 			result = state.intersect_ray(query)
 		
 		await get_tree().create_timer(1.0).timeout
-		#MultiplayerServer.join()
-		
 
 
 

@@ -35,7 +35,6 @@ enum SyncMode {
 
 var _network_id: String = "";
 var _type: String = "";
-var _network_object_id: int = -1
 var _last_state: Dictionary = {}
 ## List of properties that will be updating over the network
 var _network_control: int = ServerPeerId : set = _set_network_control
@@ -44,10 +43,6 @@ var _is_registered_network: bool = false
 
 ## The current planet the entity target is on. It is used by Multiplayer Server Singleton
 var current_planet
-
-
-var _waiting_sync: bool = true
-var _waiting_sync_states: Array[Dictionary] = []
 
 
 func ASSERT_VALID_PROPERTY(value: Variant) -> void:
@@ -77,24 +72,22 @@ func _ready() -> void:
 		ASSERT_VALID_PROPERTY(value)
 		_last_state[p] = value
 	
-	#MultiplayerServer.register_network_object(self)
+	MultiplayerServer.register_network_object(self)
+	print("Multiplayer authority: " + str(get_multiplayer_authority()))
 	
-	if not is_multiplayer_authority():
-		request_authority_parameters()
+	if get_multiplayer_authority() != MultiplayerServer._ws._peer:
+		set_process(false)
 
 
 func _process(_delta: float) -> void:
-	#if not _is_registered_network: return
 	if properties_sync.size() == 0:
 		return
 	
-	if not is_multiplayer_authority():
-		if Engine.get_process_frames() % 2 == 0:
-			pass#print("Current Entity not is the owner " + entity_owner.name)
+	if Engine.get_process_frames() % 4 == 0:
 		return
 	
 	var current_state: Dictionary = {}
-	var changed_values: Dictionary
+	var changed_values: Dictionary = {}
 	
 	for p in properties_sync:
 		var value: Variant = entity_owner.get(p)
@@ -113,30 +106,8 @@ func _process(_delta: float) -> void:
 		MultiplayerServer.send_entity_state(self, current_state)
 
 
-## Request the authority to send you the current data to keep them updated
-func request_authority_parameters() -> void:
-	assert(not is_multiplayer_authority())
-	_waiting_sync = false
-	#_on_request_data_parameters.rpc_id(get_multiplayer_authority())
-
-
-#@rpc("any_peer", "unreliable_ordered")
-func _on_data_recived(packet_data: Dictionary, sync_response: bool = false) -> void:
-	var sender: int = multiplayer.get_remote_sender_id()
-	#if sender != get_multiplayer_authority():
-	#	return
-	
-	if _waiting_sync and not sync_response:
-		_waiting_sync_states.append(packet_data)
-		return
-	elif sync_response:
-		set_properties(packet_data)
-		_waiting_sync = false
-		if _waiting_sync_states.size() > 0:
-			for p in _waiting_sync_states:
-				set_properties(p)
-	else:
-		set_properties(packet_data)
+func _on_data_recived(packet_data: Dictionary, _sync_response: bool = false) -> void:
+	set_properties(packet_data)
 
 
 @rpc("any_peer")
@@ -159,16 +130,17 @@ func get_sync_properties() -> Dictionary:
 
 ## Establishes the properties according to the packet data and that these exist in the list that can be synchronized
 func set_properties(packet_data: Dictionary) -> void:
+	print(packet_data)
 	for k in packet_data.keys():
 		ASSERT_PROPERTY_EXIST(k)
-		if k == &"global_position":
+		if k == "global_position":
 			if entity_owner is Character:
 				var diff: float = entity_owner.global_position.distance_squared_to(packet_data[k])
 				if entity_owner.is_remote_controller() and diff < (5 * 5):
 					var r: RemoteController = entity_owner.get_controller()
 					r.set_remote_position(packet_data[k])
 					continue
-		elif k == &"global_transform":
+		elif k == "global_transform":
 			if entity_owner is Ship:
 				entity_owner.global_transform = packet_data[k]
 				entity_owner._visual_root.global_transform = packet_data[k]
@@ -185,7 +157,7 @@ func serialize() -> Dictionary:
 
 ## @expermiental
 ## @deprecated
-func deserialize(p_data: Dictionary) -> void:
+func deserialize(_p_data: Dictionary) -> void:
 	#assert(false, "Implement this")
 	pass
 

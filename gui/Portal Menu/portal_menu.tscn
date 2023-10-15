@@ -11,6 +11,7 @@ layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_left = 394.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_8rsn2")
@@ -20,6 +21,7 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_left = 198.0
 grow_horizontal = 2
 grow_vertical = 2
 
@@ -43,7 +45,7 @@ columns = 6
 
 [node name="action_button" parent="PanelContainer/CenterContainer/VBoxContainer/GridContainer" instance=ExtResource("2_qig6l")]
 layout_mode = 2
-display_action = "Buy basic Ship"
+display_action = "Buy basic Ship - Price: x10 Coal refined"
 _action_id = "buy-ship"
 
 [connection signal="action_requested" from="PanelContainer/CenterContainer/VBoxContainer/GridContainer/action_button" to="." method="_on_action_button_action_requested"]

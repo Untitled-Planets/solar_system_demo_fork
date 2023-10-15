@@ -31,7 +31,7 @@ var _planet_mine_location_id: int = -1
 func _ready():
 	add_to_group(&"network")
 	_game = get_tree().get_first_node_in_group(&"game")
-	push_warning("No game class exists in the scene")
+	#push_warning("No game class exists in the scene")
 
 #####################################
 # Network interface

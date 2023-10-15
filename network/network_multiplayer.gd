@@ -76,6 +76,8 @@ signal request_instance_network_object(origin_peer: int, network_object_data: Ne
 signal network_entity_propety_changed(entity: NetworkEntity, property: StringName, value: Variant)
 signal multiplayer_event(event: NetworkNotification, origin_peer: int, data: Dictionary)
 
+signal inventory_updated(inventory: Array)
+
 const DEFAULT_PORT: int = 3000
 const MULTIPLAYER_FPS: int = 10
 const SERVER_PEER: int = 1
@@ -121,7 +123,13 @@ func _ready() -> void:
 func _on_packet_recived(type: MultiplayerServerWebSocket.MessageType, data: Dictionary) -> void:
 	match type:
 		MultiplayerServerWebSocket.MessageType.UPDATE_STATE:
-			pass
+			var id: String = data["id"]
+			if network_objects.has(id):
+				var properties: Dictionary = Util.deserialize_dic(data["state"])
+				var entity: NetworkEntity = network_objects[id]
+				entity._on_data_recived(properties)
+			else:
+				push_error("The id: %s not exist" % id)
 		MultiplayerServerWebSocket.MessageType.COLLECT_RESOURCE_FINISHED:
 			var inventoryArr: Array = data.get("inventory", [])
 			var inventory: MultiplayerServerAPI.Inventory = MultiplayerServerAPI.Inventory.new()
@@ -133,6 +141,7 @@ func _on_packet_recived(type: MultiplayerServerWebSocket.MessageType, data: Dict
 			_ws._update_inventory(inventory)
 			
 			resource_collection_finished.emit(_ws.current_player, 0)
+			inventory_updated.emit(inventory.items)
 		MultiplayerServerWebSocket.MessageType.REFIN_RESOURCE_FINISHED:
 			var inventoryArr: Array = data.get("inventory", [])
 			var inventory: MultiplayerServerAPI.Inventory = MultiplayerServerAPI.Inventory.new()
@@ -144,11 +153,11 @@ func _on_packet_recived(type: MultiplayerServerWebSocket.MessageType, data: Dict
 			_ws._update_inventory(inventory)
 			
 			refined_resource_finished.emit(_ws.current_player, 0)
+			inventory_updated.emit(inventory.items)
 		MultiplayerServerWebSocket.MessageType.ENTER_SHIP:
 			pass
 		MultiplayerServerWebSocket.MessageType.EXIT_SHIP:
 			pass
-		
 
 
 func stock_of(type: String) -> int:
@@ -168,6 +177,15 @@ func setup_client(address: String) -> Error:
 func close() -> void:
 	_ws.close()
 
+func get_peers() -> Array:
+	return _ws.get_players().map(func (e: MultiplayerServerAPI.PlayerData) -> int: return e.peer)
+
+
+func find_id_by_peer(peer: int) -> String:
+	return _ws.find_id_by_peer(peer)
+
+func get_players() -> Array[MultiplayerServerAPI.PlayerData]:
+	return _ws.get_players()
 
 func is_remote_object(node: Node) -> bool:
 	if multiplayer.has_multiplayer_peer():
@@ -181,33 +199,11 @@ func get_network_object(network_id: int) -> NetworkObjectData:
 func register_network_object(n: NetworkEntity) -> void:
 	assert(n != null, "")
 	
-	if connection_status() != MultiplayerPeer.CONNECTION_CONNECTED:
-		waiting_network_objects_pairing.append(null)
+	var parent: Node = n.get_parent()
 	
-	var data: NetworkObjectData = NetworkObjectData.new(n)
-	var n_name: StringName = n.get_name()
-	var origin: NetworkEntity.OriginControl = n.origin_control
-	
-	if (false):
-		if multiplayer.is_server():
-			randomize()
-			var network_id: int = randi()
-			#n._peer_id = network_id
-			
-			if origin != NetworkEntity.OriginControl.SERVER:
-				pass
-			else:
-				n._is_registered_network = true
-				n.set_multiplayer_authority(origin)
-			
-			network_objects[network_id] = data
-		else:
-			waiting_network_objects_pairing.append(data)
-			remote_register_network_object.rpc_id(1, data.get_instance_id(), n_name, origin)
-
-
-func send_network_notification(notification_event: NetworkNotification, data: Dictionary) -> void:
-	_on_notification_event_recived.rpc(notification_event, data)
+	if parent.has_meta(&"entity_id") and parent.has_meta(&"entity_type") and parent.has_meta(&"origin_peer"):
+		n._network_id = parent.get_meta(&"entity_id")
+		network_objects[parent.get_meta(&"entity_id")] = n
 
 
 @rpc("any_peer")
@@ -329,8 +325,8 @@ func _on_planet_listed(p_solar_system_id, p_planet_ids) -> void:
 
 func _generate_floating_resources_for_solar_system(p_solar_system_id, p_planet_ids) -> void:
 	if _resources.has(p_solar_system_id):
-		# clean
-		pass
+		for c in get_tree().get_nodes_in_group(&"pickable_object"):
+			c.queue_free()
 	else:
 		_resources[p_solar_system_id] = _generate_resources_for_planets(p_planet_ids)
 
@@ -447,42 +443,15 @@ func send_entity_state(from: NetworkEntity, state: Dictionary) -> void:
 	var type: String = from._type
 	var desialized: Dictionary = Util.serialize_dic(state)
 	var id: String = from._network_id
-	desialized["id"] = id
-	desialized["type"] = type
 	
-	_ws.send_data(MultiplayerServerAPI.MessageType.UPDATE_STATE, desialized)
-
-
-
-func pack_data() -> Dictionary:
-	var data: Dictionary = {
-		"timestamp": get_timestamp(),
-		"entities": pack_data_from_group(&"network")
-	}
-	return data
-
-
-
-func pack_data_from_group(p_group: String) -> Dictionary:
-	var ns: Array = get_tree().get_nodes_in_group(p_group)
-	var data: Dictionary = {}
 	
-	var peer_id: int = -1
-	
-	if connection_status() == MultiplayerPeer.CONNECTION_CONNECTED:
-		peer_id = MultiplayerServer.get_unique_id()
-	
-	for n in ns:
-		if n is NetworkEntity:
-			if n.has_method(&"serialize"):
-				# It will only make sure to pack the data if the source control is
-				# equal to the instance where this function is called.
-				if peer_id == n._network_control:
-					var serialize_data: Dictionary = n.serialize()
-					if not serialize_data.is_empty():
-						data[n._peer_id] = serialize_data
-	
-	return data
+	_ws.send_data(MultiplayerServerAPI.MessageType.UPDATE_STATE, {
+		"id": from._network_id,
+		"type": "PLAYER",
+		"state": desialized
+	})
+
+
 
 
 func _update(delta: float) -> void:
@@ -497,9 +466,9 @@ func _update(delta: float) -> void:
 		if _resource_selected.progress >= 1.0:
 			if _resource_selected.type == ResourceCollectionData.CollectionType.REFINED:
 				_mineral_amount = 0
-				refined_resource += roundi(_resource_selected.amount / 2)
-				resource_refined_finished.emit(_resource_selected.resource_id, roundi(_resource_selected.amount / 2))
-				Server.collect_item(_resource_selected.user_id, _resource_selected.resource_id, 1, roundi(_resource_selected.amount / 2))
+				refined_resource += roundi(_resource_selected.amount / 2.0)
+				resource_refined_finished.emit(_resource_selected.resource_id, roundi(_resource_selected.amount / 2.0))
+				Server.collect_item(_resource_selected.user_id, _resource_selected.resource_id, 1, roundi(_resource_selected.amount / 2.0))
 			else:
 				_mineral_amount += 10
 				resource_collection_finished.emit(_resource_selected.resource_id, 10)
@@ -516,39 +485,7 @@ func _update(delta: float) -> void:
 		user_position_updated.emit("dummy-id", _debug_player_pos)
 		_delta_acc = 0.0
 		
-		var data: Dictionary = pack_data()
-		data_updated.emit(data)
 
 
 func _on_network_property_changed() -> void:
 	pass
-
-
-func _update_server_multiplayer(_delta: float) -> void:
-	var buffer: Dictionary = pack_data()
-	_on_server_data_recived.rpc(buffer)
-
-
-func _update_client_multiplayer(_delta: float) -> void:
-	var send_buffer: Dictionary = pack_data()
-	_on_client_data_recived.rpc_id(1, send_buffer)
-
-
-
-@rpc("authority", "unreliable")
-func _on_server_data_recived(buffer: Dictionary) -> void:
-	if not buffer.has("timestamp") or not buffer.has("entities"):
-		return
-	
-	var buffer_data: SyncBufferData = SyncBufferData.new(buffer["timestamp"], buffer["entities"])
-	on_update_client_buffer_data.emit(buffer_data)
-
-
-@rpc("any_peer", "unreliable")
-func _on_client_data_recived(buffer: Dictionary) -> void:
-	if not buffer.has("timestamp") or not buffer.has("entities"):
-		return
-	
-	var buffer_data: SyncBufferData = SyncBufferData.new(buffer["timestamp"], buffer["entities"])
-	on_update_client_buffer_data.emit(buffer_data)
-	

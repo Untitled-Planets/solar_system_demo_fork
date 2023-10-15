@@ -117,5 +117,6 @@ script = ExtResource("9_7g2wu")
 entity_owner = NodePath("..")
 properties_sync = Array[StringName]([&"global_position"])
 origin_control = 1
+sync_mode = 1
 
 [connection signal="jumped" from="." to="Audio" method="_on_Character_jumped"]
