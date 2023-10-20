@@ -63,7 +63,7 @@ signal users_updated(user_joining, user_leaving)
 signal user_position_updated(p_user_id, player_position)
 signal resources_generated(solar_system_id, planet_id ,resources)
 signal planet_status_requested(solar_system_id, planet_id, data)
-signal floating_resources_updated(solar_system_id, planet_id, resources)
+signal floating_resources_updated(resources)
 
 signal data_updated(data: Dictionary)
 
@@ -122,6 +122,9 @@ func _ready() -> void:
 
 func _on_packet_recived(type: MultiplayerServerWebSocket.MessageType, data: Dictionary) -> void:
 	match type:
+		MultiplayerServerWebSocket.MessageType.DESPAWN_RESOURCE:
+			var mineral_id: String = data["resourceId"]
+			_ws.reference_body.remove_mineral_from_id(mineral_id)
 		MultiplayerServerWebSocket.MessageType.UPDATE_STATE:
 			var id: String = data["id"]
 			if network_objects.has(id):
@@ -158,6 +161,15 @@ func _on_packet_recived(type: MultiplayerServerWebSocket.MessageType, data: Dict
 			pass
 		MultiplayerServerWebSocket.MessageType.EXIT_SHIP:
 			pass
+
+
+func get_mineral_by_id(mineral_id: String) -> MultiplayerServerAPI.Mineral:
+	var idx: int = _ws.reference_body.index_of_mineral_by_id(mineral_id)
+	
+	if idx >= 0:
+		return _ws.reference_body.minerals[idx]
+	else:
+		return null
 
 
 func stock_of(type: String) -> int:
@@ -309,19 +321,21 @@ func init() -> void:
 
 func _on_planet_status_requested(p_solar_system_id, p_planet_id, data):
 	planet_status_requested.emit(p_solar_system_id, p_planet_id, data)
-#	_generate_floating_resources_for_solar_system(p_solar_system_id, [int(p_planet_id)])
-	_resources[int(p_solar_system_id)] = {
-		int(p_planet_id): _generate_resources(100)
-		} # temp
-	floating_resources_updated.emit(p_solar_system_id, p_planet_id, _resources[int(p_solar_system_id)][int(p_planet_id)])
+	floating_resources_updated.emit(get_resource_from_reference_body())
 
+func update_reference_body(planet_name: String) -> void:
+	_ws.send_data(MultiplayerServerAPI.MessageType.UPDATE_REFEFERENCE_BODY, {"referenceBodyName": planet_name})
 
 func get_planet_status(p_solar_system_id, p_planet_id, p_requester) -> void:
 	Server.get_planet_status(p_solar_system_id, p_planet_id, p_requester)
 
 func _on_planet_listed(p_solar_system_id, p_planet_ids) -> void:
 	_generate_floating_resources_for_solar_system(p_solar_system_id, p_planet_ids)
-	pass
+
+
+func get_resource_from_reference_body() -> Array:
+	return _ws.reference_body.minerals
+
 
 func _generate_floating_resources_for_solar_system(p_solar_system_id, p_planet_ids) -> void:
 	if _resources.has(p_solar_system_id):

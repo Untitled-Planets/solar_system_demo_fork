@@ -3,6 +3,8 @@ extends Node3D
 
 const StellarBody = preload("res://solar_system/stellar_body.gd")
 
+const MAX_SPAWN_PER_FRAME: int = 32
+
 signal machine_instance_from_ui_selected(machine_id: int)
 signal exit_to_menu_requested
 
@@ -29,6 +31,7 @@ signal exit_to_menu_requested
 @export var StationScene: PackedScene
 
 
+var _spawn_minerals_queue: Array[String] = []
 var _machine_selected: MachineCharacter = null
 var _machines := {}
 var _username := ""
@@ -61,28 +64,7 @@ var _ships: Dictionary = {}
 }
 """
 
-var bufferNetworkClientData: Array[SyncBufferData]
 
-func _on_update_buffer_data(buffer: SyncBufferData) -> void:
-	bufferNetworkClientData = [buffer]
-
-
-func _update_client_multiplayer(_delta: float) -> void:
-	var size: int = bufferNetworkClientData.size()
-	
-	if size == 0:
-		return
-	
-	var buffer: SyncBufferData = bufferNetworkClientData[0]
-	
-	#var timestamp: int = buffer.timestamp
-	
-	for network_id in buffer.get_networks_ids():
-		var network_object: NetworkObjectData = MultiplayerServer.get_network_object(network_id) as NetworkObjectData
-		assert(network_object != null, "")
-		var network_entity: NetworkEntity = network_object.get_network_entity()
-		var data_to_sync: Dictionary = buffer.get_object_data(network_id)
-		network_entity.deserialize(data_to_sync)
 
 
 
@@ -105,7 +87,35 @@ func _ready() -> void:
 	MultiplayerServer.floating_resources_updated.connect(_on_floating_resources_updated)
 	
 	MultiplayerServer.init()
-	
+
+
+
+func _physics_process(delta: float) -> void:
+	var spawn_mins_size: int = _spawn_minerals_queue.size()
+	if spawn_mins_size > 0:
+		var delete_to_queue: Array = []
+		var size: int = _spawn_minerals_queue.size()
+		var sb: StellarBody = _solar_system.get_reference_stellar_body()
+		for i in range(size):
+			var mineral: MultiplayerServerAPI.Mineral = MultiplayerServer.get_mineral_by_id(_spawn_minerals_queue[i])
+			if mineral == null:
+				continue
+			
+			var mineral_position: Vector3 = mineral.to_position()
+			
+			if mineral == null:
+				delete_to_queue.append(_spawn_minerals_queue[i])
+			elif in_player_range(sb.radius * 10.0 * mineral_position):
+				var result: Dictionary = check_planet_position_point(sb, mineral_position)
+				if not result.is_empty():
+					var instance: PickableObject = PlanetMaterialManager.spawn_material(0, _spawn_minerals_queue[i])
+					sb.node.call_deferred(&"add_child", instance)
+					instance.position = result.position
+					delete_to_queue.append(_spawn_minerals_queue[i])
+		
+		if delete_to_queue.size() > 0:
+			for d in delete_to_queue:
+				_spawn_minerals_queue.erase(d)
 
 
 func _on_resources_generated(_p_solar_system_id, _p_planet_id, _p_resources):
@@ -227,6 +237,9 @@ func _spawn_player() -> Character:
 
 
 func _process(_delta: float) -> void:
+	if Engine.get_process_frames() % 2 == 0:
+		DDD.set_text("Instanced Minerals", get_tree().get_nodes_in_group(&"pickable_object").size())
+	
 	_process_input()
 	if _info_object:
 		_update_info(_info_object)
@@ -317,6 +330,7 @@ func _on_mineral_extracted(id, amount) -> void:
 func _on_reference_body_changed(body_info):
 	var previous_body = _solar_system.get_reference_stellar_body_by_id(body_info.old_id)
 	previous_body.remove_machines()
+	MultiplayerServer.update_reference_body(_solar_system.get_reference_stellar_body_by_id(body_info.new_id).name)
 	MultiplayerServer.arrives_on_planet(0, _solar_system.get_reference_stellar_body_id(), _username)
 
 
@@ -531,32 +545,47 @@ func _on_despawn_machine_requested(_p_solar_system_id: int, _p_planet_id: int, p
 	_machines.erase(p_machine_id)
 	m.destroy_machine()
 
-func _on_floating_resources_updated(p_solar_system_id, p_planet_id, p_resources):
-	_load_floating_resource(p_solar_system_id, p_planet_id, p_resources)
+func _on_floating_resources_updated(resources: Array):
+	_load_floating_resource(resources)
 
-func _load_floating_resource(_p_solar_system_id, _p_planet_id, p_resources):
-	var floating_resources = p_resources
-	for fr in floating_resources:
-		var instance = PlanetMaterialManager.spawn_material(fr.type, fr.uuid)
-		var sb: StellarBody = _solar_system.get_reference_stellar_body()
-		sb.node.add_child(instance)
-		var coord = fr.unit_coordinates
-		var dir = Util.unit_coordinates_to_unit_vector(Vector2(coord.x, coord.y))
+
+func check_planet_position_point(stellar_body: StellarBody, dir: Vector3) -> Dictionary:
+	var query: PhysicsRayQueryParameters3D = PhysicsRayQueryParameters3D.new()
+	query.from = stellar_body.radius * 10 * dir
+	query.to = Vector3.ZERO
+	return get_world_3d().direct_space_state.intersect_ray(query)
+
+func in_player_range(target: Vector3, length: float = 4) -> bool:
+	if _local_player and _local_player.get_character():
+		var char: Character = _local_player.get_character()
+		return char.global_position.distance_squared_to(target) <= (length * length)
+	return false
+
+
+func _load_floating_resource(resources: Array) -> void:
+	var sb: StellarBody = _solar_system.get_reference_stellar_body()
+	for r in resources:
+		var dir: Vector3 = r.to_position()
 		
-		var found: bool = false
-		
-		while not found:
-			await get_tree().process_frame
-			var query := PhysicsRayQueryParameters3D.new()
-			query.from = sb.radius * 10 * dir
-			query.to = Vector3.ZERO
-			var state := get_world_3d().direct_space_state
-			var result := state.intersect_ray(query)
+		if not in_player_range(sb.radius * 10.0 * dir):
+			var result: Dictionary = check_planet_position_point(sb, dir)
 			
 			if not result.is_empty():
+				var instance: PickableObject = PlanetMaterialManager.spawn_material(0, r.id)
+				sb.node.call_deferred(&"add_child", instance)
 				instance.position = result.position
-				found = true
-	print("Spawned all resources")
+			else:
+				_spawn_minerals_queue.append(r.id)
+		else:
+			_spawn_minerals_queue.append(r.id)
+
+
+func distance_from_player(origin_point: Vector3) -> float:
+	if _local_player == null or _local_player.get_character() == null:
+		return -1.0
+	else:
+		return Util.distance_on_sphere(_solar_system.get_reference_stellar_body().radius, _local_player.get_character().global_position, origin_point)
+
 
 func get_machine(p_machine_id: int) -> MachineCharacter:
 	return _machines.get(p_machine_id, null)

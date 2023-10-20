@@ -52,7 +52,7 @@ func possess(p_char) -> void:
 	_character = p_char
 
 
-func get_character():
+func get_character() -> Node3D:
 	return _character
 
 func unpossess() -> void:

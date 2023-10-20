@@ -8,8 +8,8 @@ extends Game
 
 func _ready():
 	if MultiplayerServer.has_signal(&"update_client_network_frame") and MultiplayerServer.has_signal(&"on_update_client_buffer_data"):
-		MultiplayerServer.update_client_network_frame.connect(_update_client_multiplayer)
-		MultiplayerServer.on_update_client_buffer_data.connect(_on_update_buffer_data)
+		#MultiplayerServer.update_client_network_frame.connect(_update_client_multiplayer)
+		#MultiplayerServer.on_update_client_buffer_data.connect(_on_update_buffer_data)
 		
 		multiplayer.peer_connected.connect(_on_peer_connected)
 		MultiplayerServer.multiplayer_event.connect(_on_multiplayer_event)
@@ -181,7 +181,7 @@ func buy_ship(spawn_position: Vector3) -> void:
 		"instanced": true,
 		"owner": id
 	}
-	MultiplayerServer.send_network_notification(MultiplayerServer.NetworkNotification.SHIP_SPAWN, data)
+	#MultiplayerServer.send_network_notification(MultiplayerServer.NetworkNotification.SHIP_SPAWN, data)
 
 
 func enter_ship() -> void:

@@ -47,13 +47,6 @@ func _process(_delta: float):
 	if camera == null:
 		return
 	
-	if Engine.get_process_frames() % 2 == 0:
-		var stock_coal: int = MultiplayerServer.stock_of("coal")
-		var stock_coal_refined: int = MultiplayerServer.stock_of("coal_refined")
-		$VBoxContainer/Minerals.text = "Minerals: " + str(stock_coal)
-		$VBoxContainer/RefMinerals.text = "Refined: " + str(stock_coal_refined)
-	
-	
 	# Pointed planet info
 	var pointed_body := _find_pointed_planet(camera)
 	if pointed_body == null:

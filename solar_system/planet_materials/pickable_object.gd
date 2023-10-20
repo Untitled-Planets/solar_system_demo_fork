@@ -11,6 +11,14 @@ func _ready() -> void:
 func get_id() -> String:
 	return uuid
 
+
+func _process(delta: float) -> void:
+	if Engine.get_process_frames() % 2 == 0:
+		var game: Game = get_tree().get_first_node_in_group(&"game") as Game
+		if game != null:
+			visible = game.distance_from_player(global_position) < 128
+
+
 func _physics_process(_delta: float) -> void:
 	pass
 

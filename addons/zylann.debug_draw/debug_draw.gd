@@ -264,7 +264,6 @@ func _process_canvas() -> void:
 
 
 func _on_CanvasItem_draw() -> void:
-	return
 	var ci := _canvas_item
 	
 	var font := DebugDrawFont

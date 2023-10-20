@@ -169,19 +169,19 @@ func _process(_delta):
 
 	var global_stats = VoxelEngine.get_stats()
 
-	for group_key in ["tasks", "memory_pools"]:
-		var stats = global_stats[group_key]
-		for key in stats:
-			DDD.set_text(str(group_key, "_", key), stats[key])
+	#for group_key in ["tasks", "memory_pools"]:
+	#	var stats = global_stats[group_key]
+	#	for key in stats:
+	#		DDD.set_text(str(group_key, "_", key), stats[key])
 
-	var thread_pools_stats = global_stats["thread_pools"]
-	for thread_pool_name in thread_pools_stats:
-		var thread_pool_stats = thread_pools_stats[thread_pool_name]
-		var prefix = str("thread_pool_", thread_pool_name)
+	#var thread_pools_stats = global_stats["thread_pools"]
+	#for thread_pool_name in thread_pools_stats:
+	#	var thread_pool_stats = thread_pools_stats[thread_pool_name]
+	#	var prefix = str("thread_pool_", thread_pool_name)
 
-		DDD.set_text(str(prefix, "_tasks"), thread_pool_stats["tasks"])
-		DDD.set_text(str(prefix, "_threads"), 
-			str(thread_pool_stats["active_threads"], "/", thread_pool_stats["thread_count"]))
+		#DDD.set_text(str(prefix, "_tasks"), thread_pool_stats["tasks"])
+		#DDD.set_text(str(prefix, "_threads"), 
+	#		str(thread_pool_stats["active_threads"], "/", thread_pool_stats["thread_count"]))
 
 		# var task_names = thread_pool_stats["task_names"]
 		# for i in len(task_names):

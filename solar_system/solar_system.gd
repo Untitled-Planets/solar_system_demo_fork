@@ -41,10 +41,16 @@ var _last_clouds_quality := -1
 
 func _ready():
 	add_to_group(&"planet_mode") # TODO. Do this from editor
+	add_to_group(&"solar_system")
 	set_physics_process(false)
 #	_hud.hide()
 	Server.solar_system_requested.connect(_on_solar_system_data_requested)
-	
+
+
+func get_planet_name_by_id(p_id: int) -> String:
+	if (p_id >= 0 and p_id <= _bodies.size() - 1):
+		return _bodies[p_id].name
+	return ""
 
 
 func _on_solar_system_data_requested(p_data: Dictionary):
@@ -63,7 +69,7 @@ func _on_solar_system_data_requested(p_data: Dictionary):
 	
 	config_solar_system()
 
-func config_solar_system():
+func config_solar_system() -> void:
 	_bodies = SolarSystemSetup.create_solar_system_data(_settings)
 	
 	var progress_info = LoadingProgress.new()
@@ -248,7 +254,7 @@ func _process_debug():
 			"M: ", body.volume.debug_get_mesh_block_count())
 		if body.instancer != null:
 			s += str("| I: ", body.instancer.debug_get_block_count())
-		DDD.set_text(str("Blocks in ", body.name), s)
+		#DDD.set_text(str("Blocks in ", body.name), s)
 
 
 
@@ -279,7 +285,7 @@ func _process_directional_shadow_distance():
 	light.directional_shadow_max_distance = shadow_distance
 	# if not Input.is_key_pressed(KEY_KP_0):
 	# 	light.directional_shadow_max_distance = 500.0
-	DDD.set_text("Shadow distance", shadow_distance)
+	#DDD.set_text("Shadow distance", shadow_distance)
 
 
 # This helps with planet flickering in the distance.
@@ -321,6 +327,7 @@ func set_reference_body(ref_id: int):
 	
 	var info := ReferenceChangeInfo.new()
 	info.old_id = last_id
+	info.new_id = _reference_body_id
 	# TODO Also have relative velocity of the body,
 	# so the ship can integrate it so it looks seamless
 	info.inverse_transform = trans.affine_inverse() * body.node.transform

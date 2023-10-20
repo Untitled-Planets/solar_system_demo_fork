@@ -193,3 +193,8 @@ static func deserialize_vec3(vec_data: Dictionary) -> Vector3:
 	return Vector3(vec_data.get("x", 0), vec_data.get("y", 0), vec_data.get("z", 0))
 
 
+static func deserialize_vec2(vec_data: Dictionary) -> Vector2:
+	return Vector2(vec_data.get("x", 0), vec_data.get("y", 0))
+
+
+
