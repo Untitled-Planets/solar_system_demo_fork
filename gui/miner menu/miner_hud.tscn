@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3 uid="uid://db2bredw5bfrs"]
+[gd_scene load_steps=3 format=3 uid="uid://db2bredw5bfrs"]
 
 [ext_resource type="Script" path="res://gui/miner menu/miner_hud.gd" id="1_sbpv7"]
+[ext_resource type="PackedScene" uid="uid://bweb7ttjg6quk" path="res://gui/inventory/Item Inventory/item_inventory.tscn" id="2_n5rab"]
 
 [node name="MinerHUD" type="Control" groups=["miner_hud"]]
 layout_mode = 3
@@ -53,18 +54,6 @@ text = "Refined Minerals in the inventory:"
 custom_minimum_size = Vector2(140, 0)
 layout_mode = 2
 
-[node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer/VBoxContainer"]
-layout_mode = 2
-
-[node name="Label" type="Label" parent="PanelContainer/VBoxContainer/HBoxContainer"]
-layout_mode = 2
-text = "Add coal to refine"
-
-[node name="SpinBox" type="SpinBox" parent="PanelContainer/VBoxContainer/HBoxContainer"]
-layout_mode = 2
-min_value = 1.0
-value = 1.0
-
 [node name="CenterContainer3" type="CenterContainer" parent="PanelContainer/VBoxContainer"]
 layout_mode = 2
 
@@ -75,10 +64,25 @@ text = "Refine"
 [node name="CenterContainer" type="CenterContainer" parent="PanelContainer/VBoxContainer"]
 layout_mode = 2
 
-[node name="ProgressBar" type="ProgressBar" parent="PanelContainer/VBoxContainer/CenterContainer"]
-custom_minimum_size = Vector2(300, 0)
+[node name="ItemInventory" parent="PanelContainer/VBoxContainer/CenterContainer" instance=ExtResource("2_n5rab")]
 layout_mode = 2
-max_value = 1.0
-step = 0.001
+max_size = 1
+valid_types = ["coal"]
+
+[node name="PanelContainer" parent="PanelContainer/VBoxContainer/CenterContainer/ItemInventory" index="0"]
+offset_right = 100.0
+offset_bottom = 138.0
+
+[node name="Label" parent="PanelContainer/VBoxContainer/CenterContainer/ItemInventory/PanelContainer/VBoxContainer" index="0"]
+text = "Coal:"
+
+[node name="ScrollContainer" parent="PanelContainer/VBoxContainer/CenterContainer/ItemInventory/PanelContainer/VBoxContainer" index="2"]
+custom_minimum_size = Vector2(100, 100)
+
+[node name="GridContainer" parent="PanelContainer/VBoxContainer/CenterContainer/ItemInventory/PanelContainer/VBoxContainer/ScrollContainer" index="0"]
+custom_minimum_size = Vector2(100, 100)
+columns = 1
 
 [connection signal="pressed" from="PanelContainer/VBoxContainer/CenterContainer3/Button" to="." method="_on_button_pressed"]
+
+[editable path="PanelContainer/VBoxContainer/CenterContainer/ItemInventory"]

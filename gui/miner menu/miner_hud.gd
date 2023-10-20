@@ -2,7 +2,7 @@ extends Control
 
 @onready var mineral_count: Label = $PanelContainer/VBoxContainer/CenterContainer2/VBoxContainer/HBoxContainer/MineralCount
 @onready var refined_count: Label = $PanelContainer/VBoxContainer/CenterContainer2/VBoxContainer/HBoxContainer2/RefindeCount
-@onready var progress_bar: ProgressBar = $PanelContainer/VBoxContainer/CenterContainer/ProgressBar as ProgressBar
+#@onready var progress_bar: ProgressBar = $PanelContainer/VBoxContainer/CenterContainer/ProgressBar as ProgressBar
 
 var _game: Game = null
 
@@ -26,15 +26,15 @@ func _ready() -> void:
 
 
 func _refine_resource_started(resource_id: String) -> void:
-	progress_bar.value = 0.0
+	pass#progress_bar.value = 0.0
 
 
 func _refine_resource_progress(resource_id: String, progress: float) -> void:
-	progress_bar.value = progress
+	pass#progress_bar.value = progress
 
 
 func _refine_resource_finished(respurce_id: String, amount: int) -> void:
-	progress_bar.value = 1.0
+	#progress_bar.value = 1.0
 	refined_count.text = str(MultiplayerServer.refined_resource)
 	mineral_count.text = str(MultiplayerServer._mineral_amount)
 	$PanelContainer/VBoxContainer/CenterContainer3/Button.disabled = false

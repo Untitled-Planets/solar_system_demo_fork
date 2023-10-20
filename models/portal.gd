@@ -10,6 +10,7 @@ func _ready() -> void:
 
 
 func _on_area_3d_body_entered(body: Node3D) -> void:
+	return
 	if body.is_in_group(&"character"):
 		var portal_menu: Control = get_portal_menu()
 		assert(portal_menu != null)
@@ -17,6 +18,7 @@ func _on_area_3d_body_entered(body: Node3D) -> void:
 
 
 func _on_area_3d_body_exited(body: Node3D) -> void:
+	return
 	if body.is_in_group(&"character"):
 		var portal_menu: Control = get_portal_menu()
 		assert(portal_menu != null)

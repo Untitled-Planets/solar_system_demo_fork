@@ -31,6 +31,11 @@ class Inventory extends RefCounted:
 				return true
 		return false
 	
+	func find_by_id(item_id: String) -> Item:
+		for i in items:
+			if i.id == item_id:
+				return i
+		return null
 	
 	func stock_of(type: String) -> int:
 		var count: int = 0
@@ -42,6 +47,8 @@ class Inventory extends RefCounted:
 		return count
 
 class Mineral extends RefCounted:
+	signal collect_request
+	
 	var id: String
 	var position_coordinate: Vector2
 	
@@ -189,6 +196,8 @@ func get_players(exclude_origin: bool = true) -> Array[PlayerData]:
 				break
 	return arr
 
+func get_player() -> PlayerData:
+	return find_by_id(current_player)
 
 func find_by_peer(peer: int) -> PlayerData:
 	for i in range(players.size()):

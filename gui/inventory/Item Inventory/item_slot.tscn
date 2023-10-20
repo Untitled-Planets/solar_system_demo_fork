@@ -13,11 +13,19 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_bq652")
 
+[node name="ColorRect" type="ColorRect" parent="."]
+visible = false
+layout_mode = 2
+offset_right = 95.0
+offset_bottom = 95.0
+mouse_filter = 2
+
 [node name="PanelContainer" type="PanelContainer" parent="."]
 custom_minimum_size = Vector2(95, 95)
 layout_mode = 0
 offset_right = 40.0
 offset_bottom = 40.0
+mouse_filter = 2
 
 [node name="LabelName" type="Label" parent="PanelContainer"]
 layout_mode = 2
@@ -40,3 +48,5 @@ offset_bottom = 92.0
 text = "x999"
 horizontal_alignment = 1
 vertical_alignment = 1
+
+[connection signal="gui_input" from="." to="." method="_on_gui_input"]

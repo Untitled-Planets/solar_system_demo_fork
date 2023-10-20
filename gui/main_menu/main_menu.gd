@@ -25,10 +25,6 @@ func _on_start_client_pressed() -> void:
 	if _username.text.length() != 0:
 		var m_ip: String = multiplayer_server_ip.text
 		
-		if not m_ip.is_valid_ip_address():
-			OS.alert("The Multiplayer Server IP not is valid")
-			return
-		
 		start_client.emit(_username.text, m_ip)
 
 

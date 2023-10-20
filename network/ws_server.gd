@@ -5,7 +5,6 @@ var _socket: WebSocketPeer = WebSocketPeer.new()
 
 func connect_to_server(url: String) -> Error:
 	_socket.inbound_buffer_size = 1 << 29
-	OS.alert(str(_socket.inbound_buffer_size))
 	var err: Error = _socket.connect_to_url(url)
 	
 	if err == OK:
@@ -77,6 +76,7 @@ func _process_packet() -> void:
 				MessageType.PLANET_STATE:
 					var planet_data: Dictionary = dataDic["referenceBodyData"]
 					_update_reference_body(planet_data["id"], planet_data["minerals"])
+				
 	else:
 		OS.alert(error_string(err))
 

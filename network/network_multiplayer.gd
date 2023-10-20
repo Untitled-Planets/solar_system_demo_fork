@@ -125,6 +125,12 @@ func _on_packet_recived(type: MultiplayerServerWebSocket.MessageType, data: Dict
 		MultiplayerServerWebSocket.MessageType.DESPAWN_RESOURCE:
 			var mineral_id: String = data["resourceId"]
 			_ws.reference_body.remove_mineral_from_id(mineral_id)
+			
+			for n in get_tree().get_nodes_in_group(&"pickable_object"):
+				if n is PickableObject:
+					if n.get_id() == mineral_id:
+						n.queue_free()
+						break
 		MultiplayerServerWebSocket.MessageType.UPDATE_STATE:
 			var id: String = data["id"]
 			if network_objects.has(id):
@@ -175,6 +181,9 @@ func get_mineral_by_id(mineral_id: String) -> MultiplayerServerAPI.Mineral:
 		return _ws.reference_body.minerals[idx]
 	else:
 		return null
+
+func get_item_by_id(item_id: String) -> MultiplayerServerAPI.Item:
+	return _ws.get_player().inventory.find_by_id(item_id)
 
 
 func stock_of(type: String) -> int:

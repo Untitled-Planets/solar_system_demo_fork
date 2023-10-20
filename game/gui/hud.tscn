@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://dig3qsvc3wh4c"]
+[gd_scene load_steps=13 format=3 uid="uid://dig3qsvc3wh4c"]
 
 [ext_resource type="Script" path="res://gui/hud.gd" id="1_kwnpe"]
 [ext_resource type="FontFile" path="res://gui/fonts/hack_regular_16_dynamic_font.tres" id="2_kjkfq"]
@@ -11,6 +11,7 @@
 [ext_resource type="PackedScene" uid="uid://g0v4xog8klps" path="res://gui/Portal Menu/portal_menu.tscn" id="9_0ivtx"]
 [ext_resource type="PackedScene" uid="uid://db2bredw5bfrs" path="res://gui/miner menu/miner_hud.tscn" id="10_uyvdl"]
 [ext_resource type="PackedScene" uid="uid://bweb7ttjg6quk" path="res://gui/inventory/Item Inventory/item_inventory.tscn" id="11_g32x6"]
+[ext_resource type="Script" path="res://gui/item_inventory.gd" id="12_v4lfk"]
 
 [node name="HUD" type="Control" groups=["hud"]]
 layout_mode = 3
@@ -91,10 +92,6 @@ grow_vertical = 2
 layout_mode = 2
 text = "Collect Mineral (P Key)"
 
-[node name="ItemInventory" parent="." instance=ExtResource("11_g32x6")]
-visible = false
-layout_mode = 1
-
 [node name="Label" type="Label" parent="."]
 layout_mode = 0
 offset_left = 16.0
@@ -103,6 +100,11 @@ offset_right = 141.0
 offset_bottom = 251.0
 text = "Press F to
  Open Inventory"
+
+[node name="ItemInventory" parent="." instance=ExtResource("11_g32x6")]
+visible = false
+layout_mode = 1
+script = ExtResource("12_v4lfk")
 
 [node name="PanelContainer" type="PanelContainer" parent="."]
 visible = false
