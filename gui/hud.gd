@@ -12,9 +12,6 @@ const StellarBody = preload("../solar_system/stellar_body.gd")
 @onready var _interactive_menu = $interactive_menu
 @onready var collect_mineral_container: PanelContainer = $CollectMineralContainer as PanelContainer
 
-@onready var mineral_label: Label = $VBoxContainer/Minerals as Label
-@onready var refined_label: Label = $VBoxContainer/RefMinerals as Label
-
 
 var _can_toggle_inventory: bool = true
 var _solar_system: SolarSystem = null

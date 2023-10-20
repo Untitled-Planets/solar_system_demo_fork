@@ -210,7 +210,7 @@ func find_by_id(id: String) -> PlayerData:
 	return null
 
 
-func start_collect_resource() -> void:
+func start_collect_resource(p_resource_id: String) -> void:
 	assert(false, "Implement this")
 
 

@@ -29,7 +29,7 @@ func _on_area_3d_body_entered(body) -> void:
 
 
 func _on_area_3d_body_exited(body) -> void:
-	if body is Character:
+	if body is Character and _get_hud():
 		_get_hud()._can_mineral_interact_count -= 1
 		body.get_controller().set_pickable_object(null)
 

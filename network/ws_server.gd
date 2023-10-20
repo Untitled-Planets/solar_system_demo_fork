@@ -81,9 +81,11 @@ func _process_packet() -> void:
 		OS.alert(error_string(err))
 
 
-func start_collect_resource() -> void:
+func start_collect_resource(resource_id: String) -> void:
 	var type: MessageType = MessageType.COLLECT_RESOURCE_START
-	send_data(type, {})
+	send_data(type, {
+		"mineralId": resource_id
+		})
 
 
 func start_refin_resource() -> void:

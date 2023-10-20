@@ -134,17 +134,22 @@ func _on_packet_recived(type: MultiplayerServerWebSocket.MessageType, data: Dict
 			else:
 				push_error("The id: %s not exist" % id)
 		MultiplayerServerWebSocket.MessageType.COLLECT_RESOURCE_FINISHED:
-			var inventoryArr: Array = data.get("inventory", [])
-			var inventory: MultiplayerServerAPI.Inventory = MultiplayerServerAPI.Inventory.new()
+			var status: bool = data.get("status", false)
 			
-			for i in inventoryArr:
-				var item: MultiplayerServerAPI.Item = MultiplayerServerAPI.Item.new(i["id"], i["name"], i["type"], i["stock"], i.get("description", ""))
-				inventory.push(item)
-			
-			_ws._update_inventory(inventory)
-			
-			resource_collection_finished.emit(_ws.current_player, 0)
-			inventory_updated.emit(inventory.items)
+			if status:
+				var inventoryArr: Array = data.get("inventory", [])
+				var inventory: MultiplayerServerAPI.Inventory = MultiplayerServerAPI.Inventory.new()
+				
+				for i in inventoryArr:
+					var item: MultiplayerServerAPI.Item = MultiplayerServerAPI.Item.new(i["id"], i["name"], i["type"], i["stock"], i.get("description", ""))
+					inventory.push(item)
+				
+				_ws._update_inventory(inventory)
+				
+				resource_collection_finished.emit(_ws.current_player, 0)
+				inventory_updated.emit(inventory.items)
+			else:
+				OS.alert("ERROR: " + data.get("message"))
 		MultiplayerServerWebSocket.MessageType.REFIN_RESOURCE_FINISHED:
 			var inventoryArr: Array = data.get("inventory", [])
 			var inventory: MultiplayerServerAPI.Inventory = MultiplayerServerAPI.Inventory.new()
@@ -406,7 +411,7 @@ func start_resource_collect(_p_solar_system_id: int, _p_planet_id: int, p_resour
 		ResourceCollectionData.CollectionType.MINERAL
 		)
 	
-	_ws.start_collect_resource()
+	_ws.start_collect_resource(p_resource_id)
 	resource_collection_started.emit(p_resource_id)
 
 
