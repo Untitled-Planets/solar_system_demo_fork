@@ -36,6 +36,7 @@ func _process(_delta: float) -> void:
 	_socket.poll()
 	
 	var state: WebSocketPeer.State = _socket.get_ready_state()
+	print(state)
 	
 	if state == WebSocketPeer.STATE_OPEN:
 		if _socket.get_available_packet_count():
@@ -48,6 +49,9 @@ func _process(_delta: float) -> void:
 		var code: int = _socket.get_close_code()
 		var reason: String = _socket.get_close_reason()
 		print("WebSocket closed with code: %d, reason %s. Clean: %s" % [code, reason, code != -1])
+		if code == -1:
+			OS.alert("Error to connect with the server")
+		
 		set_process(false)
 
 
