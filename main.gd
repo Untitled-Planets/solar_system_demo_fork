@@ -12,7 +12,8 @@ var _game
 var _username := ""
 
 
-func _ready():
+func _ready() -> void:
+	_game = get_tree().get_first_node_in_group(&"game")
 	_settings_ui.set_settings(_settings)
 	Server.login_requested.connect(_on_login_requested)
 
