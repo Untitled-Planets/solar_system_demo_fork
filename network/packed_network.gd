@@ -130,7 +130,6 @@ func get_sync_properties() -> Dictionary:
 
 ## Establishes the properties according to the packet data and that these exist in the list that can be synchronized
 func set_properties(packet_data: Dictionary) -> void:
-	print(packet_data)
 	for k in packet_data.keys():
 		ASSERT_PROPERTY_EXIST(k)
 		if k == "global_position":

@@ -36,7 +36,6 @@ func _process(_delta: float) -> void:
 	_socket.poll()
 	
 	var state: WebSocketPeer.State = _socket.get_ready_state()
-	print(state)
 	
 	if state == WebSocketPeer.STATE_OPEN:
 		if _socket.get_available_packet_count():
@@ -73,6 +72,9 @@ func _process_packet() -> void:
 					var peer: int = dataDic.get("peer")
 					var id: String = dataDic.get("id")
 					_client_connected(id, peer, dataDic)
+				MessageType.CLIENT_DISCONNECTED:
+					var disconnected_id: String = dataDic.get("playerId")
+					_client_disconnected(disconnected_id)
 				MessageType.SYNC_DATA:
 					var planet_data: Dictionary = dataDic["referenceBodyData"]
 					_update_reference_body(planet_data["id"], planet_data["minerals"])

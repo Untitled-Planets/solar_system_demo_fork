@@ -79,13 +79,13 @@ func set_machine_data(p_data: Dictionary) -> void:
 
 func _on_area_3d_body_entered(body: Node3D) -> void:
 	if body.is_in_group(&"character"):
-		var miner_hud = get_tree().get_first_node_in_group(&"miner_hud")
+		var miner_hud: Control = get_tree().get_first_node_in_group(&"enter_miner_hud_label")
 		if miner_hud:
 			miner_hud.show()
 
 
 func _on_area_3d_body_exited(body: Node3D) -> void:
 	if body.is_in_group(&"character"):
-		var miner_hud: Control = get_tree().get_first_node_in_group(&"miner_hud")
+		var miner_hud: Control = get_tree().get_first_node_in_group(&"enter_miner_hud_label")
 		if miner_hud:
 			miner_hud.hide()

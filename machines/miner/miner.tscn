@@ -9,7 +9,7 @@
 [ext_resource type="Script" path="res://machines/miner/refinery.gd" id="7_mydpe"]
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_73p3y"]
-radius = 25.9302
+radius = 20.3247
 
 [node name="Miner" groups=["miner"] instance=ExtResource("1_v8j52")]
 script = ExtResource("2_0ykg2")

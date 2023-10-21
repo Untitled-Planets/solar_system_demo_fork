@@ -36,7 +36,7 @@ var _last_motor := Vector3()
 var _pickable: PickableObject = null
 var _is_picking: bool = false
 var _uuid: String = ""
-
+var _miner_hud_open: bool = false
 var _flashlight : SpotLight3D
 var _audio
 
@@ -51,11 +51,10 @@ func _ready():
 	MultiplayerServer.resource_collection_finished.connect(_on_resource_collection_finished)
 	MultiplayerServer.refined_resource_finished.connect(_on_refined_resource_finished)
 
-func set_enable_local_controller(p_value: bool):
-	var enabled := p_value
-	set_physics_process(enabled)
-	set_process_input(enabled)
-	set_process_unhandled_input(enabled)
+func set_enable_local_controller(p_value: bool) -> void:
+	set_physics_process(p_value)
+	set_process_input(p_value)
+	set_process_unhandled_input(p_value)
 
 # If uuid is empty. It is local player.
 func set_uuid(p_uuid: String):
@@ -89,10 +88,29 @@ func _process(_delta):
 	var character_body := _get_body()
 #	var camera: Camera3D = get_viewport().get_camera_3d()
 	
-	character_body.set_motor(motor)
+	if not _miner_hud_open:
+		character_body.set_motor(motor)
 	
-	if Input.is_action_just_pressed("jump"):
+	if Input.is_action_just_pressed("jump") and not _miner_hud_open:
 		character_body.jump()
+	
+	if Input.is_action_just_pressed("toggle_miner_hud"):
+		if _miner_hud_open:
+			_miner_hud_open = false
+			get_tree().get_first_node_in_group(&"hud")._can_toggle_inventory = true
+			get_tree().get_first_node_in_group(&"hud").hide_inventory()
+			capture_mouse()
+			var miner_hud: Control = get_tree().get_first_node_in_group(&"miner_hud")
+			if miner_hud:
+				miner_hud.hide()
+		elif get_tree().get_first_node_in_group("enter_miner_hud_label") and get_tree().get_first_node_in_group("enter_miner_hud_label").visible:
+			_miner_hud_open = true
+			release_mouse()
+			get_tree().get_first_node_in_group(&"hud")._can_toggle_inventory = false
+			get_tree().get_first_node_in_group(&"hud").show_inventory()
+			var miner_hud: Control = get_tree().get_first_node_in_group(&"miner_hud")
+			if miner_hud:
+				miner_hud.show()
 	
 	_process_actions()
 	_process_undig()

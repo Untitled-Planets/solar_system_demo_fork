@@ -12,6 +12,8 @@ func _ready():
 		#MultiplayerServer.on_update_client_buffer_data.connect(_on_update_buffer_data)
 		
 		multiplayer.peer_connected.connect(_on_peer_connected)
+		multiplayer.peer_disconnected.connect(_on_peer_disconnected)
+		
 		MultiplayerServer.multiplayer_event.connect(_on_multiplayer_event)
 	
 	super._ready()
@@ -84,11 +86,12 @@ func _on_peer_disconnected(peer: int) -> void:
 	if not _solar_system.has_node("player_" + str(peer)):
 		return
 	
-	var character: Character = get_node("player_" + str(peer))
-	var r: RemoteController = character.get_controller()
+	var character: Character = _solar_system.get_node_or_null("player_" + str(peer))
 	
-	character.queue_free()
-	r.queue_free()
+	if character:
+		var r: RemoteController = character.get_controller()
+		character.queue_free()
+		r.queue_free()
 
 func _spawn_player() -> Character:
 	var a = await super._spawn_player()

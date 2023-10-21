@@ -29,8 +29,12 @@ size = Vector3(0.2, 0.2, 0.5)
 [sub_resource type="GDScript" id="GDScript_4krdx"]
 script/source = "extends MeshInstance3D
 
+#var clostes_list: Array[PickableObject] = []
+#var current_idx: int = -1
+
 
 func _process(_delta: float) -> void:
+	
 	if Engine.get_process_frames() % 2 == 0:
 		var res_node: Array = get_tree().get_nodes_in_group(&\"pickable_object\")
 		
@@ -52,6 +56,7 @@ func _process(_delta: float) -> void:
 						min_pos = n.global_position
 				
 				look_at(min_pos)
+
 "
 
 [sub_resource type="PrismMesh" id="PrismMesh_ks05u"]

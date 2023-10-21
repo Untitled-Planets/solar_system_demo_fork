@@ -39,6 +39,13 @@ func _unhandled_input(event: InputEvent) -> void:
 		$ItemInventory.visible = not $ItemInventory.visible
 		DDD.visible = not $ItemInventory.visible
 
+
+func show_inventory() -> void:
+	$ItemInventory.visible = true
+
+func hide_inventory() -> void:
+	$ItemInventory.visible = false
+
 func _process(_delta: float):
 	var camera := get_viewport().get_camera_3d()
 	if camera == null:

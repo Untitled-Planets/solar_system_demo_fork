@@ -74,7 +74,22 @@ layout_mode = 1
 visible = false
 layout_mode = 1
 
+[node name="EnterMinerContainer" type="PanelContainer" parent="." groups=["enter_miner_hud_label"]]
+visible = false
+layout_mode = 2
+offset_left = 489.5
+offset_top = 304.0
+offset_right = 662.5
+offset_bottom = 344.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Label" type="Label" parent="EnterMinerContainer"]
+layout_mode = 2
+text = "Open Miner (E Key)"
+
 [node name="CollectMineralContainer" type="PanelContainer" parent="."]
+visible = false
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5

@@ -138,7 +138,7 @@ func _on_packet_recived(type: MultiplayerServerWebSocket.MessageType, data: Dict
 				var entity: NetworkEntity = network_objects[id]
 				entity._on_data_recived(properties)
 			else:
-				push_error("The id: %s not exist" % id)
+				pass#push_error("The id: %s not exist" % id)
 		MultiplayerServerWebSocket.MessageType.COLLECT_RESOURCE_FINISHED:
 			var status: bool = data.get("status", false)
 			

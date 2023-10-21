@@ -165,6 +165,15 @@ func _client_connected(id: String, peer: int, _data: Dictionary) -> void:
 	players.append(new_player)
 	multiplayer.peer_connected.emit(peer)
 
+
+func _client_disconnected(id: String) -> void:
+	for p in range(players.size()):
+		if players[p].id == id:
+			var peer: int = players[p].peer
+			players.remove_at(p)
+			multiplayer.peer_disconnected.emit(peer)
+			break
+
 func _update_reference_body(body_id: String, mineralsData: Array) -> void:
 	var minerals: Array = mineralsData.map(func (e: Dictionary) -> Mineral: return Mineral.deserialize_mineral(e)) as Array[Mineral]
 	var p: PlanetData = PlanetData.new(body_id, minerals)
