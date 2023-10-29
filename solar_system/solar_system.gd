@@ -143,14 +143,14 @@ func _physics_process(delta: float):
 					set_reference_body(0)
 	
 	# Calculate current referential transform
-	var ref_trans_inverse = Transform3D()
+	var ref_trans_inverse: Transform3D = Transform3D()
 	if _reference_body_id != 0:
 		var ref_body = _bodies[_reference_body_id]
 		var ref_trans = _compute_absolute_body_transform(ref_body)
 		ref_trans_inverse = ref_trans.affine_inverse()
 
 	# Simulate orbits
-	for i in len(_bodies):
+	for i in _bodies.size():
 		var body : StellarBody = _bodies[i]
 		
 		if body.self_revolution_time > 0:
@@ -224,7 +224,7 @@ func _process_setting_changes():
 			if body.atmosphere != null:
 				SolarSystemSetup.update_atmosphere_settings(body, _settings)
 
-func _process_debug():
+func _process_debug() -> void:
 	for body in _bodies:
 		var volume : VoxelLodTerrain = body.volume
 		if body.volume == null:
@@ -242,18 +242,18 @@ func _process_debug():
 		else:
 			volume.debug_set_draw_enabled(false)
 	
-	if len(_bodies) > 0:
+	if _bodies.size() > 0:
 		DDD.set_text("Reference body", _bodies[_reference_body_id].name)
 
-	for i in len(_bodies):
-		var body : StellarBody = _bodies[i]
-		if body.volume == null:
-			continue
-		var s := str(
-			"D: ", body.volume.debug_get_data_block_count(), ", ", 
-			"M: ", body.volume.debug_get_mesh_block_count())
-		if body.instancer != null:
-			s += str("| I: ", body.instancer.debug_get_block_count())
+	#for i in len(_bodies):
+	#	var body : StellarBody = _bodies[i]
+	#	if body.volume == null:
+	#		continue
+	#	var s := str(
+	#		"D: ", body.volume.debug_get_data_block_count(), ", ", 
+	#		"M: ", body.volume.debug_get_mesh_block_count())
+	#	if body.instancer != null:
+	#		s += str("| I: ", body.instancer.debug_get_block_count())
 		#DDD.set_text(str("Blocks in ", body.name), s)
 
 
@@ -273,7 +273,7 @@ func _process_directional_shadow_distance():
 	if _settings.world_scale_x10:
 		_scale = SolarSystemSetup.LARGE_SCALE
 
-	var near_distance := 10.0 * _scale
+	var near_distance: float = 10.0 * _scale
 	# TODO Increase near shadow distance when flying ship?
 	var near_shadow_distance := 500.0
 	var far_distance := 1000.0 * _scale

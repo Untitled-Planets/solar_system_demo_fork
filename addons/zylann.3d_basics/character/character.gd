@@ -116,7 +116,7 @@ func _process_visual_animated(forward: Vector3, character_body: CharacterBody3D)
 	_set_visual_state(state)
 
 
-func _set_visual_state(state: Mannequiny.States):
+func _set_visual_state(state: Mannequiny.States) -> void:
 	# TODO Temporarily removed Mannequinny, it did not port well to Godot4
 #	pass
 	if _visual_state != state:

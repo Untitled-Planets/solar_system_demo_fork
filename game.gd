@@ -173,8 +173,7 @@ func _on_loading_progressed(p_progress_info):
 	add_child(controller)
 	avatar.name = "player_" + str(MultiplayerServer.get_unique_id())
 	_solar_system.add_child(avatar)
-	#avatar.network_id = p_player_id
-	#var controller: CharacterController = avatar.get_controller()
+	
 	controller.set_uuid("")
 	_local_player = controller as AController
 	_mouse_capture.capture()
@@ -182,8 +181,7 @@ func _on_loading_progressed(p_progress_info):
 	var camera = CameraScene.instantiate()
 	camera.auto_find_camera_anchor = true
 	camera.set_target(avatar)
-	#if _settings.world_scale_x10:
-		#camera.far *= SolarSystemSetup.LARGE_SCALE
+	
 	_solar_system.add_child(camera)
 	
 	print("Added camera")
@@ -208,11 +206,15 @@ func _on_loading_progressed(p_progress_info):
 			new_character.name = "player_" + str(p.peer)
 			_solar_system.add_child(new_character)
 			r.set_uuid(p.id)
+	
+	if MultiplayerServer.get_player_data().sync_position != Vector3.ZERO:
+		await get_tree().physics_frame
+		avatar.global_position = MultiplayerServer.get_player_data().sync_position
+		avatar.global_position.y += 10
 
 
 
-
-func _spawn_player() -> Character:
+func _spawn_player(dir: Vector3 = Vector3.ZERO) -> Character:
 	# Spawn player
 	_hud.show()
 	
@@ -224,7 +226,7 @@ func _spawn_player() -> Character:
 		
 		var query: PhysicsRayQueryParameters3D = PhysicsRayQueryParameters3D.new()
 		query.from = _solar_system.get_reference_stellar_body().radius * 10 * Vector3.UP
-		query.to = Vector3.ZERO
+		query.to = dir
 		var state: PhysicsDirectSpaceState3D = get_world_3d().direct_space_state
 		var result: Dictionary = state.intersect_ray(query)
 		

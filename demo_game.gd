@@ -93,8 +93,8 @@ func _on_peer_disconnected(peer: int) -> void:
 		character.queue_free()
 		r.queue_free()
 
-func _spawn_player() -> Character:
-	var a = await super._spawn_player()
+func _spawn_player(dir: Vector3 = Vector3.ZERO) -> Character:
+	var a = await super._spawn_player(dir)
 	# find a mine point
 	var points := []
 	while points.size() == 0:

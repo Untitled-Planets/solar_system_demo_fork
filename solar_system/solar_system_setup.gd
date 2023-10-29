@@ -410,14 +410,14 @@ static func _configure_instancing_for_planet(body: StellarBody, volume: VoxelLod
 	for mesh in [Pebble1Mesh, Rock1Mesh, BigRock1Mesh]:
 		mesh.surface_set_material(0, RockMaterial)
 
-	var instancer = VoxelInstancer.new()
+	var instancer: VoxelInstancer = VoxelInstancer.new()
 	instancer.set_up_mode(VoxelInstancer.UP_MODE_SPHERE)
 
-	var library = VoxelInstanceLibrary.new()
+	var library: VoxelInstanceLibrary = VoxelInstanceLibrary.new()
 	# Usually most of this is done in editor, but some features can only be setup by code atm.
 	# Also if we want to procedurally-generate some of this, we may need code anyways.
 
-	var instance_generator = VoxelInstanceGenerator.new()
+	var instance_generator: VoxelInstanceGenerator = VoxelInstanceGenerator.new()
 	instance_generator.density = 0.15
 	instance_generator.min_scale = 0.2
 	instance_generator.max_scale = 0.4
@@ -491,6 +491,7 @@ static func _configure_instancing_for_planet(body: StellarBody, volume: VoxelLod
 
 	instance_generator = VoxelInstanceGenerator.new()
 	instance_generator.noise = FastNoiseLite.new()
+	instance_generator.noise.seed = RNG._seed
 	instance_generator.noise.frequency = 1.0 / 16.0
 	instance_generator.noise.fractal_octaves = 2
 	instance_generator.noise_on_scale = 1

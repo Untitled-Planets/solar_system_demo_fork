@@ -1,4 +1,5 @@
 extends Control
+class_name InventoryCharacter
 
 const ITEM_SLOT: PackedScene = preload("res://gui/inventory/Item Inventory/item_slot.tscn")
 
@@ -74,6 +75,19 @@ func load_inventory(items: Array[MultiplayerServerAPI.Item]) -> void:
 			item.pressed.connect(_on_item_slot_pressed)
 		else:
 			grid_container.get_children()[i].load_item(items[i])
+
+
+func stock_of(type: String) -> int:
+	var stock: int = 0
+	
+	for slot in grid_container.get_children():
+		if slot is ItemSlot:
+			var item: MultiplayerServerAPI.Item = slot.get_item_data()
+			if item != null and item.type == type:
+				stock += item.stock
+	
+	return stock
+
 
 
 func get_inventory_size() -> int:

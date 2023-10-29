@@ -15,6 +15,11 @@ const HINTS_NODE_NAME = "CameraHints"
 # anchor to follow, which must have a CameraHints child node
 @export var auto_find_camera_anchor = false
 
+@onready var light: SpotLight3D = $SpotLight3D
+
+
+
+
 var _default_distance_to_target := 5.0
 var _default_height_modifier := 0.33
 var _default_target_height_modifier := 1.5
@@ -45,6 +50,8 @@ func _ready():
 	
 	if get_parent().has_signal("reference_body_changed"):
 		get_parent().reference_body_changed.connect(_on_solar_system_reference_body_changed)
+	
+	light.visible = false
 
 
 func _on_solar_system_reference_body_changed(info):
@@ -156,4 +163,10 @@ func _physics_process(delta: float):
 		_wait_for_fucking_physics -= 1
 		if _wait_for_fucking_physics == 0:
 			_last_ref_change_info = null
+
+
+func _unhandled_input(event: InputEvent) -> void:
+	if event.is_action_pressed(&"toggle_light_camera"):
+		light.visible = not light.visible
+
 

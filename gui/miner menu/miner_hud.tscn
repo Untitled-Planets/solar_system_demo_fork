@@ -67,7 +67,6 @@ layout_mode = 2
 [node name="ItemInventory" parent="PanelContainer/VBoxContainer/CenterContainer" instance=ExtResource("2_n5rab")]
 layout_mode = 2
 max_size = 1
-valid_types = ["coal"]
 
 [node name="PanelContainer" parent="PanelContainer/VBoxContainer/CenterContainer/ItemInventory" index="0"]
 offset_right = 100.0

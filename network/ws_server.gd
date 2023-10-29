@@ -2,12 +2,18 @@ extends MultiplayerServerAPI
 class_name MultiplayerServerWebSocket
 
 var _socket: WebSocketPeer = WebSocketPeer.new()
+var _username: String = ""
+var _wait_auth: bool = true
+var _wait_auth_response: bool = false
 
-func connect_to_server(url: String) -> Error:
+func connect_to_server(url: String, p_username: String) -> Error:
 	_socket.inbound_buffer_size = 1 << 29
 	var err: Error = _socket.connect_to_url(url)
 	
 	if err == OK:
+		_wait_auth = true
+		_username = p_username
+		_wait_auth_response = false
 		set_process(true)
 	
 	return err
@@ -17,7 +23,6 @@ func close() -> void:
 
 func send_data(type: MessageType, data: Dictionary) -> Error:
 	var utf: String = JSON.stringify({"type": type, "data": data})
-	#var packet: PackedByteArray = utf.to_utf8_buffer()
 	var err: Error = _socket.send_text(utf)
 	
 	if err != OK:
@@ -38,12 +43,18 @@ func _process(_delta: float) -> void:
 	var state: WebSocketPeer.State = _socket.get_ready_state()
 	
 	if state == WebSocketPeer.STATE_OPEN:
-		if _socket.get_available_packet_count():
-			while _socket.get_available_packet_count():
-				_process_packet()
+		if _wait_auth and not _wait_auth_response:
+			_wait_auth_response = true
+			print("sending auth request...")
+			send_data(MessageType.AUTH_REQUEST, {
+				"username": _username
+			})
 		else:
-			pass
-	
+			if _socket.get_available_packet_count():
+				while _socket.get_available_packet_count():
+					_process_packet()
+			else:
+				pass
 	elif state == WebSocketPeer.STATE_CLOSED:
 		var code: int = _socket.get_close_code()
 		var reason: String = _socket.get_close_reason()
@@ -68,17 +79,38 @@ func _process_packet() -> void:
 			packet_recived.emit(messageType, dataDic)
 			
 			match messageType:
+				MessageType.AUTH_FAIL:
+					pass
 				MessageType.CLIENT_CONNECTED:
+					print("new client connected")
 					var peer: int = dataDic.get("peer")
 					var id: String = dataDic.get("id")
 					_client_connected(id, peer, dataDic)
 				MessageType.CLIENT_DISCONNECTED:
+					print("client disconnected")
 					var disconnected_id: String = dataDic.get("playerId")
 					_client_disconnected(disconnected_id)
 				MessageType.SYNC_DATA:
+					_wait_auth = false
+					_wait_auth_response = false
 					var planet_data: Dictionary = dataDic["referenceBodyData"]
+					var sync_pos: Vector3 = Vector3.ZERO
+					var inv: MultiplayerServerAPI.Inventory = MultiplayerServerAPI.Inventory.new()
+					
+					
+					if dataDic.has("playerPosition"):
+						sync_pos = Util.deserialize_vec3(dataDic["playerPosition"])
+					
+					if dataDic.has("inventory"):
+						for i in dataDic["inventory"]:
+							print(i)
+							var item: MultiplayerServerAPI.Item = MultiplayerServerAPI.Item.new(i["id"], i["name"], i["type"], i["stock"], i.get("description", ""))
+							inv.push(item)
+					
+					
 					_update_reference_body(planet_data["id"], planet_data["minerals"])
-					_server_connected(dataDic.get("playerId"), dataDic.get("peerId"), dataDic.get("playersList"), dataDic.get("shipsList"))
+					print("connected to server")
+					_server_connected(dataDic.get("playerId"), dataDic.get("peerId"), dataDic.get("playersList"), dataDic.get("shipsList"), sync_pos, inv)
 				MessageType.PLANET_STATE:
 					var planet_data: Dictionary = dataDic["referenceBodyData"]
 					_update_reference_body(planet_data["id"], planet_data["minerals"])
@@ -94,7 +126,9 @@ func start_collect_resource(resource_id: String) -> void:
 		})
 
 
-func start_refin_resource() -> void:
+func start_refin_resource(amount: int) -> void:
 	var type: MessageType = MessageType.REFIN_RESOURCE_START
-	send_data(type, {})
+	send_data(type, {
+		"refCount": amount
+	})
 

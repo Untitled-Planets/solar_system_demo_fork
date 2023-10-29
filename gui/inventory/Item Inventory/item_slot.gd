@@ -3,13 +3,20 @@ class_name ItemSlot
 
 signal pressed(item_id: String, item_slot: ItemSlot)
 
+@export_range(0, 999, 1, "or_greater") var min_slot: int = 0
+
 @onready var name_label: Label = $PanelContainer/LabelName as Label
 @onready var quantity_label: Label = $PanelContainer/Control/LabelQuantity as Label
+
 
 var _id: String = ""
 
 func _ready() -> void:
 	unselected()
+
+
+func get_item_data() -> MultiplayerServerAPI.Item:
+	return MultiplayerServer.get_item_by_id(_id)
 
 
 func selected() -> void:

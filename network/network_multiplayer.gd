@@ -195,9 +195,14 @@ func stock_of(type: String) -> int:
 		return p.inventory.stock_of(type)
 	else: return -1
 
-func setup_client(address: String) -> Error:
+
+func get_inventory() -> Array[MultiplayerServerAPI.Item]:
+	return _ws.get_player().inventory.items
+
+
+func setup_client(address: String, p_username: String) -> Error:
 	close()
-	return _ws.connect_to_server(address)
+	return _ws.connect_to_server(address, p_username)
 
 
 func close() -> void:
@@ -209,6 +214,10 @@ func get_peers() -> Array:
 
 func find_id_by_peer(peer: int) -> String:
 	return _ws.find_id_by_peer(peer)
+
+func get_player_data() -> MultiplayerServerAPI.PlayerData:
+	return _ws.get_player()
+
 
 func get_players() -> Array[MultiplayerServerAPI.PlayerData]:
 	return _ws.get_players()
@@ -439,7 +448,7 @@ func start_refinery_resource(
 		)
 	
 	_resource_selected.amount = amount
-	_ws.start_refin_resource()
+	_ws.start_refin_resource(amount)
 	resource_refined_started.emit(p_resource_id)
 
 

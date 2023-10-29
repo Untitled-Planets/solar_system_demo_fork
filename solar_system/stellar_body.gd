@@ -62,8 +62,8 @@ func _notification(what: int):
 
 
 func get_surface_transform(pos: Vector2):
-	var t = Transform3D().rotated(Vector3.UP, pos.y)
-	var cross := Vector3.UP.cross(t.basis.z)
+	var t: Transform3D = Transform3D().rotated(Vector3.UP, pos.y)
+	var cross: Vector3 = Vector3.UP.cross(t.basis.z)
 	t = t.rotated(cross, pos.x)
 	t = t.translated_local(Vector3(0, 0, radius))
 	return t

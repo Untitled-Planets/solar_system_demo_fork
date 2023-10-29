@@ -12,3 +12,6 @@ distance_to_target = 20.0
 
 [node name="VoxelViewer" type="VoxelViewer" parent="."]
 view_distance = 100000
+
+[node name="SpotLight3D" type="SpotLight3D" parent="."]
+spot_range = 10.8301

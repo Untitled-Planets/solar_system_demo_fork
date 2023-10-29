@@ -112,6 +112,7 @@ class EntityData extends  RefCounted:
 
 class PlayerData extends EntityData:
 	var inventory: Inventory
+	var sync_position: Vector3
 	
 	func _init(id: String, peer: int) -> void:
 		self.id = id
@@ -124,6 +125,9 @@ class ShipData extends EntityData:
 		self.peer = peer
 
 enum MessageType {
+	AUTH_REQUEST,
+	AUTH_FAIL,
+	AUTH_SUCCESS,
 	SYNC_REQUEST,
 	CLIENT_CONNECTED,
 	CLIENT_DISCONNECTED,
@@ -181,10 +185,12 @@ func _update_reference_body(body_id: String, mineralsData: Array) -> void:
 	reference_body_updated.emit(p)
 
 
-func _server_connected(origin_id: String, peer: int, client_list: Array, _ships_list: Array) -> void:
+func _server_connected(origin_id: String, peer: int, client_list: Array, _ships_list: Array, sync_pos: Vector3, inv: Inventory) -> void:
 	current_player = origin_id
 	_peer = peer
 	var new_player: PlayerData = PlayerData.new(origin_id, peer)
+	new_player.sync_position = sync_pos
+	new_player.inventory = inv
 	players.append(new_player)
 	for c in client_list:
 		_client_connected(c.id, c.peer, c)
@@ -232,7 +238,7 @@ func start_collect_resource(p_resource_id: String) -> void:
 	assert(false, "Implement this")
 
 
-func start_refin_resource() -> void:
+func start_refin_resource(amount: int) -> void:
 	assert(false, "Implement this")
 
 
