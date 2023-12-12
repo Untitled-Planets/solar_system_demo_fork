@@ -94,12 +94,6 @@ func _generate_resources(p_amount: int) -> Array:
 	return rs
 
 
-func join() -> String:
-	var id: String = "dummy-id"
-	users_updated.emit([id], [])
-	return id
-
-
 func _initialize():
 	var ssd := SolarSystemData.new()
 	_solar_systems.append(ssd)

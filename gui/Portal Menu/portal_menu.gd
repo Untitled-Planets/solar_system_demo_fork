@@ -6,8 +6,7 @@ var _current_portal_info: PortalInfo
 
 func _ready() -> void:
 	_game = get_tree().get_first_node_in_group(&"game")
-	
-	add_to_group(&"portal_menu")
+	add_to_group(&"portal_hud_menu")
 
 
 func show_ui(portal_data: PortalInfo) -> void:
@@ -19,7 +18,6 @@ func show_ui(portal_data: PortalInfo) -> void:
 func hide_ui() -> void:
 	_current_portal_info = null
 	hide()
-
 
 
 func _on_action_button_action_requested(_action_id) -> void:

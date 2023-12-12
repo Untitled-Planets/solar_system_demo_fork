@@ -163,6 +163,8 @@ static func serialize_dic(data: Dictionary) -> Dictionary:
 	for k in data.keys():
 		if typeof(data[k]) == TYPE_VECTOR3:
 			new_dic[k] = serialize_vec3(data[k])
+		elif typeof(data[k]) == TYPE_TRANSFORM3D:
+			new_dic[k] = serialize_transform(data[k])
 		else:
 			new_dic[k] = data[k]
 	
@@ -173,8 +175,11 @@ static func deserialize_dic(data: Dictionary) -> Dictionary:
 	var new_dic: Dictionary = {}
 	
 	for k in data.keys():
-		if typeof(data[k]) == TYPE_DICTIONARY and (data[k].has("x") and data[k].has("y") and data[k].has("z")):
-			new_dic[k] = deserialize_vec3(data[k])
+		if typeof(data[k]) == TYPE_DICTIONARY:
+			if data[k].has("x") and data[k].has("y") and data[k].has("z"):
+				new_dic[k] = deserialize_vec3(data[k])
+			elif data[k].has("origin") and data[k].has("basis"):
+				pass
 		else:
 			new_dic[k] = data[k]
 	
@@ -197,4 +202,53 @@ static func deserialize_vec2(vec_data: Dictionary) -> Vector2:
 	return Vector2(vec_data.get("x", 0), vec_data.get("y", 0))
 
 
+static func serialize_transform(transform: Transform3D) -> Dictionary:
+	return {
+		"basis": Util.serialize_basis(transform.basis),
+		"origin": Util.serialize_vec3(transform.origin)
+	}
 
+
+static func deserialize_transform(data: Dictionary) -> Transform3D:
+	return Transform3D(
+		Util.deserialize_basis(data["basis"]),
+		Util.deserialize_vec3(data["origin"])
+	)
+
+
+
+static func serialize_basis(basis: Basis) -> Dictionary:
+	return {
+		"x": Util.serialize_vec3(basis.x),
+		"y": Util.serialize_vec3(basis.y),
+		"z": Util.serialize_vec3(basis.z)
+	}
+
+static func deserialize_basis(basis: Dictionary) -> Basis:
+	return Basis(
+		Util.deserialize_vec3(basis["x"]),
+		Util.deserialize_vec3(basis["y"]),
+		Util.deserialize_vec3(basis["z"])
+	)
+
+
+static func hash_from_number(num: int) -> String:
+	return String.num_int64(num, 16).sha256_text()
+
+
+static func toggle_bit(position: int, bitset: int) -> int:
+	assert(position >= 0 and bitset >= 0)
+	bitset |= (1 << position)
+	return bitset
+
+
+static func is_bit_enable(position: int, bitset: int) -> bool:
+	assert(position >= 0 and bitset >= 0)
+	return ((bitset >> position) & 1) == 1
+
+
+static func decode_u32(buffer: PackedByteArray) -> int:
+	return buffer[0] << 24 | buffer[1] << 16 | buffer[2] << 8 | buffer[3]
+
+static func decode_u16(buffer: PackedByteArray) -> int:
+	return buffer[0] << 8 | buffer[1]

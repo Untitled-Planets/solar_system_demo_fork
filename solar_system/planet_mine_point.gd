@@ -5,7 +5,7 @@ extends Node3D
 
 func _ready():
 	var w = _waypoint_scene.instantiate()
-	w.info = "RAndom"
+	w.info = "Random"
 	add_child(w)
 
 func is_focussed() -> bool:

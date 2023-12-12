@@ -12,7 +12,7 @@ var _machine_selected: MachineCharacter = null
 
 func _ready():
 	Server.inventory_updated.connect(_on_inventory_updated)
-#	Server.planet_status_requested.connect(_on_planet_status_requested)
+	Server.planet_status_requested.connect(_on_planet_status_requested)
 	_game = get_tree().get_first_node_in_group(&"game")
 
 
@@ -21,17 +21,16 @@ func _on_asset_panel_asset_selected(asset_id: int):
 	add_machine.emit(asset_id)
 
 
-#func _on_planet_status_requested(solar_system_id: int, planet_id: int, data: Dictionary):
-#	return
-#	for md in data.machines:
-#		var mid: int = md.id
-#		_machine_items.add_instance_item(md)
+func _on_planet_status_requested(solar_system_id: int, planet_id: int, data: Dictionary):
+	#return
+	for md in data.machines:
+		var mid: int = md.id
+		_machine_items.add_instance_item(md)
 
 
-#func _process(delta):
-#	if _machine_selected:
-#
-#	pass
+func _process(delta):
+	if _machine_selected:
+		pass
 
 func _on_inventory_updated(p_data: Dictionary):
 	for asset in p_data.instances:

@@ -64,8 +64,9 @@ var _speed_cap_in_space_superspeed_multiplier = 10.0
 var _linear_acceleration_superspeed_multiplier = 15.0
 
 
-func _ready():
+func _ready() -> void:
 	# Workaround because these node names can easily be unreliable due to import issues
+	add_to_group(&"ship")
 	var visual_model_root = _visual_root.get_node("ship")
 	for i in visual_model_root.get_child_count():
 		var node = visual_model_root.get_child(i)
@@ -103,7 +104,7 @@ func apply_game_settings(s: Settings):
 		_linear_acceleration_superspeed_multiplier *= SolarSystemSetup.LARGE_SCALE
 
 
-func enable_controller():
+func enable_controller() -> void:
 	for n in _landed_nodes:
 		n.get_parent().remove_child(n)
 	for cs in _flight_collision_shapes:
@@ -114,7 +115,7 @@ func enable_controller():
 	_audio.play_enabled()
 
 
-func disable_controller():
+func disable_controller() -> void:
 #	_controller.set_enabled(false)
 	for i in len(_landed_nodes):
 		if not _landed_node_parents[i].has_node(NodePath(_landed_nodes[i].name)):
@@ -168,8 +169,6 @@ func set_superspeed_cmd(cmd: bool) -> void:
 
 
 func _integrate_forces(state: PhysicsDirectBodyState3D) -> void:
-	if multiplayer.has_multiplayer_peer() and not is_multiplayer_authority():
-		return
 	
 	if _ref_change_info != null:
 		# Teleport

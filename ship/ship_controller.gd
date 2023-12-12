@@ -26,7 +26,14 @@ func _process(_delta: float):
 		# The UI probably has focus
 		return
 	
-	var motor := Vector3()
+	
+	var ship: Ship = get_character() as Ship
+	
+	if not ship:
+		print("ship not exist")
+		return
+	
+	var motor: Vector3 = Vector3()
 	
 	if Input.is_action_pressed("back"):
 		motor.z -= 1
@@ -36,14 +43,12 @@ func _process(_delta: float):
 		motor.y += 1
 	if Input.is_key_pressed(KEY_SHIFT):
 		motor.y -= 1
-
+	
 	if Input.is_action_pressed("left"):
 		_turn_cmd.z -= keyboard_turn_sensitivity
 	if Input.is_action_pressed("right"):
 		_turn_cmd.z += keyboard_turn_sensitivity
 	
-	
-	var ship: Ship = get_character() as Ship
 	ship.set_superspeed_cmd(Input.is_key_pressed(KEY_SPACE))
 	
 	_turn_cmd.x = clamp(_turn_cmd.x, -1.0, 1.0)
@@ -58,7 +63,8 @@ func _process(_delta: float):
 	_turn_cmd = Vector3()
 	#ship.set_antiroll(not Input.is_key_pressed(KEY_CONTROL))
 #	flyer.set_turn_cmd(turn)
-	
+	print("update ship")
+	ship.get_node("NetworkEntity")._update()
 
 
 func _physics_process(_delta: float):

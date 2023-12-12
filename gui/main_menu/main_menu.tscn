@@ -82,9 +82,24 @@ layout_mode = 2
 layout_mode = 2
 text = "Name"
 
-[node name="username" type="LineEdit" parent="VBoxContainer/PanelContainer/VBoxContainer/HBoxContainer/VBoxContainer/HBoxContainer"]
+[node name="VBoxContainer" type="CenterContainer" parent="VBoxContainer/PanelContainer/VBoxContainer/HBoxContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+
+[node name="CenterContainer" type="Control" parent="VBoxContainer/PanelContainer/VBoxContainer/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="LastUsernames" type="OptionButton" parent="VBoxContainer/PanelContainer/VBoxContainer/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer/CenterContainer"]
+layout_mode = 2
+offset_left = 102.0
+offset_top = -10.0
+offset_right = 145.0
+offset_bottom = 10.0
+
+[node name="username" type="LineEdit" parent="VBoxContainer/PanelContainer/VBoxContainer/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer"]
+custom_minimum_size = Vector2(200, 0)
 layout_mode = 2
 size_flags_horizontal = 3
+mouse_filter = 1
 
 [node name="Start" type="Button" parent="VBoxContainer/PanelContainer/VBoxContainer/HBoxContainer/VBoxContainer"]
 visible = false
@@ -95,17 +110,17 @@ text = "Start"
 layout_mode = 2
 alignment = 1
 
-[node name="OptionButton" type="OptionButton" parent="VBoxContainer/PanelContainer/VBoxContainer/HBoxContainer/VBoxContainer/HBoxContainer3"]
-visible = false
+[node name="ServerIp" type="OptionButton" parent="VBoxContainer/PanelContainer/VBoxContainer/HBoxContainer/VBoxContainer/HBoxContainer3"]
 layout_mode = 2
 item_count = 2
 selected = 0
-popup/item_0/text = "WS"
+popup/item_0/text = "multiplayer-server-node.app.facudev.dev"
 popup/item_0/id = 0
-popup/item_1/text = "WSS"
+popup/item_1/text = "127.0.0.1"
 popup/item_1/id = 1
 
 [node name="LineEdit" type="LineEdit" parent="VBoxContainer/PanelContainer/VBoxContainer/HBoxContainer/VBoxContainer/HBoxContainer3"]
+visible = false
 custom_minimum_size = Vector2(160, 0)
 layout_mode = 2
 text = "127.0.0.1"
@@ -135,6 +150,8 @@ layout_mode = 2
 layout_mode = 2
 size_flags_vertical = 3
 
+[connection signal="item_selected" from="VBoxContainer/PanelContainer/VBoxContainer/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer/CenterContainer/LastUsernames" to="." method="_on_last_usernames_item_selected"]
+[connection signal="gui_input" from="VBoxContainer/PanelContainer/VBoxContainer/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer/username" to="." method="_on_username_gui_input"]
 [connection signal="pressed" from="VBoxContainer/PanelContainer/VBoxContainer/HBoxContainer/VBoxContainer/Start" to="." method="_on_Start_pressed"]
 [connection signal="pressed" from="VBoxContainer/PanelContainer/VBoxContainer/HBoxContainer/VBoxContainer/HBoxContainer3/StartClient" to="." method="_on_start_client_pressed"]
 [connection signal="pressed" from="VBoxContainer/PanelContainer/VBoxContainer/HBoxContainer/VBoxContainer/Settings" to="." method="_on_Settings_pressed"]

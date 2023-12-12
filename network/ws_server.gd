@@ -2,7 +2,6 @@ extends MultiplayerServerAPI
 class_name MultiplayerServerWebSocket
 
 var _socket: WebSocketPeer = WebSocketPeer.new()
-var _username: String = ""
 var _wait_auth: bool = true
 var _wait_auth_response: bool = false
 
@@ -76,7 +75,6 @@ func _process_packet() -> void:
 		if data.get('type') != null and data.get('data') != null:
 			var messageType: MessageType = data.get('type')
 			var dataDic: Dictionary = data.get('data', {})
-			packet_recived.emit(messageType, dataDic)
 			
 			match messageType:
 				MessageType.AUTH_FAIL:
@@ -108,18 +106,23 @@ func _process_packet() -> void:
 							inv.push(item)
 					
 					
-					_update_reference_body(planet_data["id"], planet_data["minerals"])
+					_update_reference_body(planet_data["id"], dataDic["mineralManager"])
 					print("connected to server")
 					_server_connected(dataDic.get("playerId"), dataDic.get("peerId"), dataDic.get("playersList"), dataDic.get("shipsList"), sync_pos, inv)
 				MessageType.PLANET_STATE:
 					var planet_data: Dictionary = dataDic["referenceBodyData"]
-					_update_reference_body(planet_data["id"], planet_data["minerals"])
-				
+					_update_reference_body(planet_data["id"], dataDic["mineralManager"])
+				MessageType.CHAT:
+					pass
+				MessageType.SHIP_INTERACT_RESULT:
+					waiting_entership_result = false
+			
+			packet_recived.emit(messageType, dataDic)
 	else:
 		OS.alert(error_string(err))
 
 
-func start_collect_resource(resource_id: String) -> void:
+func start_collect_resource(resource_id: int) -> void:
 	var type: MessageType = MessageType.COLLECT_RESOURCE_START
 	send_data(type, {
 		"mineralId": resource_id
@@ -132,3 +135,18 @@ func start_refin_resource(amount: int) -> void:
 		"refCount": amount
 	})
 
+
+func enter_ship(ship_id: String) -> void:
+	if not waiting_entership_result:
+		send_data(MessageType.ENTER_SHIP, {
+			"shipId": ship_id
+		})
+		waiting_entership_result = true
+
+
+func exit_ship(spawn_position: Vector3) -> void:
+	if not waiting_entership_result:
+		send_data(MessageType.EXIT_SHIP, {
+			"spawnPos": Util.serialize_vec3(spawn_position)
+		})
+		waiting_entership_result = true

@@ -33,9 +33,14 @@ func _ready():
 	_solar_system = get_parent().get_solar_system()
 	_waypoint_hud.set_solar_system(_solar_system)
 	collect_mineral_container.hide()
+	$EnterPortalContainer.hide()
+	$EnterMinerContainer.hide()
+	
+	$UsenameLabel.text = MultiplayerServer.get_username()
+
 
 func _unhandled_input(event: InputEvent) -> void:
-	if _can_toggle_inventory and event.is_action_pressed(&"toggle_inventory"):
+	if _can_toggle_inventory and (event.is_action_pressed(&"toggle_inventory") or ($ItemInventory.visible and event.is_action_pressed("ui_cancel"))):
 		$ItemInventory.visible = not $ItemInventory.visible
 		DDD.visible = not $ItemInventory.visible
 

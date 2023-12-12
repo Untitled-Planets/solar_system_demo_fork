@@ -25,10 +25,10 @@ func _ready():
 	action.function = func(): _game.prepare_task(get_task("move"), get_id())
 	_actions.append(action)
 	
-	action = IActionsContext.ActionContext.new()
-	action.name = "CM" # Cancel Movement
-	action.function = func(): _game.cancel_task(get_id(), get_current_task().get_id())
-	_actions.append(action)
+	#action = IActionsContext.ActionContext.new()
+	#action.name = "CM" # Cancel Movement
+	#action.function = func(): _game.cancel_task(get_id(), get_current_task().get_id())
+	#_actions.append(action)
 	
 	action = IActionsContext.ActionContext.new()
 	action.name = "Despawn"
@@ -40,8 +40,13 @@ func _ready():
 	action.function = func(): _game.machine_mine(get_id())
 	_actions.append(action)
 	
+	#action = IActionsContext.ActionContext.new()
+	#action.name = "CMine" # Cancel Mine
+	#action.function = func(): _game.cancel_task(get_id(), get_current_task().get_id())
+	#_actions.append(action)
+	
 	action = IActionsContext.ActionContext.new()
-	action.name = "CMine" # Cancel Mine
+	action.name = "Cancel" # Cancel
 	action.function = func(): _game.cancel_task(get_id(), get_current_task().get_id())
 	_actions.append(action)
 	
@@ -82,6 +87,10 @@ func _on_area_3d_body_entered(body: Node3D) -> void:
 		var miner_hud: Control = get_tree().get_first_node_in_group(&"enter_miner_hud_label")
 		if miner_hud:
 			miner_hud.show()
+		
+		var controller = get_tree().get_first_node_in_group(&"character_controler_p")
+		if controller:
+			controller._miner_count += 1
 
 
 func _on_area_3d_body_exited(body: Node3D) -> void:
@@ -89,3 +98,6 @@ func _on_area_3d_body_exited(body: Node3D) -> void:
 		var miner_hud: Control = get_tree().get_first_node_in_group(&"enter_miner_hud_label")
 		if miner_hud:
 			miner_hud.hide()
+		var controller = get_tree().get_first_node_in_group(&"character_controler_p")
+		if controller:
+			controller._miner_count -= 1

@@ -37,8 +37,12 @@ var _pickable: PickableObject = null
 var _is_picking: bool = false
 var _uuid: String = ""
 var _miner_hud_open: bool = false
+var _portal_hud_open: bool = false
 var _flashlight : SpotLight3D
 var _audio
+
+var _portal_count: int = 0
+var _miner_count: int = 0
 
 var _solar_system: SolarSystem = null
 
@@ -48,6 +52,7 @@ var _yaw := 0.0
 
 func _ready():
 	super._ready()
+	add_to_group(&"character_controler_p")
 	MultiplayerServer.resource_collection_finished.connect(_on_resource_collection_finished)
 	MultiplayerServer.refined_resource_finished.connect(_on_refined_resource_finished)
 
@@ -73,28 +78,30 @@ func _process(_delta):
 	var motor := Vector3()
 	
 #	if Input.is_key_pressed(KEY_W):
-	if Input.is_action_pressed("forward"):
+	if Input.is_action_pressed(&"forward"):
 		motor += Vector3(0, 0, 1)
 #	if Input.is_key_pressed(KEY_S):
-	if Input.is_action_pressed("back"):
+	if Input.is_action_pressed(&"back"):
 		motor += Vector3(0, 0, -1)
 #	if Input.is_key_pressed(KEY_A):
-	if Input.is_action_pressed("left"):
+	if Input.is_action_pressed(&"left"):
 		motor += Vector3(-1, 0, 0)
 #	if Input.is_key_pressed(KEY_D):
-	if Input.is_action_pressed("right"):
+	if Input.is_action_pressed(&"right"):
 		motor += Vector3(1, 0, 0)
 	
 	var character_body := _get_body()
 #	var camera: Camera3D = get_viewport().get_camera_3d()
 	
-	if not _miner_hud_open:
+	if character_body and not _miner_hud_open and not _portal_hud_open:
 		character_body.set_motor(motor)
+		if Input.is_action_just_pressed(&"jump"):
+			character_body.jump()
 	
-	if Input.is_action_just_pressed("jump") and not _miner_hud_open:
-		character_body.jump()
+	#if Input.is_action_just_pressed(&"jump") and not _portal_hud_open and not _miner_hud_open:
+	#	character_body.jump()
 	
-	if Input.is_action_just_pressed("toggle_miner_hud"):
+	if Input.is_action_just_pressed(&"toggle_miner_hud") and (_miner_count > 0 or _miner_hud_open):
 		if _miner_hud_open:
 			_miner_hud_open = false
 			get_tree().get_first_node_in_group(&"hud")._can_toggle_inventory = true
@@ -103,7 +110,9 @@ func _process(_delta):
 			var miner_hud: Control = get_tree().get_first_node_in_group(&"miner_hud")
 			if miner_hud:
 				miner_hud.hide()
-		elif get_tree().get_first_node_in_group("enter_miner_hud_label") and get_tree().get_first_node_in_group("enter_miner_hud_label").visible:
+			else:
+				push_error("Miner HUD is null")
+		elif get_tree().get_first_node_in_group(&"enter_miner_hud_label") and get_tree().get_first_node_in_group(&"enter_miner_hud_label").visible:
 			_miner_hud_open = true
 			release_mouse()
 			get_tree().get_first_node_in_group(&"hud")._can_toggle_inventory = false
@@ -111,6 +120,23 @@ func _process(_delta):
 			var miner_hud: Control = get_tree().get_first_node_in_group(&"miner_hud")
 			if miner_hud:
 				miner_hud.show()
+	elif Input.is_action_just_pressed(&"toggle_portal_hud") and (_portal_count > 0 or _portal_hud_open):
+		if _portal_hud_open:
+			_portal_hud_open = false
+			get_tree().get_first_node_in_group(&"hud")._can_toggle_inventory = true
+			get_tree().get_first_node_in_group(&"hud").hide_inventory()
+			capture_mouse()
+			var portal_hud: Control = get_tree().get_first_node_in_group(&"portal_menu")
+			if portal_hud:
+				portal_hud.hide()
+		elif get_tree().get_first_node_in_group(&"enter_portal_hud_label") and get_tree().get_first_node_in_group(&"enter_portal_hud_label").visible:
+			_portal_hud_open = true
+			release_mouse()
+			get_tree().get_first_node_in_group(&"hud")._can_toggle_inventory = false
+			get_tree().get_first_node_in_group(&"hud").show_inventory()
+			var portal_hud: Control = get_tree().get_first_node_in_group(&"portal_menu")
+			if portal_hud:
+				portal_hud.show()
 	
 	_process_actions()
 	_process_undig()
@@ -148,7 +174,7 @@ func _find_interactive_object_from_group(p_group_name: String):
 func _pick(p_value: bool):
 	if _is_picking != p_value:
 		if _pickable and p_value:
-			MultiplayerServer.start_resource_collect(0, _game.get_solar_system().get_reference_stellar_body_id(), _pickable.get_id(), _game._username)
+			MultiplayerServer.start_resource_collect(_pickable.get_id())
 		_is_picking = p_value
 
 func finish_collect_resource():
@@ -315,8 +341,8 @@ func _interact():
 	var space_state := character_body.get_world_3d().direct_space_state
 	var camera := get_viewport().get_camera_3d()
 	var front := -camera.global_transform.basis.z
-	var pos = camera.global_transform.origin
-
+	var pos: Vector3 = camera.global_transform.origin
+	
 	var ray_query := PhysicsRayQueryParameters3D.new()
 	ray_query.from = pos
 	ray_query.to = pos + front * 10.0
@@ -324,10 +350,12 @@ func _interact():
 	ray_query.collide_with_bodies = false
 	ray_query.collide_with_areas = true
 	var hit = space_state.intersect_ray(ray_query)
-
+	
 	if not hit.is_empty():
+		print(hit.collider.name)
 		if hit.collider.name == "CommandPanel":
-			_game.enter_ship()
+			print(hit.collider.get_parent().get_meta(&"entity_id"))
+			_game.enter_ship(hit.collider.get_parent().get_meta(&"entity_id"))
 #			var ship = Util.find_parent_by_type(hit.collider, Ship)
 #			if ship != null:
 #				_enter_ship(ship)

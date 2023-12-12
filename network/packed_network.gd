@@ -22,7 +22,8 @@ enum OriginControl {
 
 enum SyncMode {
 	UPDATE,
-	FRAME
+	FRAME,
+	MANUAL
 }
 
 
@@ -75,15 +76,11 @@ func _ready() -> void:
 	MultiplayerServer.register_network_object(self)
 	print("Multiplayer authority: " + str(get_multiplayer_authority()))
 	
-	if get_multiplayer_authority() != MultiplayerServer._ws._peer:
+	if _type == "PLAYER" and get_multiplayer_authority() != MultiplayerServer._ws._peer:
 		set_process(false)
 
-
-func _process(_delta: float) -> void:
+func _update() -> void:
 	if properties_sync.size() == 0:
-		return
-	
-	if Engine.get_process_frames() % 4 == 0:
 		return
 	
 	var current_state: Dictionary = {}
@@ -104,6 +101,17 @@ func _process(_delta: float) -> void:
 			MultiplayerServer.send_entity_state(self, changed_values)
 	elif sync_mode == SyncMode.FRAME:
 		MultiplayerServer.send_entity_state(self, current_state)
+	else:
+		MultiplayerServer.send_entity_state(self, current_state)
+
+func _process(_delta: float) -> void:
+	if sync_mode == SyncMode.MANUAL:
+		return
+	
+	if Engine.get_process_frames() % 4 == 0:
+		return
+	
+	_update()
 
 
 func _on_data_recived(packet_data: Dictionary, _sync_response: bool = false) -> void:
@@ -139,26 +147,17 @@ func set_properties(packet_data: Dictionary) -> void:
 					var r: RemoteController = entity_owner.get_controller()
 					r.set_remote_position(packet_data[k])
 					continue
-		elif k == "global_transform":
-			if entity_owner is Ship:
-				entity_owner.global_transform = packet_data[k]
-				entity_owner._visual_root.global_transform = packet_data[k]
-				continue
+			entity_owner.global_position = packet_data[k]
+			continue
+		elif k == "global_rotation":
+			entity_owner.global_rotation = packet_data[k]
+			continue
+		
 		entity_owner.set(k, packet_data[k])
-
-
-## @expermiental
-## @deprecated
-func serialize() -> Dictionary:
-	#assert(false, "Implement this")
-	return {}
-
-
-## @expermiental
-## @deprecated
-func deserialize(_p_data: Dictionary) -> void:
-	#assert(false, "Implement this")
-	pass
+	
+	if entity_owner is Ship:
+		print("update ship")
+		entity_owner._visual_root.global_transform = entity_owner.global_transform
 
 
 ## @expermiental

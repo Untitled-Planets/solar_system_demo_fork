@@ -456,7 +456,7 @@ static func _configure_instancing_for_planet(body: StellarBody, volume: VoxelLod
 	item.persistent = false
 	item.lod_index = 0
 	library.add_item(2, item)
-
+	
 	instance_generator = VoxelInstanceGenerator.new()
 	instance_generator.density = 0.08
 	instance_generator.min_scale = 0.5
@@ -473,7 +473,8 @@ static func _configure_instancing_for_planet(body: StellarBody, volume: VoxelLod
 	item.lod_index = 2
 	item.name = "rock"
 	library.add_item(0, item)
-
+	
+	# TO-DO: re-add big rock
 	instance_generator = VoxelInstanceGenerator.new()
 	instance_generator.density = 0.03
 	instance_generator.min_scale = 0.6
@@ -482,7 +483,10 @@ static func _configure_instancing_for_planet(body: StellarBody, volume: VoxelLod
 	instance_generator.max_slope_degrees = 10
 	instance_generator.vertical_alignment = 0.0
 	item = VoxelInstanceLibraryMultiMeshItem.new()
-	item.set_mesh(BigRock1Mesh, 0)
+	var rock2_template = BigRock1Scene.instantiate()
+	item.setup_from_template(rock2_template)
+	rock2_template.queue_free()
+	#item.set_mesh(BigRock1Mesh, 0)
 	item.generator = instance_generator
 	item.persistent = true
 	item.lod_index = 3

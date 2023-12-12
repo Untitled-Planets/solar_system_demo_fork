@@ -11,6 +11,9 @@ offset_right = -699.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_51cl5")
+max_size = null
+valid_types = null
+show_title = null
 metadata/_edit_horizontal_guides_ = [-52.0]
 
 [node name="PanelContainer" type="PanelContainer" parent="."]
@@ -40,3 +43,10 @@ layout_mode = 2
 theme_override_constants/h_separation = 10
 theme_override_constants/v_separation = 10
 columns = 4
+
+[node name="CenterContainer" type="CenterContainer" parent="PanelContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Button" type="Button" parent="PanelContainer/VBoxContainer/CenterContainer"]
+layout_mode = 2
+text = "Summon Ship"

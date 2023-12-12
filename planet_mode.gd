@@ -5,15 +5,18 @@ const StellarBody = preload("res://solar_system/stellar_body.gd")
 #const SolarSystem = preload("res://solar_system/solar_system.gd")
 const MOUSE_TURN_SENSITIVITY = 0.1
 
+const MIN_ZOOM: int = 2300
+const MAX_ZOOM: int = 3400
+
 @export var WaypointScene: PackedScene = null
 
 
 var _pitch := 0.0
 var _yaw := 0.0
 
-var distance
+var distance: int
 
-var _is_enabled = false
+var _is_enabled: bool = false
 var is_enabled: bool:
 	get:
 		return _is_enabled
@@ -96,14 +99,19 @@ func _input(event):
 		# Add to rotations
 		_yaw -= motion.x * MOUSE_TURN_SENSITIVITY
 		_pitch += motion.y * MOUSE_TURN_SENSITIVITY
-
+	
 		update_rotations()
-
-	if event.is_action_pressed("zoom_in"):
-		distance -= 10
-		camera.distance_to_target = distance
-	elif event.is_action_pressed("zoom_out"):
-		distance += 10
+	
+	var is_zoom_in: bool = event.is_action_pressed(&"zoom_in")
+	var is_zoom_out: bool = event.is_action_pressed(&"zoom_out")
+	
+	if is_zoom_in or is_zoom_out:
+		if is_zoom_in:
+			distance -= 10
+		elif is_zoom_out:
+			distance += 10
+		
+		distance = clamp(distance, MIN_ZOOM, MAX_ZOOM)
 		camera.distance_to_target = distance
 
 	if event.is_action_pressed("planet_mode_toggle"):
@@ -118,9 +126,9 @@ func pm_try_enable():
 	if ref.type == StellarBody.TYPE_SUN:
 		printt("no current planet")
 		return
-		
-	enable()
 	
+	enable()
+
 
 func _ready():
 	set_process_input(false)

@@ -1,4 +1,4 @@
-[gd_scene load_steps=32 format=3 uid="uid://blqdy4acm4wpa"]
+[gd_scene load_steps=33 format=3 uid="uid://blqdy4acm4wpa"]
 
 [ext_resource type="Script" path="res://ship/ship.gd" id="1"]
 [ext_resource type="Script" path="res://camera/camera_hints.gd" id="2"]
@@ -28,7 +28,7 @@ radius = 1.52219
 height = 10.0
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_vf3yo"]
-radius = 1.65989
+radius = 2.23442
 
 [sub_resource type="Animation" id="Animation_42goy"]
 length = 0.001
@@ -82,6 +82,9 @@ _data = {
 [sub_resource type="BoxShape3D" id="BoxShape3D_ta54x"]
 size = Vector3(2, 3.32734, 0.230548)
 
+[sub_resource type="BoxShape3D" id="BoxShape3D_5ecxx"]
+size = Vector3(3.17124, 4.36879, 3.91992)
+
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_yulrx"]
 render_priority = 0
 shader = ExtResource("4")
@@ -116,6 +119,7 @@ material = SubResource("StandardMaterial3D_1r4g6")
 size = Vector2(0.3, 0.3)
 
 [node name="Ship" type="RigidBody3D" groups=["planet_mode"]]
+collision_layer = 5
 gravity_scale = 0.0
 max_contacts_reported = 3
 contact_monitor = true
@@ -176,6 +180,14 @@ transform = Transform3D(1, 5.8616e-08, 5.42005e-07, 5.42005e-07, -0.213793, -0.9
 [node name="CollisionShape" type="CollisionShape3D" parent="Visual/VisualRoot/ship/HatchDown/KinematicBody"]
 transform = Transform3D(1, -1.7053e-13, 4.26326e-14, 0, 1, 0, 0, 0, 1, 5.68434e-13, -1.61023, 0.0508492)
 shape = SubResource("BoxShape3D_ta54x")
+
+[node name="CharacterBody3D" type="CharacterBody3D" parent="Visual/VisualRoot/ship"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.08807e-06, -0.767989, -6.40824)
+collision_layer = 256
+collision_mask = 256
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Visual/VisualRoot/ship/CharacterBody3D"]
+shape = SubResource("BoxShape3D_5ecxx")
 
 [node name="MotionParticles" type="GPUParticles3D" parent="Visual/VisualRoot"]
 material_override = SubResource("ShaderMaterial_yulrx")
@@ -270,9 +282,9 @@ stream = ExtResource("18")
 [node name="NetworkEntity" type="Node" parent="." node_paths=PackedStringArray("entity_owner")]
 script = ExtResource("18_hc8m0")
 entity_owner = NodePath("..")
-properties_sync = Array[StringName]([&"global_transform"])
+properties_sync = Array[StringName]([&"global_position", &"global_rotation"])
 origin_control = 1
-sync_mode = 1
+sync_mode = 2
 
 [connection signal="body_entered" from="." to="ShipAudio" method="_on_Ship_body_entered"]
 

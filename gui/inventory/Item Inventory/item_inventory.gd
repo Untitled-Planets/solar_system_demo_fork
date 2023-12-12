@@ -8,6 +8,7 @@ const ITEM_SLOT: PackedScene = preload("res://gui/inventory/Item Inventory/item_
 @export var show_title: bool = true
 
 @onready var grid_container: GridContainer = $PanelContainer/VBoxContainer/ScrollContainer/GridContainer as GridContainer
+@onready var summon_ship: Button = $PanelContainer/VBoxContainer/CenterContainer/Button as Button
 
 var current_selected: ItemSlot = null: set = set_current_selected
 
@@ -22,6 +23,9 @@ func set_current_selected(new_item_slot: ItemSlot) -> void:
 func _ready() -> void:
 	if not show_title:
 		$PanelContainer/VBoxContainer/Label.hide()
+	
+	summon_ship.hide()
+	summon_ship.pressed.connect(_on_summon_ship_pressed)
 	
 	clear()
 	for i in range(max_size):
@@ -98,4 +102,11 @@ func _on_item_slot_pressed(item_id: String, item_slot: ItemSlot) -> void:
 	if item_slot != null:
 		current_selected = item_slot
 
-
+func _on_summon_ship_pressed() -> void:
+	var raycast: RayCast3D = get_tree().get_first_node_in_group(&"spawn_ship_ray") as RayCast3D
+	
+	if raycast.is_colliding():
+		var point: Vector3 = raycast.get_collision_point()
+		MultiplayerServer.summon_ship(point)
+	else:
+		OS.alert("Can't spawn ship in this position")

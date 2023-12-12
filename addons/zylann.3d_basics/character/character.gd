@@ -259,3 +259,7 @@ func set_direction(p_direction: Vector3) -> void:
 
 #func set_position_from_remote(p_position: Vector3) -> void:
 #	_remote_position = p_position
+
+
+func _on_some_body_entered(body):
+	pass#print(body)

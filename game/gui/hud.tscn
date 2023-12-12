@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://dig3qsvc3wh4c"]
+[gd_scene load_steps=14 format=3 uid="uid://dig3qsvc3wh4c"]
 
 [ext_resource type="Script" path="res://gui/hud.gd" id="1_kwnpe"]
 [ext_resource type="FontFile" path="res://gui/fonts/hack_regular_16_dynamic_font.tres" id="2_kjkfq"]
@@ -12,6 +12,7 @@
 [ext_resource type="PackedScene" uid="uid://db2bredw5bfrs" path="res://gui/miner menu/miner_hud.tscn" id="10_uyvdl"]
 [ext_resource type="PackedScene" uid="uid://bweb7ttjg6quk" path="res://gui/inventory/Item Inventory/item_inventory.tscn" id="11_g32x6"]
 [ext_resource type="Script" path="res://gui/item_inventory.gd" id="12_v4lfk"]
+[ext_resource type="PackedScene" uid="uid://dorsyyosso2gh" path="res://gui/chat/chat.tscn" id="13_1kx85"]
 
 [node name="HUD" type="Control" groups=["hud"]]
 layout_mode = 3
@@ -66,7 +67,7 @@ mouse_filter = 1
 layout_mode = 1
 mouse_filter = 1
 
-[node name="PortalMenu" parent="." instance=ExtResource("9_0ivtx")]
+[node name="PortalMenu" parent="." groups=["portal_menu"] instance=ExtResource("9_0ivtx")]
 visible = false
 layout_mode = 1
 
@@ -87,6 +88,20 @@ grow_vertical = 2
 [node name="Label" type="Label" parent="EnterMinerContainer"]
 layout_mode = 2
 text = "Open Miner (E Key)"
+
+[node name="EnterPortalContainer" type="PanelContainer" parent="." groups=["enter_portal_hud_label"]]
+visible = false
+layout_mode = 2
+offset_left = 489.5
+offset_top = 304.0
+offset_right = 662.5
+offset_bottom = 344.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Label" type="Label" parent="EnterPortalContainer"]
+layout_mode = 2
+text = "Open Portal (E Key)"
 
 [node name="CollectMineralContainer" type="PanelContainer" parent="."]
 visible = false
@@ -126,3 +141,20 @@ visible = false
 layout_mode = 0
 offset_right = 40.0
 offset_bottom = 40.0
+
+[node name="Chat" parent="." instance=ExtResource("13_1kx85")]
+layout_mode = 1
+offset_left = 4.0
+offset_top = 268.0
+offset_right = 3.84
+offset_bottom = 267.88
+
+[node name="UsenameLabel" type="Label" parent="."]
+layout_mode = 0
+offset_left = 1143.0
+offset_top = 3.0
+offset_right = 1270.0
+offset_bottom = 29.0
+text = "AAAAAAAAAAAA"
+clip_text = true
+text_direction = 1
